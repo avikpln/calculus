@@ -1,0 +1,4 @@
+mypy
+pyflakes
+pydocstyle
+pytest
