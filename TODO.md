@@ -1,14 +1,14 @@
 # TODO
 
+## Tooling
+
+- Set up a virtual environment (`venv`) for development, to mirror
+  CI's clean-install environment and catch version mismatches between
+  locally installed packages and `requirements-dev.txt`.
+
 ## Testing
 
 - Add a unit test suite for `utils.py`.
-
-## Continuous Integration
-
-- Add a GitHub Actions workflow to run `mypy --strict`,
-  `pyflakes`, `pydocstyle`, and `pytest` for every push and
-  pull request.
 
 ## Documentation
 

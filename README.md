@@ -37,6 +37,12 @@ Development requires:
 - `pydocstyle` for docstring style checking
 - `pytest` for unit testing
 
+Install development dependencies with:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 ## Project layout
 
 ``` text
@@ -84,6 +90,7 @@ mypy --strict calculus
 pyflakes calculus
 pydocstyle calculus
 pytest
+git diff --cached --check
 ```
 
 ## Documentation

@@ -138,7 +138,10 @@ Before every commit, run:
 2.  `pyflakes`
 3.  `pydocstyle`
 4.  `pytest`
+5.  `git diff --cached --check` (trailing whitespace, staged changes)
 
 All checks should pass before committing.
 
-Future continuous integration should automate the same sequence.
+This same sequence is automated by the project's CI workflow, which
+uses the empty-tree hash to check every file in the repository rather
+than just staged changes.
