@@ -517,6 +517,15 @@ class Sequence(Generic[T], Iterable[T]):
         func = lambda n: self._rule(n + self.size - size)
         return Sequence(func, size, first_index=self.first_index)
 
+    @staticmethod
+    def _mapper(
+        seq: Sequence[T],
+        op: Callable[[T], U]
+    ) -> Callable[[int], U]:
+        # Return the rule obtained by applying an operation to a rule.
+
+        return lambda n: op(seq._rule(n))
+
     def map(self, op: Callable[[T], U]) -> Sequence[U]:
         """Return the sequence obtained by applying a unary operation.
 
@@ -530,8 +539,34 @@ class Sequence(Generic[T], Iterable[T]):
             Sequence[U]: The sequence obtained by applying op to each
                 element.
         """
-        return Sequence(lambda n: op(self._rule(n)), self.size,
-                        first_index=self.first_index)
+        rule = self._mapper(self, op)
+        return Sequence(rule, self.size, first_index=self.first_index)
+
+    @staticmethod
+    def _combiner(
+        first: Sequence[T],
+        second: S | Sequence[S],
+        op: Callable[[T, S], U]
+    ) -> tuple[Callable[[int], U], int | None]:
+        # Return the rule and size defining the combined sequence.
+
+        size = first.size
+        if isinstance(second, Sequence):
+            if first.first_index != second.first_index:
+                raise ValueError(
+                    "cannot apply a binary operation on sequences with "
+                    "different first index properties "
+                    f"({first.first_index} != {second.first_index})"
+                )
+            rule = lambda n: op(first._rule(n), second._rule(n))
+            if second.size is not None:
+                size = (
+                    second.size if first.size is None
+                    else min(first.size, second.size)
+                )
+        else:
+            rule = lambda n: op(first._rule(n), second)
+        return rule, size
 
     @overload
     def combine(
@@ -548,7 +583,7 @@ class Sequence(Generic[T], Iterable[T]):
         other: S | Sequence[S],
         op: Callable[[T, S], U]
     ) -> Sequence[U]:
-        """Combine this sequence with another sequence.
+        """Combine this sequence with another sequence or scalar.
 
         The returned sequence preserves the first index of the current
         sequence. Its size is the minimum of the operand sizes.
@@ -566,25 +601,8 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        size = self.size
-        if isinstance(other, Sequence):
-            if self.first_index != other.first_index:
-                raise ValueError(
-                    "cannot apply a binary operation on sequences with "
-                    "different first index properties "
-                    f"({self.first_index} != {other.first_index})"
-                )
-            rule = _Rule(lambda n: op(self._rule(n), other._rule(n)))
-            if other.size is not None:
-                size = (
-                    other.size if self.size is None
-                    else min(self.size, other.size)
-                )
-            else:
-                size = self.size
-            return Sequence(rule, size, first_index=self.first_index)
-        else:
-            return self.map(lambda x: op(x, other))
+        rule, size = self._combiner(self, other, op)
+        return Sequence(rule, size, first_index=self.first_index)
 
 # -- SPECIAL SEQUENCES
 
