@@ -1,5 +1,7 @@
 # Calculus
 
+![CI](https://github.com/avikpln/calculus/actions/workflows/ci.yml/badge.svg)
+
 A Python library for representing and manipulating finite and infinite
 sequences through lazy evaluation.
 
