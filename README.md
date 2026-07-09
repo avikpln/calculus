@@ -48,6 +48,9 @@ pip install -r requirements-dev.txt
 ## Project layout
 
 ``` text
+├── .github
+│   └── workflows
+│       └── ci.yml       # GitHub Actions CI workflow
 ├── calculus
 │   ├── __init__.py      # Package public API
 │   ├── sequence.py      # Generic Sequence implementation
@@ -57,6 +60,7 @@ pip install -r requirements-dev.txt
 ├── LICENSE
 ├── NOTES.md             # Design rationale and architectural decisions
 ├── README.md
+├── requirements-dev.txt # Development/CI tooling dependencies
 ├── STYLE.md             # Project coding and documentation conventions
 └── TODO.md              # Planned enhancements
 ```
