@@ -531,3 +531,25 @@ used for zero-division: Python's own TypeError at runtime is the
 enforcement mechanism, not eager static or runtime type-narrowing.
 The resulting mypy errors are silenced with localized, documented
 `# type: ignore[operator]` comments on each affected line.
+
+------------------------------------------------------------------------
+
+## Three-argument `pow()` is not supported
+
+`__pow__` implements only the two-operand form of exponentiation
+(`x ** y`), not Python's three-argument `pow(x, y, mod)` protocol,
+which computes `(x ** y) % mod` efficiently for modular
+exponentiation.
+
+This is a deliberate omission, not an oversight: `**` alone only
+ever calls `__pow__(self, other)`, never the three-argument form,
+so no code path in NumericSequence currently reaches it. Supporting
+it properly would require accepting an optional third operand
+across `_binary()`, which is designed for strictly binary
+operations, and modular exponentiation is a specialized numeric
+technique of unclear relevance to a general-purpose sequence
+library.
+
+If a concrete use case emerges, this can be revisited; until then,
+NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
+calls, consistent with the project's EAFP philosophy elsewhere.

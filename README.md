@@ -95,6 +95,11 @@ print((squares + evens).head(5))
 # Element-wise multiplication.
 print((squares * evens).head(5))
 # ⟨2, 16, 54, 128, 250⟩
+
+# Exponentiation.
+nonnegints = NumericSequence(lambda n: n, first_index=0)
+print(2 ** nonnegints)
+# ⟨1, 2, 4, 8, 16, ...⟩
 ```
 
 ## Development

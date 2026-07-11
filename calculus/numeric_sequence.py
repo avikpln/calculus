@@ -290,3 +290,39 @@ class NumericSequence(Sequence[Number]):
                 first index.
         """
         return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]
+
+# -- EXPONENTIATION
+
+    def __pow__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise exponentiation.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                use as the exponent.
+
+        Returns:
+            NumericSequence: The element-wise exponentiation of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x ** y)
+
+    def __rpow__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise exponentiation.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                use as the base.
+
+        Returns:
+            NumericSequence: The element-wise exponentiation of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: y ** x)

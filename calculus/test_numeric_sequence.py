@@ -235,6 +235,41 @@ def test_rmod_scalar_returns_elementwise_remainder() -> None:
     assert list(result) == [0, 2, 0]
 
 
+# -- EXPONENTIATION
+
+def test_pow_scalar_returns_elementwise_power() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = seq ** 2
+    assert list(result) == [1, 4, 9]
+
+
+def test_pow_sequence_returns_elementwise_power() -> None:
+    a = NumericSequence(lambda n: n + 1, size=3, first_index=1)
+    b = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = a ** b
+    assert list(result) == [2, 9, 64]
+
+
+def test_pow_returns_numeric_sequence() -> None:
+    a = NumericSequence(lambda n: n, size=3)
+    b = NumericSequence(lambda n: n, size=3)
+    result = a ** b
+    assert isinstance(result, NumericSequence)
+
+
+def test_pow_mismatched_first_index_raises_value_error() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=0)
+    b = NumericSequence(lambda n: n, size=3, first_index=1)
+    with pytest.raises(ValueError):
+        a ** b
+
+
+def test_rpow_scalar_returns_elementwise_power() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = 2 ** seq
+    assert list(result) == [2, 4, 8]
+
+
 # -- COMPLEX OPERAND BEHAVIOR
 
 def test_floordiv_with_complex_operand_raises_type_error() -> None:
