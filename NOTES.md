@@ -267,3 +267,60 @@ pip install -e .
 Packaging should be introduced together with project metadata,
 dependency declarations, and continuous integration so that the
 repository follows modern Python packaging conventions.
+
+## Numeric arithmetic via mixin, not multiple inheritance
+
+When designing `NumericSequence`, the natural next thought was a
+future `NumericRecurrence(NumericSequence, Recurrence)` — numeric
+arithmetic plus recursive evaluation, combined the obvious way any
+object-oriented instinct would reach for: multiple inheritance.
+
+This was rejected, for reasons worth recording since they weren't
+obvious until worked through.
+
+**The `__slots__` problem.** `NumericSequence` and `Recurrence` both
+descend from `Sequence`, forming a diamond. If both branches declare
+non-empty `__slots__` (as `Recurrence` does, for `_basis`), Python
+raises `TypeError: multiple bases have instance lay-out conflict` at
+class-definition time. This isn't a style concern — the class
+literally cannot be defined.
+
+**The type-preservation problem, which is the deeper issue.** Even
+setting `__slots__` aside, `combine()` returning `type(self)` — the
+obvious way to make `NumericSequence.combine()` yield a
+`NumericSequence` instead of a bare `Sequence[Number]` — is unsound in
+general. A `Recurrence`'s identity *is* its recursive rule and basis;
+the elementwise sum of two recurrences is not, in general, itself
+expressible as some recursion with some basis. It is simply a sequence
+evaluable independently at each index. Forcing `type(self)` here would
+either silently produce a broken `Recurrence` or require reconstructing
+a valid recursion for the result, which isn't generally possible.
+`NumericSequence` itself is the special case where this danger doesn't
+apply — it carries no extra structure beyond "numbers indexed by a
+rule," so there is nothing for `combine()` to fail to preserve.
+
+**Resolution: a mixin, not a shared base.** `ArithmeticMixin` provides
+the arithmetic dunders (`__add__`, `__sub__`, etc.) without inheriting
+from `Sequence` at all. It assumes only that `self` supports `map()`
+and `combine()` — enforced via a `Protocol`, not runtime inheritance —
+and its helper always constructs a plain `NumericSequence` as the
+result, regardless of what class it's mixed into. This means:
+
+- No diamond: a class like a future `NumericRecurrence` would inherit
+  from `Recurrence` alone and mix in `ArithmeticMixin` separately, so
+  its only path to `Sequence` is through `Recurrence` — ordinary
+  single inheritance.
+- No `__slots__` conflict: the mixin declares `__slots__ = ()`,
+  contributing no instance layout.
+- No type-preservation trap: arithmetic on any mixed-in class
+  correctly downgrades to `NumericSequence`, since that's the most
+  specific type any elementwise numeric result can honestly claim to
+  be — a sum of two recurrences was never going to still be a
+  recurrence.
+
+**Trade-off accepted.** The mixin's methods depend on `self` already
+having `combine()`/`map()`, which is a structural (`Protocol`-based)
+rather than an inheritance-based requirement. This is intentional:
+the whole point of the mixin is to add capability without adding a
+base class, so the dependency has to be expressed as "shape," not
+"ancestry."
