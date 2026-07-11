@@ -268,64 +268,61 @@ Packaging should be introduced together with project metadata,
 dependency declarations, and continuous integration so that the
 repository follows modern Python packaging conventions.
 
-## Numeric arithmetic via mixin, not multiple inheritance
+------------------------------------------------------------------------
 
-When designing `NumericSequence`, the natural next thought was a
-future `NumericRecurrence(NumericSequence, Recurrence)` — numeric
-arithmetic plus recursive evaluation, combined the obvious way any
-object-oriented instinct would reach for: multiple inheritance.
+## Reversing the mixin decision
 
-This was rejected, for reasons worth recording since they weren't
-obvious until worked through.
+The mixin-based arithmetic design, previously used for
+`NumericSequence`, was reversed: `NumericSequence` now defines its
+arithmetic dunders directly, with a plain `Sequence[Number]` base and
+no `_ArithmeticMixin`.
 
-**The `__slots__` problem.** `NumericSequence` and `Recurrence` both
-descend from `Sequence`, forming a diamond. If both branches declare
-non-empty `__slots__` (as `Recurrence` does, for `_basis`), Python
-raises `TypeError: multiple bases have instance lay-out conflict` at
-class-definition time. This isn't a style concern — the class
-literally cannot be defined.
+The reversal came from noticing an inconsistency in how
+`NumericRecurrence` had been imagined. `Recurrence` is a `Sequence`
+subclass; by the same logic, `NumericRecurrence` should be a
+`NumericSequence` — it is numeric, after all, just like any other
+`NumericSequence`. But modeled this way, `NumericRecurrence` naturally
+inherits from *both* `Recurrence` and `NumericSequence`, which is
+precisely the diamond (`Sequence` reached via two branches) the mixin
+was invented to route around. In other words, the diamond was never
+avoidable by clever base-class design — it falls directly out of
+treating "is recursively constructed" and "is numeric" as two
+independent, combinable properties, which they are.
 
-**The type-preservation problem, which is the deeper issue.** Even
-setting `__slots__` aside, `combine()` returning `type(self)` — the
-obvious way to make `NumericSequence.combine()` yield a
-`NumericSequence` instead of a bare `Sequence[Number]` — is unsound in
-general. A `Recurrence`'s identity *is* its recursive rule and basis;
-the elementwise sum of two recurrences is not, in general, itself
-expressible as some recursion with some basis. It is simply a sequence
-evaluable independently at each index. Forcing `type(self)` here would
-either silently produce a broken `Recurrence` or require reconstructing
-a valid recursion for the result, which isn't generally possible.
-`NumericSequence` itself is the special case where this danger doesn't
-apply — it carries no extra structure beyond "numbers indexed by a
-rule," so there is nothing for `combine()` to fail to preserve.
+Once that was accepted, the mixin's purpose evaporated: it existed
+solely to let `NumericSequence`'s arithmetic be mixed into a class that
+*also* inherits `Sequence` through another branch, without a `__slots__`
+conflict. But if any future numeric subclass (`NumericRecurrence`,
+`Series`, etc.) is going to face this diamond regardless of whether
+arithmetic comes from a mixin or a base class, the mixin buys nothing.
+The simpler resolution is to drop the multiple-inheritance model
+altogether: `NumericRecurrence` inherits singly from `NumericSequence`
+and reimplements recursive *construction* internally (e.g. memoized
+evaluation), rather than obtaining it by also inheriting `Recurrence`
+as a second base. Recursion becomes an implementation detail of how the
+rule is built, not a base class contributing behavior alongside
+`NumericSequence`.
 
-**Resolution: a mixin, not a shared base.** `ArithmeticMixin` provides
-the arithmetic dunders (`__add__`, `__sub__`, etc.) without inheriting
-from `Sequence` at all. It assumes only that `self` supports `map()`
-and `combine()` — enforced via a `Protocol`, not runtime inheritance —
-and its helper always constructs a plain `NumericSequence` as the
-result, regardless of what class it's mixed into. This means:
+This also removed a nontrivial typing cost the mixin had incurred:
+making `_ArithmeticMixin` generic over its own concrete return type
+required splitting `Self` into two `Protocol`/`TypeVar` pairs
+(`UnarySelf`/`_UnaryProtocol`, `BinarySelf`/`_BinaryProtocol`), because
+`mypy --strict` could not resolve a single shared `Self` across two
+protocol methods without mistyping unrelated dunders. With no mixin,
+`self` is concretely `NumericSequence` everywhere, and none of that
+machinery is needed.
 
-- No diamond: a class like a future `NumericRecurrence` would inherit
-  from `Recurrence` alone and mix in `ArithmeticMixin` separately, so
-  its only path to `Sequence` is through `Recurrence` — ordinary
-  single inheritance.
-- No `__slots__` conflict: the mixin declares `__slots__ = ()`,
-  contributing no instance layout.
-- No type-preservation trap: arithmetic on any mixed-in class
-  correctly downgrades to `NumericSequence`, since that's the most
-  specific type any elementwise numeric result can honestly claim to
-  be — a sum of two recurrences was never going to still be a
-  recurrence.
-
-**Trade-off accepted.** The mixin's methods depend on `self` already
-having `combine()`/`map()`, which is a structural (`Protocol`-based)
-rather than an inheritance-based requirement. This is intentional:
-the whole point of the mixin is to add capability without adding a
-base class, so the dependency has to be expressed as "shape," not
-"ancestry."
-
-> **Note:** this section needs revisiting in light of the following item.
+**Lesson.** The original mixin decision was reasonable given what was
+known at the time — multiple inheritance from two `Sequence` branches
+is a real risk worth avoiding. But it solved the wrong problem: it
+avoided the diamond's *implementation* conflict (`__slots__`,
+`type(self)` preservation) while leaving the diamond's *conceptual*
+inevitability unexamined. Once `NumericRecurrence` was modeled
+honestly as "is-numeric" and "is-recursively-constructed" at once, the
+diamond turned out to be a modeling choice, not a fact — avoidable by
+not inheriting `Recurrence` at all, which made the mixin's generality
+cost more (in typing complexity) than it returned (in reuse), since it
+currently has exactly one consumer.
 
 ------------------------------------------------------------------------
 
@@ -522,3 +519,37 @@ should govern the result — neither one's subtype survives regardless.
 This is consistent with `NumericSequence`'s arithmetic mixin, which
 never routes through `self.combine()`/`self.map()` for its own
 construction and therefore has no reason to override either.
+
+------------------------------------------------------------------------
+
+## Floor division and modulo on complex operands
+
+`__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
+which includes `complex`, even though `//` and `%` are undefined for
+complex numbers. This mirrors the project's EAFP philosophy already
+used for zero-division: Python's own TypeError at runtime is the
+enforcement mechanism, not eager static or runtime type-narrowing.
+The resulting mypy errors are silenced with localized, documented
+`# type: ignore[operator]` comments on each affected line.
+
+------------------------------------------------------------------------
+
+## Three-argument `pow()` is not supported
+
+`__pow__` implements only the two-operand form of exponentiation
+(`x ** y`), not Python's three-argument `pow(x, y, mod)` protocol,
+which computes `(x ** y) % mod` efficiently for modular
+exponentiation.
+
+This is a deliberate omission, not an oversight: `**` alone only
+ever calls `__pow__(self, other)`, never the three-argument form,
+so no code path in NumericSequence currently reaches it. Supporting
+it properly would require accepting an optional third operand
+across `_binary()`, which is designed for strictly binary
+operations, and modular exponentiation is a specialized numeric
+technique of unclear relevance to a general-purpose sequence
+library.
+
+If a concrete use case emerges, this can be revisited; until then,
+NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
+calls, consistent with the project's EAFP philosophy elsewhere.

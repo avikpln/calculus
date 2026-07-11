@@ -11,12 +11,14 @@ The Calculus package aims to provide a collection of reusable
 abstractions for discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]`
-abstraction, which serves as the foundation for future components such
-as numeric sequences, recurrences, series, and function abstractions.
+abstraction together with the specialized `NumericSequence` subclass,
+serving as the foundation for future components such as recurrences,
+series, and function abstractions.
 
 ## Features
 
 -   Generic `Sequence[T]` implementation.
+-   `NumericSequence` with element-wise arithmetic.
 -   Finite and infinite sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
@@ -50,34 +52,58 @@ pip install -r requirements-dev.txt
 ``` text
 ├── .github
 │   └── workflows
-│       └── ci.yml       # GitHub Actions CI workflow
+│       └── ci.yml                    # GitHub Actions CI workflow
 ├── calculus
-│   ├── __init__.py      # Package public API
-│   ├── sequence.py      # Generic Sequence implementation
-│   ├── test_sequence.py # Pytest test suite
-│   └── utils.py         # Shared validation helpers
+│   ├── __init__.py                   # Package public API
+│   ├── numeric_sequence.py           # NumericSequence implementation
+│   ├── sequence.py                   # Generic Sequence implementation
+│   ├── test_numeric_sequence.py      # Pytest test suite
+│   ├── test_sequence.py              # Pytest test suite
+│   └── utils.py                      # Shared validation helpers
 ├── .gitignore
 ├── LICENSE
-├── NOTES.md             # Design rationale and architectural decisions
+├── NOTES.md                          # Design rationale and architectural decisions
 ├── README.md
-├── requirements-dev.txt # Development/CI tooling dependencies
-├── STYLE.md             # Project coding and documentation conventions
-└── TODO.md              # Planned enhancements
+├── requirements-dev.txt              # Development and CI dependencies
+├── STYLE.md                          # Project coding and documentation conventions
+└── TODO.md                           # Planned enhancements
 ```
 
 ## Example
 
 ```python
-from calculus import Sequence
+from calculus import NumericSequence
 
 # Infinite sequence of perfect squares.
-squares = Sequence(lambda n: n**2)
+squares = NumericSequence(lambda n: n**2)
 
 print(squares[3])
 # 9
 
 print(squares.head(5))
 # ⟨1, 4, 9, 16, 25⟩
+
+# Unary arithmetic.
+print(-squares.head(5))
+# ⟨-1, -4, -9, -16, -25⟩
+
+# Absolute value.
+print(abs(-squares.head(5)))
+# ⟨1, 4, 9, 16, 25⟩
+
+# Element-wise addition.
+evens = NumericSequence(lambda n: 2 * n)
+print((squares + evens).head(5))
+# ⟨3, 8, 15, 24, 35⟩
+
+# Element-wise multiplication.
+print((squares * evens).head(5))
+# ⟨2, 16, 54, 128, 250⟩
+
+# Exponentiation.
+nonnegints = NumericSequence(lambda n: n, first_index=0)
+print(2 ** nonnegints)
+# ⟨1, 2, 4, 8, 16, ...⟩
 ```
 
 ## Development
