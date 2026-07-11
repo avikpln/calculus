@@ -80,6 +80,15 @@ class NumericSequence(Sequence[Number]):
         """
         return self._unary(lambda x: -x)
 
+    def __abs__(self) -> NumericSequence:
+        """Return the element-wise absolute value.
+
+        Returns:
+            NumericSequence: The element-wise absolute value of the
+                sequence.
+        """
+        return self._unary(abs)
+
 # -- ADDITIVE
 
     def __add__(self, other: Number | NumericSequence) -> NumericSequence:

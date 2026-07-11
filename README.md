@@ -87,6 +87,10 @@ print(squares.head(5))
 print(-squares.head(5))
 # ⟨-1, -4, -9, -16, -25⟩
 
+# Absolute value.
+print(abs(-squares.head(5)))
+# ⟨1, 4, 9, 16, 25⟩
+
 # Element-wise addition.
 evens = NumericSequence(lambda n: 2 * n)
 print((squares + evens).head(5))

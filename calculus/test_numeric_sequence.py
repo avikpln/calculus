@@ -33,6 +33,18 @@ def test_neg_returns_numeric_sequence() -> None:
     assert isinstance(result, NumericSequence)
 
 
+def test_abs_returns_elementwise_absolute_value() -> None:
+    seq = NumericSequence(lambda n: (-1)**n * n, size=5, first_index=1)
+    result = abs(seq)
+    assert list(result) == [1, 2, 3, 4, 5]
+
+
+def test_abs_returns_numeric_sequence() -> None:
+    seq = NumericSequence(lambda n: -n, size=3)
+    result = abs(seq)
+    assert isinstance(result, NumericSequence)
+
+
 # -- ADDITIVE
 
 def test_add_scalar_returns_elementwise_sum() -> None:
