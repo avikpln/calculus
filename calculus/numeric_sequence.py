@@ -1,7 +1,7 @@
 """Numeric abstractions for finite and infinite sequences.
 
 This module extends the generic Sequence abstraction with support for
-numeric sequences and element-wise additive operations.
+numeric sequences and element-wise arithmetic operations.
 
 Classes:
     NumericSequence: A finite or infinite sequence of numeric values.
@@ -27,8 +27,8 @@ class NumericSequence(Sequence[Number]):
     """A sequence whose elements are numeric values.
 
     This subclass inherits all functionality from Sequence and extends
-    it with element-wise additive operations, exposed through the
-    standard arithmetic operators (+, -, unary -, and unary +).
+    it with element-wise arithmetic operations, exposed through the
+    standard arithmetic operators.
     """
 
 # -- INITIALIZATION
@@ -147,3 +147,146 @@ class NumericSequence(Sequence[Number]):
                 first index.
         """
         return self._binary(other, lambda x, y: y - x)
+
+# -- MULTIPLICATIVE
+
+    def __mul__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise product.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                multiply.
+
+        Returns:
+            NumericSequence: The element-wise product of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x * y)
+
+    def __rmul__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise product.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                be multiplied.
+
+        Returns:
+            NumericSequence: The element-wise product of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: y * x)
+
+    def __truediv__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise quotient.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                divide by.
+
+        Returns:
+            NumericSequence: The element-wise quotient of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x / y)
+
+    def __rtruediv__(
+        self,
+        other: Number | NumericSequence
+    ) -> NumericSequence:
+        """Return the element-wise quotient.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                be divided by the current sequence.
+
+        Returns:
+            NumericSequence: The element-wise quotient of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: y / x)
+
+    def __floordiv__(
+        self,
+        other: Number | NumericSequence
+    ) -> NumericSequence:
+        """Return the element-wise floor quotient.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                divide by.
+
+        Returns:
+            NumericSequence: The element-wise floor quotient of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x // y)  # type: ignore[operator]
+
+    def __rfloordiv__(
+        self,
+        other: Number | NumericSequence
+    ) -> NumericSequence:
+        """Return the element-wise floor quotient.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                be divided by the current sequence.
+
+        Returns:
+            NumericSequence: The element-wise floor quotient of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: y // x)  # type: ignore[operator]
+
+    def __mod__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise remainder.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                divide by.
+
+        Returns:
+            NumericSequence: The element-wise remainder of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x % y)  # type: ignore[operator]
+
+    def __rmod__(self, other: Number | NumericSequence) -> NumericSequence:
+        """Return the element-wise remainder.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                be divided by the current sequence.
+
+        Returns:
+            NumericSequence: The element-wise remainder of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]

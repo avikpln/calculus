@@ -519,3 +519,15 @@ should govern the result — neither one's subtype survives regardless.
 This is consistent with `NumericSequence`'s arithmetic mixin, which
 never routes through `self.combine()`/`self.map()` for its own
 construction and therefore has no reason to override either.
+
+------------------------------------------------------------------------
+
+## Floor division and modulo on complex operands
+
+`__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
+which includes `complex`, even though `//` and `%` are undefined for
+complex numbers. This mirrors the project's EAFP philosophy already
+used for zero-division: Python's own TypeError at runtime is the
+enforcement mechanism, not eager static or runtime type-narrowing.
+The resulting mypy errors are silenced with localized, documented
+`# type: ignore[operator]` comments on each affected line.

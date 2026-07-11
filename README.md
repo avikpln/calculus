@@ -18,7 +18,7 @@ series, and function abstractions.
 ## Features
 
 -   Generic `Sequence[T]` implementation.
--   `NumericSequence` with element-wise additive arithmetic.
+-   `NumericSequence` with element-wise arithmetic.
 -   Finite and infinite sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
@@ -91,6 +91,10 @@ print(-squares.head(5))
 evens = NumericSequence(lambda n: 2 * n)
 print((squares + evens).head(5))
 # ⟨3, 8, 15, 24, 35⟩
+
+# Element-wise multiplication.
+print((squares * evens).head(5))
+# ⟨2, 16, 54, 128, 250⟩
 ```
 
 ## Development
