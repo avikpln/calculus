@@ -84,15 +84,50 @@ Reconsider this only if a genuine use case emerges.
 
 ------------------------------------------------------------------------
 
-### Fixed `first_index`
+### Restricted `first_index`
 
-`first_index` is immutable.
+`first_index` was originally unrestricted, accepting any integer. It is
+now constrained to `FIRST_INDEX_OPTIONS = (0, 1)`.
 
-Every operation deriving a new sequence preserves the original
-`first_index`.
+An arbitrary `first_index` was rarely useful in practice: the only
+real use cases are thinking in one-indexed mathematical terms (`a_1,
+a_2, ...`) or zero-indexed programming terms (`a_0, a_1, ...`).
+Supporting arbitrary starting points added complexity — an unbounded
+validation range, and a `combine()` mismatch check with no natural
+"correct" resolution — without a corresponding benefit.
 
-Whether arbitrary starting indices justify their additional complexity
-should be reconsidered after the library has matured.
+Restricting to two values also clarifies negative indexing, which
+remains gated on `first_index == 0`. This is deliberate, not an
+oversight: negative indexing (`seq[-1]`) is a zero-based convention
+inherited from Python sequences, and has no natural meaning for
+one-indexed sequences. It is not offered as a general feature; its one
+motivating use case is `Recurrence`, which defaults to `first_index=0`
+so that base cases and negative-offset lookups behave predictably.
+
+`first_index` remains immutable, and every operation deriving a new
+sequence continues to preserve the original `first_index`.
+
+**Considered alternative: `one_indexed: bool`.** Replacing the public
+`first_index: int` parameter with a boolean `one_indexed` was
+considered, since a two-valued choice reads more clearly as a flag
+than as a raw integer. This was rejected for two reasons.
+
+First, `bool` does not truly correspond to what is being represented.
+`first_index` is fundamentally an integer-valued property; restricting
+it to two options is a validation choice, not evidence that the
+underlying concept is binary. A boolean parameter would have no way to
+express a third indexing scheme if one were ever needed, whereas an
+`int` validated against a widening set requires only a validation
+change.
+
+Second, `one_indexed` would have required a conversion at every
+internal reconstruction site (`_resize()`, `_reindex()`, `map()`,
+`combine()`, and their `NumericSequence` counterparts), each of which
+currently forwards `first_index=self.first_index` unchanged. Under a
+boolean parameter, each of these would instead need
+`one_indexed=bool(self.first_index)`, immediately converted back to
+`int` inside `__init__` — a round trip with no computational benefit,
+repeated at every call site.
 
 ------------------------------------------------------------------------
 
