@@ -48,12 +48,7 @@ class _Rule(Generic[T]):
     def __call__(self, n: int) -> T:
         # Invoke the rule function on the given input.
         validate_int(n, "n")
-        return self.func(n)
-
-    @property
-    def func(self) -> Callable[[int], T]:
-        # The function defining the rule.
-        return self._func
+        return self._func(n)
 
 
 class Sequence(Generic[T], Iterable[T]):

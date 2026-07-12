@@ -327,16 +327,30 @@ Only commit once all checks pass.
 
 ## Implementation
 
-### `_Rule.func` property
+### `_Rule.func` property removed
 
-`_Rule` exposes its callable through a read-only property even though
-calling `_func` directly would be microscopically faster.
+`_Rule` previously exposed its callable through a read-only `func`
+property, used internally by `__call__()`. This was removed;
+`__call__()` now calls `self._func` directly.
 
-The property represents the logical interface while `_func` remains an
-implementation detail. The overhead is negligible compared to the
-user-supplied callable.
+The property was originally kept for encapsulation, on the reasoning
+that calling `_func` directly was only a negligible performance
+difference. That reasoning undersold the risk: exposing `func`
+externally invites callers to bypass a rule's `int -> T` calling
+contract and reach into its internals directly. This surfaced
+concretely when considering `_resize()`: the polymorphic contract
+that lets `_resize()` work for any rule type (`_Rule`, and future
+types such as `_RecursiveRule`) is `self._rule(n)`, not
+`self._rule.func`. `_RecursiveRule.func`, for instance, is not an
+`int -> T` callable at all, but the multi-argument combining function
+(e.g. `lambda x, y: x + y` for a Fibonacci recurrence); calling it as
+if it were `_Rule.func` would be a type mismatch, not just redundant
+validation.
 
-Optimize only if profiling ever demonstrates a measurable benefit.
+Removing the public property does not fully prevent this class of
+mistake (a caller could still reach `self._rule._func` directly), but
+it removes the specific, named affordance that made the mistake easy
+to reach for, including in future optimization attempts.
 
 ------------------------------------------------------------------------
 
