@@ -1,19 +1,15 @@
 # NOTES
 
-## Purpose
-
-This document records design decisions and implementation rationale for
+**Purpose.** This document records design decisions and implementation rationale for
 the `Sequence` library. It is intended as a long-term memory of *why*
 certain choices were made, especially when the obvious implementation
 was rejected.
 
 Only decisions that may influence future development belong here.
 
-------------------------------------------------------------------------
+## API Design
 
-# API Design
-
-## `Sequence.__repr__`
+### `Sequence.__repr__`
 
 `__repr__` intentionally returns the same value as `__str__`.
 
@@ -31,7 +27,7 @@ This intentionally favors practicality over convention.
 
 ------------------------------------------------------------------------
 
-## Shifting semantics
+### Shifting semantics
 
 `shift_by()` and `shift_to()` transform the underlying evaluation rule,
 not the visible window of a sequence.
@@ -50,7 +46,7 @@ mechanism.
 
 ------------------------------------------------------------------------
 
-## Forward-only iteration
+### Forward-only iteration
 
 `subiter()` supports only forward iteration (`step > 0`).
 
@@ -63,7 +59,7 @@ General reindexing remains available through `subsequence()`.
 
 ------------------------------------------------------------------------
 
-## `map()` and `combine()`
+### `map()` and `combine()`
 
 `map()` and `combine()` are instance methods.
 
@@ -76,7 +72,7 @@ functional API.
 
 ------------------------------------------------------------------------
 
-## Exposing the evaluation rule
+### Exposing the evaluation rule
 
 The internal `_rule` object remains private.
 
@@ -86,9 +82,60 @@ future subclasses whose evaluation depends on mutable internal state
 
 Reconsider this only if a genuine use case emerges.
 
-# Construction
+------------------------------------------------------------------------
 
-## Default construction
+### Fixed `first_index`
+
+`first_index` is immutable.
+
+Every operation deriving a new sequence preserves the original
+`first_index`.
+
+Whether arbitrary starting indices justify their additional complexity
+should be reconsidered after the library has matured.
+
+------------------------------------------------------------------------
+
+### Three-argument `pow()` is not supported
+
+`__pow__` implements only the two-operand form of exponentiation
+(`x ** y`), not Python's three-argument `pow(x, y, mod)` protocol,
+which computes `(x ** y) % mod` efficiently for modular
+exponentiation.
+
+This is a deliberate omission, not an oversight: `**` alone only
+ever calls `__pow__(self, other)`, never the three-argument form,
+so no code path in NumericSequence currently reaches it. Supporting
+it properly would require accepting an optional third operand
+across `_binary()`, which is designed for strictly binary
+operations, and modular exponentiation is a specialized numeric
+technique of unclear relevance to a general-purpose sequence
+library.
+
+If a concrete use case emerges, this can be revisited; until then,
+NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
+calls, consistent with the project's EAFP philosophy elsewhere.
+
+------------------------------------------------------------------------
+
+### In-place operators are not implemented
+
+`NumericSequence` does not implement `__iadd__`, `__imul__`, or any
+other in-place arithmetic dunder.
+
+Sequences are immutable by design: no method anywhere in `Sequence` or
+`NumericSequence` mutates an existing instance, and every
+transformation returns a new sequence. Implementing in-place operators
+would be inconsistent with that model.
+
+Python's default fallback — using the corresponding binary operator
+(`__add__`, `__mul__`, etc.) when no in-place counterpart exists — is
+therefore the correct and sufficient behavior, requiring no additional
+code.
+
+## Construction
+
+### Default construction
 
 `Sequence()` currently constructs an infinite sequence returning `None`.
 
@@ -104,7 +151,7 @@ Future work:
 
 ------------------------------------------------------------------------
 
-## Default rule and typing
+### Default rule and typing
 
 The default rule is implemented as a private function returning `None`.
 
@@ -122,7 +169,7 @@ considered but currently provide less convenient APIs.
 
 ------------------------------------------------------------------------
 
-## Lazy validation
+### Lazy validation
 
 `Sequence.__init__()` eagerly validates its primary callable because it
 establishes the object's core invariant.
@@ -132,9 +179,9 @@ do **not** eagerly validate their callables. Errors surface naturally
 when the transformed sequence is evaluated, following the same EAFP
 philosophy used elsewhere in the implementation.
 
-# Documentation
+## Documentation
 
-## Private methods
+### Private methods
 
 Private methods use block comments rather than docstrings.
 
@@ -144,7 +191,7 @@ and invariants rather than duplicate the method signature.
 
 ------------------------------------------------------------------------
 
-## Delegating methods
+### Delegating methods
 
 Methods that internally construct a new `Sequence` document only the
 exceptions they can actually propagate.
@@ -153,65 +200,9 @@ Their docstrings should not simply refer readers to
 `Sequence.__init__()`, because each delegating method reaches only part
 of the constructor's validation logic.
 
-# Implementation
+## Development
 
-## `_Rule.func` property
-
-`_Rule` exposes its callable through a read-only property even though
-calling `_func` directly would be microscopically faster.
-
-The property represents the logical interface while `_func` remains an
-implementation detail. The overhead is negligible compared to the
-user-supplied callable.
-
-Optimize only if profiling ever demonstrates a measurable benefit.
-
-------------------------------------------------------------------------
-
-## Fixed `first_index`
-
-`first_index` is immutable.
-
-Every operation deriving a new sequence preserves the original
-`first_index`.
-
-Whether arbitrary starting indices justify their additional complexity
-should be reconsidered after the library has matured.
-
-------------------------------------------------------------------------
-
-## Internal invariants
-
-Several methods contain assertions such as
-
-``` python
-assert self.size is not None
-```
-
-or
-
-``` python
-assert self.last_index is not None
-```
-
-These are not runtime validation but documentation of internal
-invariants that current type checkers cannot infer.
-
-If the repetition becomes excessive, consider replacing them with
-private helper properties that establish the invariant in one place.
-
-------------------------------------------------------------------------
-
-## Code cleanliness
-
-Avoid speculative imports, constants, and infrastructure.
-
-Unused code should be introduced only when a concrete feature requires
-it, keeping static analysis clean and reducing maintenance overhead.
-
-# Development
-
-## Local verification
+### Local verification
 
 Before every commit, run:
 
@@ -228,7 +219,30 @@ This same sequence is automated by the project's CI workflow, which
 uses the empty-tree hash to check every file in the repository rather
 than just staged changes.
 
-## Project layout
+------------------------------------------------------------------------
+
+### Trailing whitespace checking
+
+No dedicated package is used to detect trailing whitespace.
+`pycodestyle` (W291/W293) only covers `.py` files, since it implements
+PEP 8, which has no jurisdiction over Markdown or other text files.
+
+Git already provides a file-type-agnostic mechanism: `git diff --check`
+reports whitespace errors (trailing whitespace, space before tab,
+etc.). To check an entire tree rather than just a diff, compare
+against the fixed, well-known empty-tree SHA:
+
+```bash
+git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
+```
+
+This is run as a CI step alongside `mypy --strict`, `pyflakes`,
+`pydocstyle`, and `pytest`. No `pycodestyle` or `pre-commit` framework
+is used for this; whitespace checking stays native to Git.
+
+------------------------------------------------------------------------
+
+### Project layout
 
 The project currently keeps the test suite alongside the library
 sources inside the `calculus/` package.
@@ -253,7 +267,9 @@ tests, and continuous integration.
 No migration is currently necessary. Revisit this once the project
 contains multiple modules or a substantially larger test suite.
 
-## Packaging
+------------------------------------------------------------------------
+
+### Packaging
 
 The project is not yet packaged for installation.
 
@@ -270,7 +286,95 @@ repository follows modern Python packaging conventions.
 
 ------------------------------------------------------------------------
 
-## Reversing the mixin decision
+### Code cleanliness
+
+Avoid speculative imports, constants, and infrastructure.
+
+Unused code should be introduced only when a concrete feature requires
+it, keeping static analysis clean and reducing maintenance overhead.
+
+------------------------------------------------------------------------
+
+### Feature implementation protocol
+
+To keep development consistent and incremental, each feature should be
+implemented using the following workflow:
+
+1. **Implement**
+   - Implement the feature.
+   - Keep the implementation focused on the current feature only.
+
+2. **Document**
+   - Add or update method docstrings.
+   - Update the class docstring if the public API has changed.
+   - Update the module docstring if appropriate.
+
+3. **Test**
+   - Add or update the relevant tests.
+   - Ensure the test suite reflects only the public API.
+
+4. **Publish**
+   - Update `README.md` to document the new feature.
+   - Add or update usage examples where appropriate.
+
+5. **Record** *(only if warranted)*
+   - Record important design decisions, rejected alternatives, or
+     implementation notes in `NOTES.md`.
+   - Avoid documenting routine implementation details.
+
+**IMPORTANT!** Run the project's verification tools **before committing**.
+Only commit once all checks pass.
+
+## Implementation
+
+### `_Rule.func` property
+
+`_Rule` exposes its callable through a read-only property even though
+calling `_func` directly would be microscopically faster.
+
+The property represents the logical interface while `_func` remains an
+implementation detail. The overhead is negligible compared to the
+user-supplied callable.
+
+Optimize only if profiling ever demonstrates a measurable benefit.
+
+------------------------------------------------------------------------
+
+### Internal invariants
+
+Several methods contain assertions such as
+
+``` python
+assert self.size is not None
+```
+
+or
+
+``` python
+assert self.last_index is not None
+```
+
+These are not runtime validation but documentation of internal
+invariants that current type checkers cannot infer.
+
+If the repetition becomes excessive, consider replacing them with
+private helper properties that establish the invariant in one place.
+
+------------------------------------------------------------------------
+
+### Floor division and modulo on complex operands
+
+`__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
+which includes `complex`, even though `//` and `%` are undefined for
+complex numbers. This mirrors the project's EAFP philosophy already
+used for zero-division: Python's own TypeError at runtime is the
+enforcement mechanism, not eager static or runtime type-narrowing.
+The resulting mypy errors are silenced with localized, documented
+`# type: ignore[operator]` comments on each affected line.
+
+------------------------------------------------------------------------
+
+### Reversing the mixin decision
 
 The mixin-based arithmetic design, previously used for
 `NumericSequence`, was reversed: `NumericSequence` now defines its
@@ -326,9 +430,9 @@ currently has exactly one consumer.
 
 ------------------------------------------------------------------------
 
-## Redesign: subtype preservation across transformations
+### Redesign: subtype preservation across transformations
 
-### Motivation
+**<u>Motivation</u>**
 
 While expanding `NumericSequence`, an issue was discovered during the
 preparation of the README examples:
@@ -348,20 +452,18 @@ This is a general design issue affecting all future subclasses
 (`Recurrence`, `NumericRecurrence`, etc.), and therefore warranted an
 architectural redesign.
 
-### Considered solutions
+**<u>Considered Solutions</u>**
 
-#### 1. Override every transformation method
+**1. Override every transformation method**
 
 Override all methods in `NumericSequence` that return a `Sequence` so
 that they instead return a `NumericSequence`.
 
-**Rejected.**
-
-Although straightforward, this introduces a large amount of duplicated
+**Rejected.** Although straightforward, this introduces a large amount of duplicated
 code, is difficult to maintain, and would require every future subclass
 to repeat the same pattern.
 
-#### 2. Preserve construction arguments
+**2. Preserve construction arguments**
 
 Store the additional constructor arguments required by each subclass and
 allow `Sequence` to reconstruct objects using a pattern similar to:
@@ -375,40 +477,34 @@ return type(self)(
 )
 ```
 
-**Rejected.**
-
-This significantly reduces duplication, but still forces `Sequence` to
+**Rejected.** This significantly reduces duplication, but still forces `Sequence` to
 know that reconstruction is performed by forwarding constructor
 arguments. The abstraction remains unnecessarily tied to one particular
 construction mechanism.
 
-#### 3. Use decorators
+**3. Use decorators**
 
 Move the reconstruction logic into decorators applied to transformation
 methods.
 
-**Rejected.**
-
-Although technically feasible, decorators hide an important part of the
+**Rejected.** Although technically feasible, decorators hide an important part of the
 control flow and make the implementation less explicit. The additional
 complexity is not justified.
 
-#### 4. Introduce a protected factory method
+**4. Introduce a protected factory method**
 
 Provide a protected factory method responsible for constructing the
 result of transformations. Transformation methods simply delegate object
 creation to this hook, while subclasses override it when additional
 construction state is required.
 
-**Current direction.**
-
-This keeps `Sequence` completely agnostic to subclass constructor
+**Current direction.** This keeps `Sequence` completely agnostic to subclass constructor
 signatures and delegates reconstruction to the subclass itself. The
 resulting design is simpler, more extensible, and avoids duplicated
 overrides while providing a single, well-defined extension point for all
 future subclasses.
 
-### Classifying classes and methods
+**<u>Classifying Classes and Methods</u>**
 
 The `_make()` factory alone is not sufficient. Further analysis showed
 that the problem is deeper than object construction: **both classes and
@@ -461,7 +557,7 @@ same holds for `NumericSequence`, which has no extra structure to
 preserve in the first place, so preservation is never available at
 this category regardless of the class doing the calling.
 
-### The `_make()` factory and the `preserve` flag
+**<u>The `_make()` Factory and the `preserve` Flag</u>**
 
 `_make()` is invoked with a `preserve` flag set by the calling method's
 category, not by the class:
@@ -494,7 +590,7 @@ This resolves the motivating example: `head()` is a preserving method,
 so `(-squares).head(4)` correctly stays a `NumericSequence` via
 `_make(preserve=True)`.
 
-### Summary table
+**<u>Summary Table</u>**
 
 | Method category | Preserving class | Non-preserving class |
 | --- | --- | --- |
@@ -503,7 +599,7 @@ so `(-squares).head(4)` correctly stays a `NumericSequence` via
 | Mathematically preserving (future `Recurrence.tail()`/`shift()`) | `_make()`, no override needed | subclass override computes representation, then `_make(preserve=True)` |
 | Strictly non-preserving (`map()`, `combine()`) | plain `Sequence`, no `_make()` call | plain `Sequence`, no `_make()` call |
 
-### Consequences
+**<u>Consequences</u>**
 
 `_make()` is intentionally **only a factory**. It constructs an object
 once the necessary data has already been derived; it never performs
@@ -519,37 +615,3 @@ should govern the result — neither one's subtype survives regardless.
 This is consistent with `NumericSequence`'s arithmetic mixin, which
 never routes through `self.combine()`/`self.map()` for its own
 construction and therefore has no reason to override either.
-
-------------------------------------------------------------------------
-
-## Floor division and modulo on complex operands
-
-`__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
-which includes `complex`, even though `//` and `%` are undefined for
-complex numbers. This mirrors the project's EAFP philosophy already
-used for zero-division: Python's own TypeError at runtime is the
-enforcement mechanism, not eager static or runtime type-narrowing.
-The resulting mypy errors are silenced with localized, documented
-`# type: ignore[operator]` comments on each affected line.
-
-------------------------------------------------------------------------
-
-## Three-argument `pow()` is not supported
-
-`__pow__` implements only the two-operand form of exponentiation
-(`x ** y`), not Python's three-argument `pow(x, y, mod)` protocol,
-which computes `(x ** y) % mod` efficiently for modular
-exponentiation.
-
-This is a deliberate omission, not an oversight: `**` alone only
-ever calls `__pow__(self, other)`, never the three-argument form,
-so no code path in NumericSequence currently reaches it. Supporting
-it properly would require accepting an optional third operand
-across `_binary()`, which is designed for strictly binary
-operations, and modular exponentiation is a specialized numeric
-technique of unclear relevance to a general-purpose sequence
-library.
-
-If a concrete use case emerges, this can be revisited; until then,
-NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
-calls, consistent with the project's EAFP philosophy elsewhere.
