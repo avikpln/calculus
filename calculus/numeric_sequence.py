@@ -9,7 +9,6 @@ Classes:
 from __future__ import annotations
 
 __all__ = ["NumericSequence"]
-__version__ = '0.2.0'
 __author__ = 'Avi Kaplan'
 
 from collections.abc import Callable
