@@ -37,12 +37,11 @@ class NumericSequence(Sequence[Number]):
         self,
         func: Callable[[int], Number] | None = None,
         size: int | None = None, *,
-        first_index: int = Sequence.DEFAULT_FIRST_INDEX,
         preserve: bool = False,
     ) -> NumericSequence:
         # Construct the result of a sequence transformation.
 
-        return NumericSequence(func, size=size, first_index=first_index)
+        return NumericSequence(func, size=size, first_index=self.first_index)
 
 # -- ARITHMETIC HELPERS
 

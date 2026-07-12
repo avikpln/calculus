@@ -142,12 +142,11 @@ class Sequence(Generic[T], Iterable[T]):
         self,
         func: Callable[[int], T] | None = None,
         size: int | None = None, *,
-        first_index: int = DEFAULT_FIRST_INDEX,
         preserve: bool = False,
     ) -> Sequence[T]:
         # Construct the result of a sequence transformation.
 
-        return Sequence(func, size=size, first_index=first_index)
+        return Sequence(func, size=size, first_index=self.first_index)
 
 # -- PROPERTIES
 
@@ -392,7 +391,7 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         func = lambda k: self._rule(subfunc(k))
-        return self._make(func, size, first_index=self.first_index)
+        return self._make(func, size)
 
 # -- UTILITY
 
@@ -463,7 +462,7 @@ class Sequence(Generic[T], Iterable[T]):
         # original domain.
         validate_int(offset, "offset")
         func = lambda n: self._rule(n + offset)
-        return self._make(func, self.size, first_index=self.first_index)
+        return self._make(func, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
         """Shift the evaluation rule to a given index.
@@ -501,9 +500,7 @@ class Sequence(Generic[T], Iterable[T]):
         if self.finite:
             assert self.size is not None
             size = min(size, self.size)
-        return self._make(
-            self._rule, size, first_index=self.first_index, preserve=True
-        )
+        return self._make(self._rule, size, preserve=True)
 
     def tail(self, size: int) -> Sequence[T]:
         """Return a sequence containing the last elements.
@@ -528,7 +525,7 @@ class Sequence(Generic[T], Iterable[T]):
             assert self.size is not None
             size = min(size, self.size)
         func = lambda n: self._rule(n + self.size - size)
-        return self._make(func, size, first_index=self.first_index)
+        return self._make(func, size)
 
     @staticmethod
     def _mapper(
