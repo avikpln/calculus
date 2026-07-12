@@ -2,9 +2,6 @@
 
 ## Features
 
-- Centralize `__version__` in `__init__.py`; remove the duplicated
-  definitions in `sequence.py` and `numeric_sequence.py`.
-
 - Implement comparison operators (`__eq__`, `__lt__`, etc.), returning
   0/1 `NumericSequence` results rather than `Sequence[bool]`; record
   the decision in `NOTES.md` once implemented.
