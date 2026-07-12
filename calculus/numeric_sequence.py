@@ -33,15 +33,23 @@ class NumericSequence(Sequence[Number]):
 
 # -- INITIALIZATION
 
-    def _make(
-        self,
-        func: Callable[[int], Number] | None = None,
-        size: int | None = None, *,
-        preserve: bool = False,
-    ) -> NumericSequence:
-        # Construct the result of a sequence transformation.
+    def _resize(self, size: int | None) -> NumericSequence:
+        # Construct a new sequence of the same type with the given size.
 
-        return NumericSequence(func, size=size, first_index=self.first_index)
+        return NumericSequence(
+            self._rule, size=size, first_index=self.first_index
+        )
+
+    def _reindex(
+        self,
+        func: Callable[[int], Number] | None,
+        size: int | None = None,
+    ) -> NumericSequence:
+        # Construct a new sequence with the given rule and size.
+
+        return NumericSequence(
+            func, size=size, first_index=self.first_index
+        )
 
 # -- ARITHMETIC HELPERS
 

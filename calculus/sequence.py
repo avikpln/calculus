@@ -138,13 +138,17 @@ class Sequence(Generic[T], Iterable[T]):
         # Establish the rule of the sequence.
         self._rule = _Rule(func)
 
-    def _make(
+    def _resize(self, size: int | None) -> Sequence[T]:
+        # Construct a new sequence of the same type with the given size.
+
+        return Sequence(self._rule, size=size, first_index=self.first_index)
+
+    def _reindex(
         self,
-        func: Callable[[int], T] | None = None,
-        size: int | None = None, *,
-        preserve: bool = False,
+        func: Callable[[int], T] | None,
+        size: int | None = None,
     ) -> Sequence[T]:
-        # Construct the result of a sequence transformation.
+        # Construct a new sequence with the given rule and size.
 
         return Sequence(func, size=size, first_index=self.first_index)
 
@@ -391,7 +395,7 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         func = lambda k: self._rule(subfunc(k))
-        return self._make(func, size)
+        return self._reindex(func, size)
 
 # -- UTILITY
 
@@ -462,7 +466,7 @@ class Sequence(Generic[T], Iterable[T]):
         # original domain.
         validate_int(offset, "offset")
         func = lambda n: self._rule(n + offset)
-        return self._make(func, self.size)
+        return self._reindex(func, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
         """Shift the evaluation rule to a given index.
@@ -500,7 +504,7 @@ class Sequence(Generic[T], Iterable[T]):
         if self.finite:
             assert self.size is not None
             size = min(size, self.size)
-        return self._make(self._rule, size, preserve=True)
+        return self._resize(size)
 
     def tail(self, size: int) -> Sequence[T]:
         """Return a sequence containing the last elements.
@@ -525,7 +529,7 @@ class Sequence(Generic[T], Iterable[T]):
             assert self.size is not None
             size = min(size, self.size)
         func = lambda n: self._rule(n + self.size - size)
-        return self._make(func, size)
+        return self._reindex(func, size)
 
     @staticmethod
     def _mapper(

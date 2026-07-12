@@ -489,28 +489,28 @@ methods.
 control flow and make the implementation less explicit. The additional
 complexity is not justified.
 
-**4. Introduce a protected factory method**
+**4. Introduce protected factory methods**
 
-Provide a protected factory method responsible for constructing the
+Provide protected factory methods responsible for constructing the
 result of transformations. Transformation methods simply delegate object
-creation to this hook, while subclasses override it when additional
+creation to these hooks, while subclasses override them when additional
 construction state is required.
 
 **Current direction.** This keeps `Sequence` completely agnostic to subclass constructor
 signatures and delegates reconstruction to the subclass itself. The
 resulting design is simpler, more extensible, and avoids duplicated
-overrides while providing a single, well-defined extension point for all
+overrides while providing well-defined extension points for all
 future subclasses.
 
 **<u>Classifying Classes and Methods</u>**
 
-The `_make()` factory alone is not sufficient. Further analysis showed
-that the problem is deeper than object construction: **both classes and
+A single factory is not sufficient. Further analysis showed that the
+problem is deeper than object construction: **both classes and
 transformation methods must be classified**, since not every
 transformation can honestly preserve every subclass's structure.
 
 A **preserving class** carries no mathematical structure beyond its
-evaluation rule. Returning `type(self)` from `_make()` is always
+evaluation rule. Constructing its own type from its own rule is always
 correct.
 
 Examples:
@@ -527,18 +527,15 @@ Example:
 
 Transformation methods fall into three categories:
 
-* **Preserving methods** preserve the representation and require no
-  subclass-specific mathematics.
+* **Preserving methods** vary only size, always reusing the calling
+  instance's own rule unchanged.
   Example: `head()`.
 
-* **Non-preserving methods** change the representation, but only
-  through *reindexing* — the underlying rule is still evaluated
-  through the original sequence, just at different indices.
-  Examples: `subsequence()`, slicing.
-
-* **Mathematically preserving methods** preserve the representation,
-  but only through subclass-specific mathematics.
-  Examples: future `tail()` and `shift()` for `Recurrence`.
+* **Non-preserving methods** change the representation by supplying a
+  new rule, but only through *reindexing* — the underlying rule is
+  still evaluated through the original sequence, just at different
+  indices.
+  Examples: `subsequence()`, `shift_by()`, `tail()`, slicing.
 
 * **Strictly non-preserving methods** compute genuinely new *values*
   via a rule, not merely a reindexing of existing ones. No class can
@@ -555,61 +552,58 @@ same holds for `NumericSequence`, which has no extra structure to
 preserve in the first place, so preservation is never available at
 this category regardless of the class doing the calling.
 
-**<u>The `_make()` Factory and the `preserve` Flag</u>**
+**<u>`_resize()` and `_reindex()`</u>**
 
-`_make()` is invoked with a `preserve` flag set by the calling method's
-category, not by the class:
+Preserving and non-preserving methods are backed by two separate
+protected methods rather than a single factory with a flag:
 
-* Preserving methods call `self._make(preserve=True)`.
-* Non-preserving methods call `self._make(preserve=False)`.
-* Mathematically preserving methods (once a subclass overrides them to
-  compute the new representation) call `self._make(preserve=True)`.
-* Strictly non-preserving methods bypass `_make()` entirely and
-  construct a plain `Sequence` directly.
+* `_resize(size)` — used by preserving methods. Takes only `size`;
+  always reuses the calling instance's own rule and constructs its
+  own type by name. Every preserving class overrides this to name its
+  own constructor; there is exactly one consumer today (`head()`).
 
-`_make()` itself decides what to do with the flag, based on the class:
+* `_reindex(func, size)` — used by non-preserving (reindexing)
+  methods. Takes an explicit new rule and size. Each class states its
+  construction target as a literal class name, not `type(self)`:
+  `Sequence._reindex()` and `NumericSequence._reindex()` each
+  construct their own type directly, while a future non-preserving
+  class such as `Recurrence` overrides `_reindex()` to construct a
+  plain `Sequence` instead, since an arbitrary reindexing generally
+  isn't a valid recurrence.
 
-```python
-if preserve:
-    return self._make(...)      # type(self), always correct
-else:
-    return super()._make(...)   # defer to the nearest preserving ancestor
-```
+An earlier version of this design used a single `_make()` method with
+a `preserve` boolean, deferring non-preserving calls up the MRO via
+`super()._make()` when a class wanted to fall back to its nearest
+preserving ancestor. This was abandoned: `type(self)` inside a method
+reached via `super()` still resolves to the *original* calling
+instance's type, not the ancestor being deferred to, since `self` does
+not change across a `super()` call. That made MRO deferral incompatible
+with `type(self)`-based construction. Splitting into two explicitly
+named methods removes the need for any deferral chain — each class
+that needs non-default behavior for `_reindex()` overrides it directly
+with its own literal target, rather than relying on `self`/`super()`
+semantics to route the call correctly.
 
-A preserving class ignores the flag — `type(self)` is correct either
-way. A non-preserving class honors it: `preserve=True` still builds
-`type(self)`, but `preserve=False` defers to `super()._make()`. If the
-superclass is itself non-preserving, its `_make()` performs the same
-check, so the call chain walks up the MRO — no matter how many
-non-preserving classes are stacked — until it reaches the nearest
-preserving ancestor.
-
-This resolves the motivating example: `head()` is a preserving method,
-so `(-squares).head(4)` correctly stays a `NumericSequence` via
-`_make(preserve=True)`.
-
-**<u>Summary Table</u>**
-
-| Method category | Preserving class | Non-preserving class |
-| --- | --- | --- |
-| Preserving (`head()`) | `_make()` → `type(self)` | `_make()` → `type(self)` |
-| Non-preserving (`subsequence()`, slicing) | `_make()` → `type(self)` (flag has no effect) | `_make()` → `super()._make()` chain → nearest preserving ancestor |
-| Mathematically preserving (future `Recurrence.tail()`/`shift()`) | `_make()`, no override needed | subclass override computes representation, then `_make(preserve=True)` |
-| Strictly non-preserving (`map()`, `combine()`) | plain `Sequence`, no `_make()` call | plain `Sequence`, no `_make()` call |
+`map()` and `combine()` remain outside this mechanism entirely: since
+they always return a plain `Sequence`, there is no subtype to
+preserve and no call to `_resize()` or `_reindex()` to make. This is
+consistent with `NumericSequence`'s arithmetic, which never routes
+through `self.combine()`/`self.map()` for its own construction and
+therefore has no reason to override either.
 
 **<u>Consequences</u>**
 
-`_make()` is intentionally **only a factory**. It constructs an object
-once the necessary data has already been derived; it never performs
-representation-specific mathematics itself. That responsibility
-belongs to the transformation methods (or subclass overrides of them)
-that call it.
+`_resize()` and `_reindex()` are intentionally **only factories**. They
+construct an object once the necessary data has already been derived;
+they never perform representation-specific mathematics themselves.
+That responsibility belongs to the transformation methods (or subclass
+overrides of them) that call them.
 
-`map()` and `combine()` are deliberately excluded from the `_make()`
-mechanism altogether: since they always return a plain `Sequence`,
-there is no subtype to preserve, no `_make()` call to make, and (for
-`combine()` specifically) no ambiguity over which operand's class
+`map()` and `combine()` are deliberately excluded from this mechanism
+altogether: since they always return a plain `Sequence`, there is no
+subtype to preserve, no `_resize()`/`_reindex()` call to make, and
+(for `combine()` specifically) no ambiguity over which operand's class
 should govern the result — neither one's subtype survives regardless.
-This is consistent with `NumericSequence`'s arithmetic mixin, which
-never routes through `self.combine()`/`self.map()` for its own
-construction and therefore has no reason to override either.
+This is consistent with `NumericSequence`'s arithmetic, which never
+routes through `self.combine()`/`self.map()` for its own construction
+and therefore has no reason to override either.
