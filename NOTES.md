@@ -373,7 +373,14 @@ The resulting mypy errors are silenced with localized, documented
 `# type: ignore[operator]` comments on each affected line.
 
 ------------------------------------------------------------------------
+Remove incorrect mixin decision from NOTES.md
 
+Corrects NOTES.md, which recorded that NumericRecurrence adopts single
+single inheritance from NumericSequence, reimplementing recursion
+internally to avoid a diamond with Recurrence. This misstates the
+actual decision: the diamond inheritance from both Recurrence and
+NumericSequence was accepted as conceptually sound and adopted
+directly, not avoided.
 ### Reversing the mixin decision
 
 The mixin-based arithmetic design, previously used for
@@ -381,52 +388,43 @@ The mixin-based arithmetic design, previously used for
 arithmetic dunders directly, with a plain `Sequence[Number]` base and
 no `_ArithmeticMixin`.
 
-The reversal came from noticing an inconsistency in how
-`NumericRecurrence` had been imagined. `Recurrence` is a `Sequence`
-subclass; by the same logic, `NumericRecurrence` should be a
-`NumericSequence` — it is numeric, after all, just like any other
-`NumericSequence`. But modeled this way, `NumericRecurrence` naturally
-inherits from *both* `Recurrence` and `NumericSequence`, which is
-precisely the diamond (`Sequence` reached via two branches) the mixin
-was invented to route around. In other words, the diamond was never
-avoidable by clever base-class design — it falls directly out of
-treating "is recursively constructed" and "is numeric" as two
-independent, combinable properties, which they are.
+The reversal came from recognizing that `NumericRecurrence` is a
+diamond: it is both a `NumericSequence` (numeric) and a `Recurrence`
+(recursively constructed), and both of these are genuine is-a
+relationships, not merely shared implementation. There is no
+single-inheritance alternative that honestly captures both concepts at
+once — reimplementing recursion internally on a `NumericSequence`
+subclass would abandon the is-a relationship with `Recurrence` for no
+real gain. The diamond (`Sequence` reached via two branches) was
+therefore accepted as the correct design: `NumericRecurrence` inherits
+from both `Recurrence` and `NumericSequence`.
 
-Once that was accepted, the mixin's purpose evaporated: it existed
-solely to let `NumericSequence`'s arithmetic be mixed into a class that
-*also* inherits `Sequence` through another branch, without a `__slots__`
-conflict. But if any future numeric subclass (`NumericRecurrence`,
-`Series`, etc.) is going to face this diamond regardless of whether
-arithmetic comes from a mixin or a base class, the mixin buys nothing.
-The simpler resolution is to drop the multiple-inheritance model
-altogether: `NumericRecurrence` inherits singly from `NumericSequence`
-and reimplements recursive *construction* internally (e.g. memoized
-evaluation), rather than obtaining it by also inheriting `Recurrence`
-as a second base. Recursion becomes an implementation detail of how the
-rule is built, not a base class contributing behavior alongside
-`NumericSequence`.
-
-This also removed a nontrivial typing cost the mixin had incurred:
-making `_ArithmeticMixin` generic over its own concrete return type
-required splitting `Self` into two `Protocol`/`TypeVar` pairs
-(`UnarySelf`/`_UnaryProtocol`, `BinarySelf`/`_BinaryProtocol`), because
-`mypy --strict` could not resolve a single shared `Self` across two
-protocol methods without mistyping unrelated dunders. With no mixin,
-`self` is concretely `NumericSequence` everywhere, and none of that
-machinery is needed.
+Once the diamond was accepted, the mixin's purpose disappeared: it
+existed solely to let `NumericSequence`'s arithmetic be mixed into a
+class that also inherits `Sequence` through another branch, without a
+`__slots__` conflict. But since the diamond itself was accepted instead
+of avoided, that problem needs to be solved directly (through
+`__slots__` and MRO handling) regardless of whether arithmetic comes
+from a mixin or a base class — so the mixin no longer buys anything.
+Defining arithmetic directly on `NumericSequence` is simpler and
+removes the mixin's nontrivial typing cost: making `_ArithmeticMixin`
+generic over its own concrete return type required splitting `Self`
+into two `Protocol`/`TypeVar` pairs (`UnarySelf`/`_UnaryProtocol`,
+`BinarySelf`/`_BinaryProtocol`), because `mypy --strict` could not
+resolve a single shared `Self` across two protocol methods without
+mistyping unrelated dunders. With no mixin, `self` is concretely
+`NumericSequence` everywhere, and none of that machinery is needed.
 
 **Lesson.** The original mixin decision was reasonable given what was
 known at the time — multiple inheritance from two `Sequence` branches
 is a real risk worth avoiding. But it solved the wrong problem: it
-avoided the diamond's *implementation* conflict (`__slots__`,
-`type(self)` preservation) while leaving the diamond's *conceptual*
-inevitability unexamined. Once `NumericRecurrence` was modeled
-honestly as "is-numeric" and "is-recursively-constructed" at once, the
-diamond turned out to be a modeling choice, not a fact — avoidable by
-not inheriting `Recurrence` at all, which made the mixin's generality
-cost more (in typing complexity) than it returned (in reuse), since it
-currently has exactly one consumer.
+tried to route around the diamond's *implementation* conflicts
+(`__slots__`, `type(self)` preservation) rather than confronting
+whether the diamond itself was the correct model. Once
+`NumericRecurrence` was recognized as genuinely both numeric and
+recursively constructed, the diamond turned out to be the correct model,
+and the mixin's generality cost more (in typing complexity) than it
+returned (in reuse), since it currently has exactly one consumer.
 
 ------------------------------------------------------------------------
 
