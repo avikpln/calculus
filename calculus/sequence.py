@@ -20,6 +20,9 @@ T = TypeVar("T")
 S = TypeVar("S")
 U = TypeVar("U")
 
+# The allowed first indices of a sequence.
+FIRST_INDEX_OPTIONS = (0, 1)
+
 # Number of elements to display for infinite sequences.
 DISPLAY_HEAD = 5
 
@@ -82,9 +85,6 @@ class Sequence(Generic[T], Iterable[T]):
 
     __slots__ = ("_size", "_first_index", "_last_index", "_rule")
 
-    # The default first index of a sequence.
-    DEFAULT_FIRST_INDEX = 1
-
     @staticmethod
     def _none(n: int) -> None:
         # Default rule: returns None for all indices.
@@ -94,7 +94,7 @@ class Sequence(Generic[T], Iterable[T]):
         self,
         func: Callable[[int], T] | None = None,
         size: int | None = None, *,
-        first_index: int = DEFAULT_FIRST_INDEX
+        first_index: int = 1
     ) -> None:
         """Initialize a new sequence object.
 
@@ -105,8 +105,7 @@ class Sequence(Generic[T], Iterable[T]):
             size (int | None): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence.
-                Defaults to DEFAULT_FIRST_INDEX. A read-only keyword
-                parameter.
+                Defaults to 1. A read-only keyword parameter.
 
         Raises:
             TypeError: If ``func`` is not callable, if size is not None
@@ -124,6 +123,12 @@ class Sequence(Generic[T], Iterable[T]):
                     f"expected nonnegative size, got {size} instead"
                 )
         validate_int(first_index, "first_index")
+        if first_index not in FIRST_INDEX_OPTIONS:
+            raise ValueError(
+                f"first_index must be in {FIRST_INDEX_OPTIONS}, "
+                f"got {first_index} instead"
+            )
+
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
@@ -620,7 +625,7 @@ class Sequence(Generic[T], Iterable[T]):
         value: T,
         size: int | None = None,
         *,
-        first_index: int = DEFAULT_FIRST_INDEX
+        first_index: int = 1
     ) -> Sequence[T]:
         """Return a constant sequence.
 
@@ -645,7 +650,7 @@ class Sequence(Generic[T], Iterable[T]):
     def from_iterable(
         iterable: Iterable[T],
         *,
-        first_index: int = DEFAULT_FIRST_INDEX
+        first_index: int = 1
     ) -> Sequence[T]:
         """Return a sequence from an iterable.
 

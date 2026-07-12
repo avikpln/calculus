@@ -54,14 +54,20 @@ def test_noninteger_first_index_raises_type_error() -> None:
     with pytest.raises(TypeError):
         Sequence(lambda n: n, first_index="zero")  # type: ignore[arg-type]
 
+
+def test_first_index_out_of_range_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        Sequence(lambda n: n, first_index=2)
+
+
 # -- PROPERTIES
 
 def test_properties_reflect_construction_arguments() -> None:
-    seq = Sequence(lambda n: n, size=4, first_index=2)
+    seq = Sequence(lambda n: n, size=4, first_index=0)
     assert seq.size == 4
     assert seq.finite is True
-    assert seq.first_index == 2
-    assert seq.last_index == 5
+    assert seq.first_index == 0
+    assert seq.last_index == 3
 
 
 def test_properties_for_infinite_sequence() -> None:
