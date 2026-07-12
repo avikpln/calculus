@@ -116,6 +116,23 @@ If a concrete use case emerges, this can be revisited; until then,
 NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
 calls, consistent with the project's EAFP philosophy elsewhere.
 
+------------------------------------------------------------------------
+
+### In-place operators are not implemented
+
+`NumericSequence` does not implement `__iadd__`, `__imul__`, or any
+other in-place arithmetic dunder.
+
+Sequences are immutable by design: no method anywhere in `Sequence` or
+`NumericSequence` mutates an existing instance, and every
+transformation returns a new sequence. Implementing in-place operators
+would be inconsistent with that model.
+
+Python's default fallback — using the corresponding binary operator
+(`__add__`, `__mul__`, etc.) when no in-place counterpart exists — is
+therefore the correct and sufficient behavior, requiring no additional
+code.
+
 ## Construction
 
 ### Default construction
@@ -204,6 +221,27 @@ than just staged changes.
 
 ------------------------------------------------------------------------
 
+### Trailing whitespace checking
+
+No dedicated package is used to detect trailing whitespace.
+`pycodestyle` (W291/W293) only covers `.py` files, since it implements
+PEP 8, which has no jurisdiction over Markdown or other text files.
+
+Git already provides a file-type-agnostic mechanism: `git diff --check`
+reports whitespace errors (trailing whitespace, space before tab,
+etc.). To check an entire tree rather than just a diff, compare
+against the fixed, well-known empty-tree SHA:
+
+```bash
+git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
+```
+
+This is run as a CI step alongside `mypy --strict`, `pyflakes`,
+`pydocstyle`, and `pytest`. No `pycodestyle` or `pre-commit` framework
+is used for this; whitespace checking stays native to Git.
+
+------------------------------------------------------------------------
+
 ### Project layout
 
 The project currently keeps the test suite alongside the library
@@ -254,6 +292,38 @@ Avoid speculative imports, constants, and infrastructure.
 
 Unused code should be introduced only when a concrete feature requires
 it, keeping static analysis clean and reducing maintenance overhead.
+
+------------------------------------------------------------------------
+
+### Feature implementation protocol
+
+To keep development consistent and incremental, each feature should be
+implemented using the following workflow:
+
+1. **Implement**
+   - Implement the feature.
+   - Keep the implementation focused on the current feature only.
+
+2. **Document**
+   - Add or update method docstrings.
+   - Update the class docstring if the public API has changed.
+   - Update the module docstring if appropriate.
+
+3. **Test**
+   - Add or update the relevant tests.
+   - Ensure the test suite reflects only the public API.
+
+4. **Publish**
+   - Update `README.md` to document the new feature.
+   - Add or update usage examples where appropriate.
+
+5. **Record** *(only if warranted)*
+   - Record important design decisions, rejected alternatives, or
+     implementation notes in `NOTES.md`.
+   - Avoid documenting routine implementation details.
+
+**IMPORTANT!** Run the project's verification tools **before committing**.
+Only commit once all checks pass.
 
 ## Implementation
 
