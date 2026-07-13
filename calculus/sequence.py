@@ -10,8 +10,8 @@ from __future__ import annotations
 __all__ = ["Sequence"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable, Iterable
-from typing import Generic, TypeVar, Generator, overload
+from collections.abc import Callable, Generator, Iterable
+from typing import Generic, TypeVar, overload
 
 from .utils import validate_int, validate_optional_int
 

@@ -43,10 +43,6 @@
   simple operands, e.g. `n**2`); record the decision in `NOTES.md`
   once resolved.
 
-- Modernize typing imports: `Callable`, `Iterable`, `Generator` from
-  `collections.abc`; `Generic`, `TypeVar`, `Protocol`, `overload`,
-  `Self` from `typing`.
-
 - Rename section-comment delimiters in `numeric_sequence.py` and
   `test_numeric_sequence.py` to include ARITHMETIC (e.g. `UNARY` →
   `UNARY ARITHMETIC`, `ADDITIVE` → `ADDITIVE ARITHMETIC`) for
