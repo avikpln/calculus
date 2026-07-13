@@ -9,7 +9,7 @@ Classes:
 from __future__ import annotations
 
 __all__ = ["NumericSequence"]
-__author__ = 'Avi Kaplan'
+__author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 

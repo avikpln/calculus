@@ -8,7 +8,7 @@ Classes:
 from __future__ import annotations
 
 __all__ = ["Sequence"]
-__author__ = 'Avi Kaplan'
+__author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 from typing import Generic, TypeVar, Generator, overload
