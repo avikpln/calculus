@@ -6,15 +6,6 @@
   0/1 `NumericSequence` results rather than `Sequence[bool]`; record
   the decision in `NOTES.md` once implemented.
 
-- Convert `constant()` and `from_iterable()` away from `@staticmethod`
-  to a format that allows subclasses (like `NumericSequence`) to
-  inherit them and return their own type. This is done by routing
-  construction through the existing `self._make(..., preserve=True)`
-  mechanism rather than directly instantiating `Sequence(...)`. This
-  change builds upon the subtype-preservation design in `NOTES.md`; a
-  new entry should be added for this task, and the existing entry must
-  be reviewed.
-
 ## Testing
 
 - Move test files into a `test/` directory, separating them from the
