@@ -130,6 +130,19 @@ When subclassing:
 
 ------------------------------------------------------------------------
 
+# Arithmetic operators
+
+-   Binary operators are spaced on both sides by default (e.g. `a + b`,
+    `a ** b`).
+-   When operators of different priority are mixed in the same
+    expression, tighten the higher-priority operator and space the
+    lower-priority one (e.g. `a*b + c*d`, `(-1)**n * n`).
+-   `**` follows the same rule as any other operator: spaced when
+    standalone, tightened only when mixed with a lower-priority
+    operator in the same expression.
+
+------------------------------------------------------------------------
+
 # Testing and quality
 
 Before every commit, run:

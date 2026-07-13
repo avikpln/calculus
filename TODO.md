@@ -38,11 +38,6 @@
   indent, with initial arguments on the opening line and continuation
   wrapped below. Pick one and apply it consistently project-wide.
 
-- Standardize PEP 8 spacing around arithmetic operators (e.g. `a + b`
-  vs. `a+b`; note that `**` is already decided to use no spaces for
-  simple operands, e.g. `n**2`); record the decision in `NOTES.md`
-  once resolved.
-
 ## Environment
 
 - Add a gitignored `.llm.md` project context document capturing stable
