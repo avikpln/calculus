@@ -72,6 +72,58 @@ functional API.
 
 ------------------------------------------------------------------------
 
+### `constant()` and `from_iterable()` stay `@staticmethod`
+
+Both factory methods remain `@staticmethod`, hardcoding their own
+class name rather than becoming `classmethod`s that construct via
+`cls`.
+
+A `classmethod` version would let every subclass automatically
+"inherit" a correctly-typed factory for free, since `cls` resolves to
+whichever class the method was actually called on. This works safely
+only as long as a subclass's constructor accepts nothing beyond
+`func`, `size`, and `first_index`. `NumericSequence` satisfies this,
+but classes such as `Recurrence` do not: `Recurrence` requires an
+additional `basis` argument, so `cls(func, size, first_index)` would
+either raise `TypeError` or, worse, succeed in some degenerate form
+that only accidentally means what its class name suggests. This
+concern isn't hypothetical: `Recurrence(func=lambda x: c, basis=(None,))`
+is a valid constructor call for a constant sequence-shaped
+`Recurrence`, so a naive `cls`-based factory could quietly hand back a
+technically-legal but conceptually vestigial `Recurrence` — a constant
+sequence is not, in the mathematical sense the library cares about,
+"a recurrence." Mistaking a qualification (e.g. calling
+`Recurrence.constant()` instead of `NumericSequence.constant()`) would
+then fail silently rather than loudly.
+
+Keeping `constant()`/`from_iterable()` as `@staticmethod`s with each
+class hardcoding its own type avoids this trap entirely: only classes
+that explicitly override the method claim a construction type; every
+other class in the hierarchy falls through, via ordinary MRO, to the
+nearest ancestor that did. No class is responsible for judging whether
+some other, possibly future, subclass is "safe" to auto-construct —
+each class only ever states what it itself returns.
+
+Concretely: `Sequence` defines the base implementation, returning
+`Sequence`. `NumericSequence` overrides it to return `NumericSequence`,
+since `NumericSequence` adds no constructor parameters beyond
+`Sequence`'s own and is therefore safe to construct generically.
+`Recurrence` defines no override, so it inherits `Sequence`'s version
+and returns a plain `Sequence` — never attempting, and never risking,
+a malformed or misleadingly-typed `Recurrence`. `NumericRecurrence`
+(inheriting from both `Recurrence` and `NumericSequence`) also defines
+no override; by MRO, it inherits `NumericSequence`'s version and
+correctly returns a `NumericSequence`, with no code required on its
+part.
+
+This does mean `constant()`'s and `from_iterable()`'s bodies are
+near-duplicated between `Sequence` and `NumericSequence` — identical
+logic, differing only in the hardcoded class name. This is an accepted
+cost, consistent with the per-class duplication already accepted for
+`_resize()`/`_reindex()`.
+
+------------------------------------------------------------------------
+
 ### Exposing the evaluation rule
 
 The internal `_rule` object remains private.

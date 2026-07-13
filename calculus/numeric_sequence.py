@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["NumericSequence"]
 __author__ = 'Avi Kaplan'
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 
 from .sequence import Sequence
 
@@ -341,3 +341,55 @@ class NumericSequence(Sequence[Number]):
                 first index.
         """
         return self._binary(other, lambda x, y: y ** x)
+
+# -- SPECIAL SEQUENCES
+
+    @staticmethod
+    def constant(
+        value: Number,
+        size: int | None = None,
+        *,
+        first_index: int = 1
+    ) -> NumericSequence:
+        """Return a constant sequence.
+
+        Args:
+            value (Number): The constant value of each sequence element.
+            size (int | None): The number of elements in the sequence,
+                or None for an infinite sequence.
+            first_index (int): The index of the first sequence element.
+
+        Returns:
+            NumericSequence: A sequence whose elements are all equal to
+                value.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative.
+        """
+        return NumericSequence(Sequence._constant_rule(value), size=size,
+                               first_index=first_index)
+
+    @staticmethod
+    def from_iterable(
+        iterable: Iterable[Number],
+        *,
+        first_index: int = 1
+    ) -> NumericSequence:
+        """Return a numeric sequence from a numeric iterable.
+
+        Args:
+            iterable (Iterable[Number]): The iterable providing the
+                sequence elements.
+            first_index (int): The index of the first sequence element.
+
+        Returns:
+            NumericSequence: A finite numeric sequence containing the
+                elements of iterable.
+
+        Raises:
+            TypeError: If ``first_index`` is not an integer.
+        """
+        func, size = Sequence._iterable_rule(iterable, first_index)
+        return NumericSequence(func, size=size, first_index=first_index)
