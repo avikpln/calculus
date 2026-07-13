@@ -7,7 +7,7 @@ import pytest
 
 from .numeric_sequence import NumericSequence
 
-# -- UNARY
+# -- UNARY ARITHMETIC
 
 def test_pos_returns_elementwise_identity() -> None:
     seq = NumericSequence(lambda n: n, size=3, first_index=1)
@@ -45,7 +45,7 @@ def test_abs_returns_numeric_sequence() -> None:
     assert isinstance(result, NumericSequence)
 
 
-# -- ADDITIVE
+# -- ADDITIVE ARITHMETIC
 
 def test_add_scalar_returns_elementwise_sum() -> None:
     seq = NumericSequence(lambda n: n, size=3, first_index=1)
@@ -113,7 +113,7 @@ def test_rsub_scalar_returns_elementwise_difference() -> None:
     assert list(result) == [9, 8, 7]
 
 
-# -- MULTIPLICATIVE
+# -- MULTIPLICATIVE ARITHMETIC
 
 def test_mul_scalar_returns_elementwise_product() -> None:
     seq = NumericSequence(lambda n: n, size=3, first_index=1)
@@ -247,7 +247,7 @@ def test_rmod_scalar_returns_elementwise_remainder() -> None:
     assert list(result) == [0, 2, 0]
 
 
-# -- EXPONENTIATION
+# -- EXPONENTIATION ARITHMETIC
 
 def test_pow_scalar_returns_elementwise_power() -> None:
     seq = NumericSequence(lambda n: n, size=3, first_index=1)

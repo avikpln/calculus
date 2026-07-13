@@ -43,12 +43,6 @@
   simple operands, e.g. `n**2`); record the decision in `NOTES.md`
   once resolved.
 
-- Rename section-comment delimiters in `numeric_sequence.py` and
-  `test_numeric_sequence.py` to include ARITHMETIC (e.g. `UNARY` →
-  `UNARY ARITHMETIC`, `ADDITIVE` → `ADDITIVE ARITHMETIC`) for
-  consistency across `UNARY`, `ADDITIVE`, `MULTIPLICATIVE`, and
-  `EXPONENTIATION`.
-
 ## Environment
 
 - Add a gitignored `.llm.md` project context document capturing stable

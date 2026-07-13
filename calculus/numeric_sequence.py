@@ -68,7 +68,7 @@ class NumericSequence(Sequence[Number]):
         rule, size = self._combiner(self, other, op)
         return NumericSequence(rule, size, first_index=self.first_index)
 
-# -- UNARY
+# -- UNARY ARITHMETIC
 
     def __pos__(self) -> NumericSequence:
         """Return the element-wise unary plus.
@@ -95,7 +95,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._unary(abs)
 
-# -- ADDITIVE
+# -- ADDITIVE ARITHMETIC
 
     def __add__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise sum.
@@ -163,7 +163,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y - x)
 
-# -- MULTIPLICATIVE
+# -- MULTIPLICATIVE ARITHMETIC
 
     def __mul__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise product.
@@ -306,7 +306,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]
 
-# -- EXPONENTIATION
+# -- EXPONENTIATION ARITHMETIC
 
     def __pow__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise exponentiation.
