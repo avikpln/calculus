@@ -7,13 +7,11 @@ Departures from common practice are intentional, documented, and made
 only when they improve readability, maintainability, or better express
 the mathematical model of the library.
 
-------------------------------------------------------------------------
-
-# Documentation
+## Documentation
 
 The project follows PEP 257 with the conventions below.
 
-## Modules
+### Modules
 
 Module docstrings should contain:
 
@@ -22,7 +20,9 @@ Module docstrings should contain:
 -   a list of exported public classes, functions, and other objects;
 -   no documentation of private implementation details.
 
-## Classes
+------------------------------------------------------------------------
+
+### Classes
 
 Class docstrings should:
 
@@ -33,7 +33,9 @@ Class docstrings should:
 
 Constructors are documented in `__init__()`, not in the class docstring.
 
-## Functions and methods
+------------------------------------------------------------------------
+
+### Functions and methods
 
 Public functions and methods should document:
 
@@ -44,7 +46,9 @@ Public functions and methods should document:
 -   restrictions or preconditions;
 -   keyword-only parameters, when applicable.
 
-## Inheritance
+------------------------------------------------------------------------
+
+### Inheritance
 
 When subclassing:
 
@@ -54,9 +58,7 @@ When subclassing:
     to new behavior;
 -   summarize only the behavioral differences from the parent class.
 
-------------------------------------------------------------------------
-
-# Docstring conventions
+## Docstring conventions
 
 -   Summary line: exactly one line, appearing on the same line as the
 	opening """
@@ -87,50 +89,39 @@ When subclassing:
     propagate through its own parameters. Delegating methods should not
     reproduce a constructor's complete exception contract.
 
-------------------------------------------------------------------------
 
-# Type hints
+## Type hints
 
 -   The project targets `mypy --strict`.
 -   Type ignores should be localized and documented.
 -   Public APIs should be fully type annotated.
 
-------------------------------------------------------------------------
-
-# Validation
+## Validation
 
 -   Constructors eagerly validate values that establish object
     invariants.
 -   Transformation methods generally rely on lazy validation and EAFP
     semantics unless eager validation protects a core invariant.
 
-------------------------------------------------------------------------
-
-# Comments
+## Comments
 
 -   Explain why, not what.
 -   Avoid comments that merely restate the code.
 -   Prefer concise comments close to the code they explain.
 
-------------------------------------------------------------------------
-
-# Naming
+## Naming
 
 -   Public APIs should use descriptive names.
 -   Private helpers should begin with an underscore.
 -   Module-level constants use UPPER_CASE.
 
-------------------------------------------------------------------------
-
-# Imports
+## Imports
 
 -   Avoid speculative imports.
 -   Introduce imports only when required by implemented functionality.
 -   Keep static analysis free of unused imports and symbols.
 
-------------------------------------------------------------------------
-
-# Arithmetic operators
+## Arithmetic operators
 
 -   Binary operators are spaced on both sides by default (e.g. `a + b`,
     `a ** b`).
@@ -141,9 +132,7 @@ When subclassing:
     standalone, tightened only when mixed with a lower-priority
     operator in the same expression.
 
-------------------------------------------------------------------------
-
-# Testing and quality
+## Testing and quality
 
 Before every commit, run:
 
