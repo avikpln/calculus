@@ -368,7 +368,7 @@ class Sequence(Generic[T], Iterable[T]):
         start, step, size = self._process_range(
             slice_.start, slice_.stop, slice_.step
         )
-        subrule = lambda k: start + (k - self.first_index) * step
+        subrule = lambda k: start + (k - self.first_index)*step
         return self.subsequence(subrule, size)
 
     def subsequence(
