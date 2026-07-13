@@ -366,7 +366,8 @@ class NumericSequence(Sequence[Number]):
         Raises:
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
-            ValueError: If ``size`` is negative.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
         """
         return NumericSequence(Sequence._constant_rule(value), size=size,
                                first_index=first_index)
@@ -390,6 +391,8 @@ class NumericSequence(Sequence[Number]):
 
         Raises:
             TypeError: If ``first_index`` is not an integer.
+            ValueError: If ``first_index`` is not in
+                FIRST_INDEX_OPTIONS.
         """
         func, size = Sequence._iterable_rule(iterable, first_index)
         return NumericSequence(func, size=size, first_index=first_index)
