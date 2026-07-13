@@ -89,7 +89,6 @@ When subclassing:
     propagate through its own parameters. Delegating methods should not
     reproduce a constructor's complete exception contract.
 
-
 ## Type hints
 
 -   The project targets `mypy --strict`.
@@ -114,6 +113,84 @@ When subclassing:
 -   Public APIs should use descriptive names.
 -   Private helpers should begin with an underscore.
 -   Module-level constants use UPPER_CASE.
+
+## Line-wrapping
+
+The guiding rule is *all-or-none*: if a construct fits entirely on
+one line within the line-length limit, it stays on one line. If it
+does not fit, every element gets its own line — never a partial
+grouping aligned to the opening delimiter.
+
+### General
+
+-   Whenever a construct is wrapped across multiple lines, the
+    last element (or group of elements) gets a trailing comma
+    before the closing delimiter.
+
+-   These conventions apply to library source files. Test files
+    are not held to them; prioritize readability of test setup and
+    assertions over strict formatting.
+
+------------------------------------------------------------------------
+
+### Class declarations
+
+-   A class declaration that does not fit on one line places each
+    base class on its own line, with the opening parenthesis on
+    the `class` line and the closing parenthesis and colon on
+    their own line.
+
+------------------------------------------------------------------------
+
+### Function and method definitions
+
+-   A definition that does not fit on one line places every
+    parameter on its own line. Nothing follows the opening
+    parenthesis; the closing parenthesis and return-type
+    annotation share a line at the method's base indentation.
+
+-   The bare `*` marking the start of keyword-only parameters gets
+    its own line rather than sharing one with an adjacent
+    parameter.
+
+------------------------------------------------------------------------
+
+### Function calls
+
+-   A call that does not fit on one line, but whose full argument
+    list fits on a single indented continuation line, is written
+    with the arguments grouped together on that one line:
+
+        func(
+            a, b, c,
+        )
+
+-   If the argument list does not fit even this way, it falls back
+    to one argument per line, matching the convention for
+    definitions.
+
+------------------------------------------------------------------------
+
+### Imports
+
+-   An import that does not fit on one line is wrapped in
+    parentheses, with one imported name per line.
+
+------------------------------------------------------------------------
+
+### `__all__` and other list literals
+
+-   A list literal that does not fit on one line places one
+    element per line.
+
+------------------------------------------------------------------------
+
+### Exemption: multi-line string concatenation
+
+-   Implicit string concatenation spanning multiple lines (for
+    example, a multi-part message inside a `raise` statement) is
+    not a sequence of discrete arguments and is exempt from the
+    rules above. Wrap for readability at your own discretion.
 
 ## Imports
 

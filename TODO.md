@@ -31,13 +31,6 @@
 - Revise `STYLE.md` (see `attic/style/missing.txt`; also consider the
   error-delegation question).
 
-- Decide and standardize a single line-break style for wrapped method
-  signatures and call expressions. At least three styles currently
-  coexist in the codebase: (1) grouped, multiple arguments per line
-  wrapped at a fixed width; (2) one argument per line; (3) a hanging
-  indent, with initial arguments on the opening line and continuation
-  wrapped below. Pick one and apply it consistently project-wide.
-
 ## Environment
 
 - Add a gitignored `.llm.md` project context document capturing stable

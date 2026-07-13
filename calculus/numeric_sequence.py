@@ -46,9 +46,7 @@ class NumericSequence(Sequence[Number]):
     ) -> NumericSequence:
         # Construct a new sequence with the given rule and size.
 
-        return NumericSequence(
-            func, size=size, first_index=self.first_index
-        )
+        return NumericSequence(func, size=size, first_index=self.first_index)
 
 # -- ARITHMETIC HELPERS
 
@@ -61,7 +59,7 @@ class NumericSequence(Sequence[Number]):
     def _binary(
         self,
         other: Number | NumericSequence,
-        op: Callable[[Number, Number], Number]
+        op: Callable[[Number, Number], Number],
     ) -> NumericSequence:
         # Return the sequence obtained by applying a binary operation.
 
@@ -215,7 +213,7 @@ class NumericSequence(Sequence[Number]):
 
     def __rtruediv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise quotient.
 
@@ -234,7 +232,7 @@ class NumericSequence(Sequence[Number]):
 
     def __floordiv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
@@ -254,7 +252,7 @@ class NumericSequence(Sequence[Number]):
 
     def __rfloordiv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
@@ -349,7 +347,7 @@ class NumericSequence(Sequence[Number]):
         value: Number,
         size: int | None = None,
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> NumericSequence:
         """Return a constant sequence.
 
@@ -369,14 +367,15 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in FIRST_INDEX_OPTIONS.
         """
-        return NumericSequence(Sequence._constant_rule(value), size=size,
-                               first_index=first_index)
+        return NumericSequence(
+            Sequence._constant_rule(value), size=size, first_index=first_index,
+        )
 
     @staticmethod
     def from_iterable(
         iterable: Iterable[Number],
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> NumericSequence:
         """Return a numeric sequence from a numeric iterable.
 

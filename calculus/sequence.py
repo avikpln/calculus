@@ -92,8 +92,9 @@ class Sequence(Generic[T], Iterable[T]):
     def __init__(
         self,
         func: Callable[[int], T] | None = None,
-        size: int | None = None, *,
-        first_index: int = 1
+        size: int | None = None,
+        *,
+        first_index: int = 1,
     ) -> None:
         """Initialize a new sequence object.
 
@@ -374,7 +375,7 @@ class Sequence(Generic[T], Iterable[T]):
     def subsequence(
         self,
         subfunc: Callable[[int], int],
-        size: int | None = None
+        size: int | None = None,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
@@ -533,7 +534,7 @@ class Sequence(Generic[T], Iterable[T]):
     @staticmethod
     def _mapper(
         seq: Sequence[T],
-        op: Callable[[T], U]
+        op: Callable[[T], U],
     ) -> Callable[[int], U]:
         # Return the rule obtained by applying an operation to a rule.
 
@@ -559,7 +560,7 @@ class Sequence(Generic[T], Iterable[T]):
     def _combiner(
         first: Sequence[T],
         second: S | Sequence[S],
-        op: Callable[[T, S], U]
+        op: Callable[[T, S], U],
     ) -> tuple[Callable[[int], U], int | None]:
         # Return the rule and size defining the combined sequence.
 
@@ -582,19 +583,19 @@ class Sequence(Generic[T], Iterable[T]):
         return rule, size
 
     @overload
-    def combine(
-        self, other: S, op: Callable[[T, S], U]
-    ) -> Sequence[U]: ...
+    def combine(self, other: S, op: Callable[[T, S], U]) -> Sequence[U]: ...
 
     @overload
     def combine(
-        self, other: Sequence[S], op: Callable[[T, S], U]
+        self,
+        other: Sequence[S],
+        op: Callable[[T, S], U],
     ) -> Sequence[U]: ...
 
     def combine(
         self,
         other: S | Sequence[S],
-        op: Callable[[T, S], U]
+        op: Callable[[T, S], U],
     ) -> Sequence[U]:
         """Combine this sequence with another sequence or scalar.
 
@@ -629,7 +630,7 @@ class Sequence(Generic[T], Iterable[T]):
         value: T,
         size: int | None = None,
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> Sequence[T]:
         """Return a constant sequence.
 
@@ -649,13 +650,14 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in FIRST_INDEX_OPTIONS.
         """
-        return Sequence(Sequence._constant_rule(value), size=size,
-                        first_index=first_index)
+        return Sequence(
+            Sequence._constant_rule(value), size=size, first_index=first_index,
+        )
 
     @staticmethod
     def _iterable_rule(
         iterable: Iterable[T],
-        first_index: int
+        first_index: int,
     ) -> tuple[Callable[[int], T], int]:
         # Return the rule and size defining a sequence from an iterable.
         table = tuple(iterable)
@@ -665,7 +667,7 @@ class Sequence(Generic[T], Iterable[T]):
     def from_iterable(
         iterable: Iterable[T],
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> Sequence[T]:
         """Return a sequence from an iterable.
 
