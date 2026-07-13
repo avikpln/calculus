@@ -30,9 +30,9 @@ _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
 _RIGHT_SEQUENCE_BRACKET = "\N{mathematical right angle bracket}"
 _INFINITY_SYMBOL = "\N{infinity}"
 
-#=======================================================================
+#========================================================================
 # Sequence {aₙ}
-#=======================================================================
+#========================================================================
 
 class _Rule(Generic[T]):
     # This class represents a sequence rule mapping integers to values.
