@@ -646,7 +646,8 @@ class Sequence(Generic[T], Iterable[T]):
         Raises:
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
-            ValueError: If ``size`` is negative.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
         """
         return Sequence(Sequence._constant_rule(value), size=size,
                         first_index=first_index)
@@ -679,6 +680,8 @@ class Sequence(Generic[T], Iterable[T]):
 
         Raises:
             TypeError: If ``first_index`` is not an integer.
+            ValueError: If ``first_index`` is not in
+                FIRST_INDEX_OPTIONS.
 
         Examples:
             >>> Sequence.from_iterable("Hello, world!")
