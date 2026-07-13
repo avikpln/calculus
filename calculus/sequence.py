@@ -620,6 +620,11 @@ class Sequence(Generic[T], Iterable[T]):
 # -- SPECIAL SEQUENCES
 
     @staticmethod
+    def _constant_rule(value: T) -> Callable[[int], T]:
+        # Return the rule that yields a constant value for every index.
+        return lambda n: value
+
+    @staticmethod
     def constant(
         value: T,
         size: int | None = None,
@@ -643,7 +648,17 @@ class Sequence(Generic[T], Iterable[T]):
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative.
         """
-        return Sequence(lambda n: value, size=size, first_index=first_index)
+        return Sequence(Sequence._constant_rule(value), size=size,
+                        first_index=first_index)
+
+    @staticmethod
+    def _iterable_rule(
+        iterable: Iterable[T],
+        first_index: int
+    ) -> tuple[Callable[[int], T], int]:
+        # Return the rule and size defining a sequence from an iterable.
+        table = tuple(iterable)
+        return lambda n: table[n - first_index], len(table)
 
     @staticmethod
     def from_iterable(
@@ -669,6 +684,5 @@ class Sequence(Generic[T], Iterable[T]):
             >>> Sequence.from_iterable("Hello, world!")
             ⟨'H', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd', '!'⟩
         """
-        table = tuple(iterable)
-        return Sequence(lambda n: table[n - first_index], len(table),
-                        first_index=first_index)
+        func, size = Sequence._iterable_rule(iterable, first_index)
+        return Sequence(func, size=size, first_index=first_index)
