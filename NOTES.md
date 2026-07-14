@@ -220,6 +220,58 @@ Python's default fallback — using the corresponding binary operator
 therefore the correct and sufficient behavior, requiring no additional
 code.
 
+------------------------------------------------------------------------
+
+### Naming: `naturals`, `progression`, `geometric`
+
+`identity` was rejected as the name for the sequence of natural
+numbers. It describes the underlying rule (`f(n) = n`), not the
+sequence a caller actually wants — someone reaching for this
+library thinks "give me 1, 2, 3, ...", not "give me the sequence
+whose rule is the identity function." `naturals` names the result,
+not the mechanism.
+
+A `start_at` parameter, letting `naturals()` begin at an arbitrary
+value, was considered and rejected. Crossed against the existing
+`first_index` parameter (0 or 1), it produces four combinations
+that are confusing to reason about, and a sequence with an
+arbitrary starting value is no longer really "the natural numbers"
+— it degenerates into an arithmetic progression with a fixed common
+difference of 1. That capability, if wanted, belongs to
+`progression()`, not as a bolt-on to `naturals()`.
+
+`progression`, not `arithmetic_progression`, mirrors the choice
+already made for `geometric`: both name the sequence type in full
+mathematical terms, without redundantly restating "progression"
+once the qualifying adjective already implies it. Keeping the two
+names parallel (`geometric`, `progression`) avoids the asymmetry of
+one method spelling out "progression" and the other not.
+
+------------------------------------------------------------------------
+
+### Default `first_index` for `progression()` and `geometric()`
+
+`progression()` and `geometric()` default to `first_index=0`,
+diverging from the library's general default of 1. Both sequences
+are conventionally written in `a_0, a_1, a_2, ...` notation in
+standard mathematical usage, so defaulting to 0 matches how these
+sequences are actually expressed rather than forcing a translation
+step. `constant()` and `naturals()` keep the library's general
+default of 1, since neither has a comparable, universally
+recognized zero-indexed convention pulling them the other way.
+
+------------------------------------------------------------------------
+
+### No private helper needed for special sequences
+
+Unlike `constant()` and `from_iterable()`, which are duplicated
+across `Sequence` and `NumericSequence` because both classes must
+construct their own type from the same rule-building logic,
+`naturals()`, `progression()`, and `geometric()` exist only on
+`NumericSequence`. There is no second class needing to share this
+logic, so there is no reason to factor it into a private helper —
+each rule is built directly inside its own factory method.
+
 ## Construction
 
 ### Default construction

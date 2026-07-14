@@ -395,3 +395,93 @@ class NumericSequence(Sequence[Number]):
         """
         func, size = Sequence._iterable_rule(iterable, first_index)
         return NumericSequence(func, size=size, first_index=first_index)
+
+    @staticmethod
+    def naturals(
+        size: int | None = None,
+        *,
+        first_index: int = 1,
+    ) -> NumericSequence:
+        """Return the sequence of natural numbers.
+
+        Args:
+            size (int | None): The number of elements in the sequence.
+                Defaults to None, which corresponds to an infinite
+                sequence.
+            first_index (int): The index of the first sequence element.
+                Defaults to 1.
+
+        Returns:
+            NumericSequence: A sequence of natural numbers.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
+        """
+        return NumericSequence(lambda n: n, size=size, first_index=first_index)
+
+    @staticmethod
+    def progression(
+        first_term: Number,
+        common_difference: Number,
+        size: int | None = None,
+        *,
+        first_index: int = 0,
+    ) -> NumericSequence:
+        """Return an arithmetic progression.
+
+        Args:
+            first_term (Number): The first term of the progression.
+            common_difference (Number): The constant difference
+                between consecutive terms.
+            size (int | None): The number of elements in the sequence.
+                Defaults to None, which corresponds to an infinite
+                sequence.
+            first_index (int): The index of the first sequence element.
+                Defaults to 0.
+
+        Returns:
+            NumericSequence: The specified arithmetic progression.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
+        """
+        func = lambda n: first_term + common_difference*(n - first_index)
+        return NumericSequence(func, size=size, first_index=first_index)
+
+    @staticmethod
+    def geometric(
+        first_term: Number,
+        common_ratio: Number,
+        size: int | None = None,
+        *,
+        first_index: int = 0,
+    ) -> NumericSequence:
+        """Return a geometric sequence.
+
+        Args:
+            first_term (Number): The first term of the sequence.
+            common_ratio (Number): The constant ratio between
+                consecutive terms.
+            size (int | None): The number of elements in the sequence.
+                Defaults to None, which corresponds to an infinite
+                sequence.
+            first_index (int): The index of the first sequence element.
+                Defaults to 0.
+
+        Returns:
+            NumericSequence: The specified geometric sequence.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
+        """
+        func = lambda n: first_term * common_ratio**(n - first_index)
+        return NumericSequence(func, size=size, first_index=first_index)
