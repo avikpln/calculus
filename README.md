@@ -61,6 +61,7 @@ pip install -r requirements-dev.txt
 │   ├── test_sequence.py              # Pytest test suite
 │   └── utils.py                      # Shared validation helpers
 ├── .gitignore
+├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
 ├── NOTES.md                          # Design rationale and architectural decisions
 ├── README.md
