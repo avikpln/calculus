@@ -316,3 +316,21 @@ def test_from_iterable_returns_numeric_sequence() -> None:
     seq = NumericSequence.from_iterable([1, 2, 3])
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [1, 2, 3]
+
+
+def test_naturals_returns_correct_numeric_sequence() -> None:
+    seq = NumericSequence.naturals(size=3)
+    assert isinstance(seq, NumericSequence)
+    assert list(seq) == [1, 2, 3]
+
+
+def test_progression_returns_correct_numeric_sequence() -> None:
+    seq = NumericSequence.progression(5, 3, size=4)
+    assert isinstance(seq, NumericSequence)
+    assert list(seq) == [5, 8, 11, 14]
+
+
+def test_geometric_returns_correct_numeric_sequence() -> None:
+    seq = NumericSequence.geometric(2, 3, size=4)
+    assert isinstance(seq, NumericSequence)
+    assert list(seq) == [2, 6, 18, 54]
