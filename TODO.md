@@ -23,9 +23,6 @@
   # ⟨2, 5, 10, 17, 26⟩
 ```
 
-- Add a UML class diagram documenting the package architecture and
-  relationships between public classes.
-
 ## Style
 
 - Revise `STYLE.md` (see `attic/style/missing.txt`).
