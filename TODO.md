@@ -28,8 +28,7 @@
 
 ## Style
 
-- Revise `STYLE.md` (see `attic/style/missing.txt`; also consider the
-  error-delegation question).
+- Revise `STYLE.md` (see `attic/style/missing.txt`).
 
 ## Environment
 
