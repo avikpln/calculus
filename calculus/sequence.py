@@ -8,10 +8,10 @@ Classes:
 from __future__ import annotations
 
 __all__ = ["Sequence"]
-__author__ = 'Avi Kaplan'
+__author__ = "Avi Kaplan"
 
-from collections.abc import Callable, Iterable
-from typing import Generic, TypeVar, Generator, overload
+from collections.abc import Callable, Generator, Iterable
+from typing import Generic, TypeVar, overload
 
 from .utils import validate_int, validate_optional_int
 
@@ -30,9 +30,9 @@ _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
 _RIGHT_SEQUENCE_BRACKET = "\N{mathematical right angle bracket}"
 _INFINITY_SYMBOL = "\N{infinity}"
 
-#=======================================================================
+#========================================================================
 # Sequence {aₙ}
-#=======================================================================
+#========================================================================
 
 class _Rule(Generic[T]):
     # This class represents a sequence rule mapping integers to values.
@@ -92,8 +92,9 @@ class Sequence(Generic[T], Iterable[T]):
     def __init__(
         self,
         func: Callable[[int], T] | None = None,
-        size: int | None = None, *,
-        first_index: int = 1
+        size: int | None = None,
+        *,
+        first_index: int = 1,
     ) -> None:
         """Initialize a new sequence object.
 
@@ -368,13 +369,13 @@ class Sequence(Generic[T], Iterable[T]):
         start, step, size = self._process_range(
             slice_.start, slice_.stop, slice_.step
         )
-        subrule = lambda k: start + (k - self.first_index) * step
+        subrule = lambda k: start + (k - self.first_index)*step
         return self.subsequence(subrule, size)
 
     def subsequence(
         self,
         subfunc: Callable[[int], int],
-        size: int | None = None
+        size: int | None = None,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
@@ -533,7 +534,7 @@ class Sequence(Generic[T], Iterable[T]):
     @staticmethod
     def _mapper(
         seq: Sequence[T],
-        op: Callable[[T], U]
+        op: Callable[[T], U],
     ) -> Callable[[int], U]:
         # Return the rule obtained by applying an operation to a rule.
 
@@ -559,7 +560,7 @@ class Sequence(Generic[T], Iterable[T]):
     def _combiner(
         first: Sequence[T],
         second: S | Sequence[S],
-        op: Callable[[T, S], U]
+        op: Callable[[T, S], U],
     ) -> tuple[Callable[[int], U], int | None]:
         # Return the rule and size defining the combined sequence.
 
@@ -582,19 +583,19 @@ class Sequence(Generic[T], Iterable[T]):
         return rule, size
 
     @overload
-    def combine(
-        self, other: S, op: Callable[[T, S], U]
-    ) -> Sequence[U]: ...
+    def combine(self, other: S, op: Callable[[T, S], U]) -> Sequence[U]: ...
 
     @overload
     def combine(
-        self, other: Sequence[S], op: Callable[[T, S], U]
+        self,
+        other: Sequence[S],
+        op: Callable[[T, S], U],
     ) -> Sequence[U]: ...
 
     def combine(
         self,
         other: S | Sequence[S],
-        op: Callable[[T, S], U]
+        op: Callable[[T, S], U],
     ) -> Sequence[U]:
         """Combine this sequence with another sequence or scalar.
 
@@ -629,7 +630,7 @@ class Sequence(Generic[T], Iterable[T]):
         value: T,
         size: int | None = None,
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> Sequence[T]:
         """Return a constant sequence.
 
@@ -646,15 +647,17 @@ class Sequence(Generic[T], Iterable[T]):
         Raises:
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
-            ValueError: If ``size`` is negative.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
         """
-        return Sequence(Sequence._constant_rule(value), size=size,
-                        first_index=first_index)
+        return Sequence(
+            Sequence._constant_rule(value), size=size, first_index=first_index,
+        )
 
     @staticmethod
     def _iterable_rule(
         iterable: Iterable[T],
-        first_index: int
+        first_index: int,
     ) -> tuple[Callable[[int], T], int]:
         # Return the rule and size defining a sequence from an iterable.
         table = tuple(iterable)
@@ -664,7 +667,7 @@ class Sequence(Generic[T], Iterable[T]):
     def from_iterable(
         iterable: Iterable[T],
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> Sequence[T]:
         """Return a sequence from an iterable.
 
@@ -679,6 +682,8 @@ class Sequence(Generic[T], Iterable[T]):
 
         Raises:
             TypeError: If ``first_index`` is not an integer.
+            ValueError: If ``first_index`` is not in
+                FIRST_INDEX_OPTIONS.
 
         Examples:
             >>> Sequence.from_iterable("Hello, world!")

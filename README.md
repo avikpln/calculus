@@ -75,7 +75,7 @@ pip install -r requirements-dev.txt
 from calculus import NumericSequence
 
 # Infinite sequence of perfect squares.
-squares = NumericSequence(lambda n: n**2)
+squares = NumericSequence(lambda n: n ** 2)
 
 print(squares[3])
 # 9

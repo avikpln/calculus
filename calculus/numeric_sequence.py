@@ -9,7 +9,7 @@ Classes:
 from __future__ import annotations
 
 __all__ = ["NumericSequence"]
-__author__ = 'Avi Kaplan'
+__author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 
@@ -18,9 +18,9 @@ from .sequence import Sequence
 # A type for representing a number.
 Number = int | float | complex
 
-#=======================================================================
+#========================================================================
 # Numeric Sequence {aₙ}
-#=======================================================================
+#========================================================================
 
 class NumericSequence(Sequence[Number]):
     """A sequence whose elements are numeric values.
@@ -46,9 +46,7 @@ class NumericSequence(Sequence[Number]):
     ) -> NumericSequence:
         # Construct a new sequence with the given rule and size.
 
-        return NumericSequence(
-            func, size=size, first_index=self.first_index
-        )
+        return NumericSequence(func, size=size, first_index=self.first_index)
 
 # -- ARITHMETIC HELPERS
 
@@ -61,14 +59,14 @@ class NumericSequence(Sequence[Number]):
     def _binary(
         self,
         other: Number | NumericSequence,
-        op: Callable[[Number, Number], Number]
+        op: Callable[[Number, Number], Number],
     ) -> NumericSequence:
         # Return the sequence obtained by applying a binary operation.
 
         rule, size = self._combiner(self, other, op)
         return NumericSequence(rule, size, first_index=self.first_index)
 
-# -- UNARY
+# -- UNARY ARITHMETIC
 
     def __pos__(self) -> NumericSequence:
         """Return the element-wise unary plus.
@@ -95,7 +93,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._unary(abs)
 
-# -- ADDITIVE
+# -- ADDITIVE ARITHMETIC
 
     def __add__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise sum.
@@ -163,7 +161,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y - x)
 
-# -- MULTIPLICATIVE
+# -- MULTIPLICATIVE ARITHMETIC
 
     def __mul__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise product.
@@ -215,7 +213,7 @@ class NumericSequence(Sequence[Number]):
 
     def __rtruediv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise quotient.
 
@@ -234,7 +232,7 @@ class NumericSequence(Sequence[Number]):
 
     def __floordiv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
@@ -254,7 +252,7 @@ class NumericSequence(Sequence[Number]):
 
     def __rfloordiv__(
         self,
-        other: Number | NumericSequence
+        other: Number | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
@@ -306,7 +304,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]
 
-# -- EXPONENTIATION
+# -- EXPONENTIATION ARITHMETIC
 
     def __pow__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise exponentiation.
@@ -349,7 +347,7 @@ class NumericSequence(Sequence[Number]):
         value: Number,
         size: int | None = None,
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> NumericSequence:
         """Return a constant sequence.
 
@@ -366,16 +364,18 @@ class NumericSequence(Sequence[Number]):
         Raises:
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
-            ValueError: If ``size`` is negative.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in FIRST_INDEX_OPTIONS.
         """
-        return NumericSequence(Sequence._constant_rule(value), size=size,
-                               first_index=first_index)
+        return NumericSequence(
+            Sequence._constant_rule(value), size=size, first_index=first_index,
+        )
 
     @staticmethod
     def from_iterable(
         iterable: Iterable[Number],
         *,
-        first_index: int = 1
+        first_index: int = 1,
     ) -> NumericSequence:
         """Return a numeric sequence from a numeric iterable.
 
@@ -390,6 +390,8 @@ class NumericSequence(Sequence[Number]):
 
         Raises:
             TypeError: If ``first_index`` is not an integer.
+            ValueError: If ``first_index`` is not in
+                FIRST_INDEX_OPTIONS.
         """
         func, size = Sequence._iterable_rule(iterable, first_index)
         return NumericSequence(func, size=size, first_index=first_index)

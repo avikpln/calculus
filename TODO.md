@@ -28,30 +28,7 @@
 
 ## Style
 
-- Revise `STYLE.md` (see `attic/style/missing.txt`; also consider the
-  error-delegation question).
-
-- Decide and standardize a single line-break style for wrapped method
-  signatures and call expressions. At least three styles currently
-  coexist in the codebase: (1) grouped, multiple arguments per line
-  wrapped at a fixed width; (2) one argument per line; (3) a hanging
-  indent, with initial arguments on the opening line and continuation
-  wrapped below. Pick one and apply it consistently project-wide.
-
-- Standardize PEP 8 spacing around arithmetic operators (e.g. `a + b`
-  vs. `a+b`; note that `**` is already decided to use no spaces for
-  simple operands, e.g. `n**2`); record the decision in `NOTES.md`
-  once resolved.
-
-- Modernize typing imports: `Callable`, `Iterable`, `Generator` from
-  `collections.abc`; `Generic`, `TypeVar`, `Protocol`, `overload`,
-  `Self` from `typing`.
-
-- Rename section-comment delimiters in `numeric_sequence.py` and
-  `test_numeric_sequence.py` to include ARITHMETIC (e.g. `UNARY` →
-  `UNARY ARITHMETIC`, `ADDITIVE` → `ADDITIVE ARITHMETIC`) for
-  consistency across `UNARY`, `ADDITIVE`, `MULTIPLICATIVE`, and
-  `EXPONENTIATION`.
+- Revise `STYLE.md` (see `attic/style/missing.txt`).
 
 ## Environment
 

@@ -5,7 +5,7 @@ Functions:
     validate_optional_int: Validate int or None, rejecting booleans.
 """
 
-__all__ = ['validate_int', 'validate_optional_int']
+__all__ = ["validate_int", "validate_optional_int"]
 
 
 def validate_int(value: int, name: str = "value") -> None:
