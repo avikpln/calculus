@@ -509,33 +509,6 @@ Only commit once all checks pass.
 
 ## Implementation
 
-### `_Rule.rule` property removed
-
-`_Rule` previously exposed its callable through a read-only `rule`
-property, used internally by `__call__()`. This was removed;
-`__call__()` now calls `self._rule` directly.
-
-The property was originally kept for encapsulation, on the reasoning
-that calling `_rule` directly was only a negligible performance
-difference. That reasoning undersold the risk: exposing `rule`
-externally invites callers to bypass a rule's `int -> T` calling
-contract and reach into its internals directly. This surfaced
-concretely when considering `_resize()`: the polymorphic contract
-that lets `_resize()` work for any rule type (`_Rule`, and future
-types such as `_RecursiveRule`) is `self._rule(n)`, not
-`self._rule.rule`. `_RecursiveRule.rule`, for instance, is not an
-`int -> T` callable at all, but the multi-argument combining function
-(e.g. `lambda x, y: x + y` for a Fibonacci recurrence); calling it as
-if it were `_Rule.rule` would be a type mismatch, not just redundant
-validation.
-
-Removing the public property does not fully prevent this class of
-mistake (a caller could still reach `self._rule._rule` directly), but
-it removes the specific, named affordance that made the mistake easy
-to reach for, including in future optimization attempts.
-
-------------------------------------------------------------------------
-
 ### `_Rule` removed entirely
 
 The `_Rule` wrapper class is removed. `Sequence._rule` now holds the
@@ -551,11 +524,6 @@ gone, `_Rule` no longer did anything beyond storing a callable and
 invoking it — exactly what a plain function reference already does.
 Keeping the wrapper class around would have meant maintaining an
 indirection layer with no remaining behavior of its own.
-
-This supersedes the earlier "`_Rule.rule` property removed" entry
-above: that entry's concern (external callers bypassing `_Rule`'s
-calling contract via `.rule`) is now moot, since there is no `_Rule`
-instance, or contract, left to bypass.
 
 ------------------------------------------------------------------------
 
