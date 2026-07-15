@@ -536,6 +536,29 @@ to reach for, including in future optimization attempts.
 
 ------------------------------------------------------------------------
 
+### `_Rule` removed entirely
+
+The `_Rule` wrapper class is removed. `Sequence._rule` now holds the
+raw callable directly, rather than a `_Rule` instance wrapping it.
+
+`_Rule` originally existed to give every rule a uniform, polymorphic
+`self._rule(n)` calling contract, and to validate `n` on every call
+via `validate_int()`. Once the validation-ownership convention
+established that private methods should not perform independent
+argument validation (see the "Validation ownership" section above),
+that per-call `validate_int(n)` check was dropped entirely. With it
+gone, `_Rule` no longer did anything beyond storing a callable and
+invoking it — exactly what a plain function reference already does.
+Keeping the wrapper class around would have meant maintaining an
+indirection layer with no remaining behavior of its own.
+
+This supersedes the earlier "`_Rule.func` property removed" entry
+above: that entry's concern (external callers bypassing `_Rule`'s
+calling contract via `.func`) is now moot, since there is no `_Rule`
+instance, or contract, left to bypass.
+
+------------------------------------------------------------------------
+
 ### Internal invariants
 
 Several methods contain assertions such as

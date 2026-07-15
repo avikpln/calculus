@@ -34,22 +34,6 @@ _INFINITY_SYMBOL = "\N{infinity}"
 # Sequence {aₙ}
 #========================================================================
 
-class _Rule(Generic[T]):
-    # This class represents a sequence rule mapping integers to values.
-
-    __slots__ = ("_func",)
-
-    _func: Callable[[int], T]
-
-    def __init__(self, func: Callable[[int], T]) -> None:
-        # Initialize a new rule instance.
-        self._func = func
-
-    def __call__(self, n: int) -> T:
-        # Invoke the rule function on the given input.
-        return self._func(n)
-
-
 class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences of objects.
 
@@ -129,11 +113,7 @@ class Sequence(Generic[T], Iterable[T]):
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
-        self._set_rule(func)
-
-    def _set_rule(self, func: Callable[[int], T]) -> None:
-        # Establish the rule of the sequence.
-        self._rule = _Rule(func)
+        self._rule = func
 
     def _resize(self, size: int | None) -> Sequence[T]:
         # Construct a new sequence of the same type with the given size.
