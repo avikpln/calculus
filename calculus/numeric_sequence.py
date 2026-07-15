@@ -41,12 +41,12 @@ class NumericSequence(Sequence[Number]):
 
     def _reindex(
         self,
-        func: Callable[[int], Number] | None,
+        rule: Callable[[int], Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
         # Construct a new sequence with the given rule and size.
 
-        return NumericSequence(func, size=size, first_index=self.first_index)
+        return NumericSequence(rule, size=size, first_index=self.first_index)
 
 # -- ARITHMETIC HELPERS
 
@@ -393,8 +393,8 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``first_index`` is not in
                 FIRST_INDEX_OPTIONS.
         """
-        func, size = Sequence._iterable_rule(iterable, first_index)
-        return NumericSequence(func, size=size, first_index=first_index)
+        rule, size = Sequence._iterable_rule(iterable, first_index)
+        return NumericSequence(rule, size=size, first_index=first_index)
 
     @staticmethod
     def naturals(
@@ -451,8 +451,8 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in FIRST_INDEX_OPTIONS.
         """
-        func = lambda n: first_term + common_difference*(n - first_index)
-        return NumericSequence(func, size=size, first_index=first_index)
+        rule = lambda n: first_term + common_difference*(n - first_index)
+        return NumericSequence(rule, size=size, first_index=first_index)
 
     @staticmethod
     def geometric(
@@ -483,5 +483,5 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in FIRST_INDEX_OPTIONS.
         """
-        func = lambda n: first_term * common_ratio**(n - first_index)
-        return NumericSequence(func, size=size, first_index=first_index)
+        rule = lambda n: first_term * common_ratio**(n - first_index)
+        return NumericSequence(rule, size=size, first_index=first_index)

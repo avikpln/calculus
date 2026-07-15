@@ -17,7 +17,7 @@ def test_default_construction_is_infinite_with_none_rule() -> None:
     assert seq[1] is None
 
 
-def test_construction_with_func_size_and_first_index() -> None:
+def test_construction_with_rule_size_and_first_index() -> None:
     seq = Sequence(lambda n: n * 2, size=3, first_index=0)
     assert seq.size == 3
     assert seq.finite is True
@@ -35,9 +35,9 @@ def test_size_zero_is_allowed() -> None:
     assert bool(seq) is False
 
 
-def test_noncallable_func_raises_type_error() -> None:
+def test_noncallable_rule_raises_type_error() -> None:
     with pytest.raises(TypeError):
-        Sequence(func="not callable")  # type: ignore[arg-type]
+        Sequence(rule="not callable")  # type: ignore[arg-type]
 
 
 def test_noninteger_size_raises_type_error() -> None:

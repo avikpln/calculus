@@ -12,7 +12,7 @@ classDiagram
         +finite
         +first_index
         +last_index
-        +subsequence(subfunc, size)
+        +subsequence(subrule, size)
         +shift_by(offset)
         +shift_to(where)
         +head(size)
