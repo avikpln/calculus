@@ -12,7 +12,7 @@ classDiagram
         +finite
         +first_index
         +last_index
-        +subsequence(subfunc, size)
+        +subsequence(subrule, size)
         +shift_by(offset)
         +shift_to(where)
         +head(size)
@@ -31,21 +31,11 @@ classDiagram
         +geometric(first_term, common_ratio, size, first_index)$
     }
 
-    class _Rule~T~ {
-        -_func
-        +__call__(n)
-    }
-
     Sequence <|-- NumericSequence
-    Sequence *-- _Rule : evaluates through
 ```
 
 ## Notes
 
-- `_Rule` is a private implementation detail, not part of the
-  public API. It is included here because it is central to how
-  every `Sequence` evaluates its elements; see `NOTES.md` for the
-  rationale behind keeping it private.
 - `$` denotes a static method (a factory that does not operate on
   an existing instance).
 - `NumericSequence`'s arithmetic operators are grouped rather than

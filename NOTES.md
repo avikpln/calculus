@@ -16,7 +16,7 @@ Only decisions that may influence future development belong here.
 A conventional representation such as
 
 ``` python
-Sequence(func=<function <lambda> at 0x...>, ...)
+Sequence(rule=<function <lambda> at 0x...>, ...)
 ```
 
 is technically more faithful but usually provides little useful
@@ -82,12 +82,12 @@ A `classmethod` version would let every subclass automatically
 "inherit" a correctly-typed factory for free, since `cls` resolves to
 whichever class the method was actually called on. This works safely
 only as long as a subclass's constructor accepts nothing beyond
-`func`, `size`, and `first_index`. `NumericSequence` satisfies this,
+`rule`, `size`, and `first_index`. `NumericSequence` satisfies this,
 but classes such as `Recurrence` do not: `Recurrence` requires an
-additional `basis` argument, so `cls(func, size, first_index)` would
+additional `basis` argument, so `cls(rule, size, first_index)` would
 either raise `TypeError` or, worse, succeed in some degenerate form
 that only accidentally means what its class name suggests. This
-concern isn't hypothetical: `Recurrence(func=lambda x: c, basis=(None,))`
+concern isn't hypothetical: `Recurrence(rule=lambda x: c, basis=(None,))`
 is a valid constructor call for a constant sequence-shaped
 `Recurrence`, so a naive `cls`-based factory could quietly hand back a
 technically-legal but conceptually vestigial `Recurrence` — a constant
@@ -509,30 +509,21 @@ Only commit once all checks pass.
 
 ## Implementation
 
-### `_Rule.func` property removed
+### `_Rule` removed entirely
 
-`_Rule` previously exposed its callable through a read-only `func`
-property, used internally by `__call__()`. This was removed;
-`__call__()` now calls `self._func` directly.
+The `_Rule` wrapper class is removed. `Sequence._rule` now holds the
+raw callable directly, rather than a `_Rule` instance wrapping it.
 
-The property was originally kept for encapsulation, on the reasoning
-that calling `_func` directly was only a negligible performance
-difference. That reasoning undersold the risk: exposing `func`
-externally invites callers to bypass a rule's `int -> T` calling
-contract and reach into its internals directly. This surfaced
-concretely when considering `_resize()`: the polymorphic contract
-that lets `_resize()` work for any rule type (`_Rule`, and future
-types such as `_RecursiveRule`) is `self._rule(n)`, not
-`self._rule.func`. `_RecursiveRule.func`, for instance, is not an
-`int -> T` callable at all, but the multi-argument combining function
-(e.g. `lambda x, y: x + y` for a Fibonacci recurrence); calling it as
-if it were `_Rule.func` would be a type mismatch, not just redundant
-validation.
-
-Removing the public property does not fully prevent this class of
-mistake (a caller could still reach `self._rule._func` directly), but
-it removes the specific, named affordance that made the mistake easy
-to reach for, including in future optimization attempts.
+`_Rule` originally existed to give every rule a uniform, polymorphic
+`self._rule(n)` calling contract, and to validate `n` on every call
+via `validate_int()`. Once the validation-ownership convention
+established that private methods should not perform independent
+argument validation (see the "Validation ownership" section above),
+that per-call `validate_int(n)` check was dropped entirely. With it
+gone, `_Rule` no longer did anything beyond storing a callable and
+invoking it — exactly what a plain function reference already does.
+Keeping the wrapper class around would have meant maintaining an
+indirection layer with no remaining behavior of its own.
 
 ------------------------------------------------------------------------
 
@@ -758,7 +749,7 @@ protected methods rather than a single factory with a flag:
   own type by name. Every preserving class overrides this to name its
   own constructor; there is exactly one consumer today (`head()`).
 
-* `_reindex(func, size)` — used by non-preserving (reindexing)
+* `_reindex(rule, size)` — used by non-preserving (reindexing)
   methods. Takes an explicit new rule and size. Each class states its
   construction target as a literal class name, not `type(self)`:
   `Sequence._reindex()` and `NumericSequence._reindex()` each

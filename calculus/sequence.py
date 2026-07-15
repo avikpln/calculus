@@ -34,22 +34,6 @@ _INFINITY_SYMBOL = "\N{infinity}"
 # Sequence {aₙ}
 #========================================================================
 
-class _Rule(Generic[T]):
-    # This class represents a sequence rule mapping integers to values.
-
-    __slots__ = ("_func",)
-
-    _func: Callable[[int], T]
-
-    def __init__(self, func: Callable[[int], T]) -> None:
-        # Initialize a new rule instance.
-        self._func = func
-
-    def __call__(self, n: int) -> T:
-        # Invoke the rule function on the given input.
-        return self._func(n)
-
-
 class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences of objects.
 
@@ -61,7 +45,7 @@ class Sequence(Generic[T], Iterable[T]):
             if infinite).
 
     Methods:
-        subsequence(subfunc, size):
+        subsequence(subrule, size):
             Construct a subsequence by reindexing the current sequence.
         shift_by(offset):
             Shift the evaluation rule by a fixed offset.
@@ -88,7 +72,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     def __init__(
         self,
-        func: Callable[[int], T] | None = None,
+        rule: Callable[[int], T] | None = None,
         size: int | None = None,
         *,
         first_index: int = 1,
@@ -96,7 +80,7 @@ class Sequence(Generic[T], Iterable[T]):
         """Initialize a new sequence object.
 
         Args:
-            func (Callable[[int], T]): The rule governing the sequence.
+            rule (Callable[[int], T]): The rule governing the sequence.
                 If None, uses a default rule that returns None for
                 every index.
             size (int | None): The size of the sequence. Defaults to
@@ -105,14 +89,14 @@ class Sequence(Generic[T], Iterable[T]):
                 Defaults to 1. A read-only keyword parameter.
 
         Raises:
-            TypeError: If ``func`` is not callable, if size is not None
+            TypeError: If ``rule`` is not callable, if size is not None
                 or an integer, or if ``first_index`` is not an integer.
             ValueError: If ``size`` is negative.
         """
-        if func is None:
-            func = self._none  # type: ignore[assignment]
-        if not callable(func):
-            raise TypeError(f"'{type(func).__name__}' object is not callable")
+        if rule is None:
+            rule = self._none  # type: ignore[assignment]
+        if not callable(rule):
+            raise TypeError(f"'{type(rule).__name__}' object is not callable")
         if size is not None:
             validate_int(size, "size")
             if size < 0:
@@ -129,11 +113,7 @@ class Sequence(Generic[T], Iterable[T]):
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
-        self._set_rule(func)
-
-    def _set_rule(self, func: Callable[[int], T]) -> None:
-        # Establish the rule of the sequence.
-        self._rule = _Rule(func)
+        self._rule = rule
 
     def _resize(self, size: int | None) -> Sequence[T]:
         # Construct a new sequence of the same type with the given size.
@@ -142,12 +122,12 @@ class Sequence(Generic[T], Iterable[T]):
 
     def _reindex(
         self,
-        func: Callable[[int], T] | None,
+        rule: Callable[[int], T] | None,
         size: int | None = None,
     ) -> Sequence[T]:
         # Construct a new sequence with the given rule and size.
 
-        return Sequence(func, size=size, first_index=self.first_index)
+        return Sequence(rule, size=size, first_index=self.first_index)
 
 # -- PROPERTIES
 
@@ -369,13 +349,13 @@ class Sequence(Generic[T], Iterable[T]):
 
     def subsequence(
         self,
-        subfunc: Callable[[int], int],
+        subrule: Callable[[int], int],
         size: int | None = None,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
         Args:
-            subfunc (Callable[[int], int]): A function that maps
+            subrule (Callable[[int], int]): A function that maps
                 indices of the subsequence to indices of this
                 sequence.
             size (int | None): The size of the subsequence.
@@ -389,8 +369,8 @@ class Sequence(Generic[T], Iterable[T]):
             TypeError: If ``size`` is not None or an integer.
             ValueError: If ``size`` is negative.
         """
-        func = lambda k: self._rule(subfunc(k))
-        return self._reindex(func, size)
+        rule = lambda k: self._rule(subrule(k))
+        return self._reindex(rule, size)
 
 # -- UTILITY
 
@@ -460,8 +440,8 @@ class Sequence(Generic[T], Iterable[T]):
         # sequences, the shifted rule may be evaluated outside the
         # original domain.
         validate_int(offset, "offset")
-        func = lambda n: self._rule(n + offset)
-        return self._reindex(func, self.size)
+        rule = lambda n: self._rule(n + offset)
+        return self._reindex(rule, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
         """Shift the evaluation rule to a given index.
@@ -523,8 +503,8 @@ class Sequence(Generic[T], Iterable[T]):
         if self.finite:
             assert self.size is not None  # mypy
             size = min(size, self.size)
-        func = lambda n: self._rule(n + self.size - size)
-        return self._reindex(func, size)
+        rule = lambda n: self._rule(n + self.size - size)
+        return self._reindex(rule, size)
 
     @staticmethod
     def _mapper(
@@ -684,5 +664,5 @@ class Sequence(Generic[T], Iterable[T]):
             >>> Sequence.from_iterable("Hello, world!")
             ⟨'H', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd', '!'⟩
         """
-        func, size = Sequence._iterable_rule(iterable, first_index)
-        return Sequence(func, size=size, first_index=first_index)
+        rule, size = Sequence._iterable_rule(iterable, first_index)
+        return Sequence(rule, size=size, first_index=first_index)
