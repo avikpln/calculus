@@ -102,6 +102,21 @@ When subclassing:
 -   Transformation methods generally rely on lazy validation and EAFP
     semantics unless eager validation protects a core invariant.
 
+-   `assert False` may be used to mark a branch that is structurally
+    unreachable once callers have validated their inputs (e.g. an
+    `else` clause following exhaustive `if`/`elif` conditions). This
+    is distinct from an `assert` used purely to narrow a type for
+    `mypy`, which should be marked with a trailing `# mypy` comment
+    instead.
+
+-   Validation ownership belongs to the public API, not to private
+    methods. A private method may still raise an exception where
+    doing so is the natural implementation of a public caller's
+    documented behavior (not independent argument validation) — this
+    is acceptable as long as all current callers of that private
+    method agree on what it should reject. If callers genuinely
+    diverge, the check moves out to each public caller instead.
+
 ## Comments
 
 -   Explain why, not what.

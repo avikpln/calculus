@@ -318,6 +318,49 @@ do **not** eagerly validate their callables. Errors surface naturally
 when the transformed sequence is evaluated, following the same EAFP
 philosophy used elsewhere in the implementation.
 
+## Validation
+
+### Validation ownership: public API vs. private methods
+
+Argument validation belongs to the public API layer: public methods
+validate their own parameters before proceeding.
+
+Private methods may assume that these preconditions already hold and
+do not perform independent validation of their own. However, a
+private method may still raise an exception as a natural consequence
+of implementing the documented behavior of the public method(s) that
+call it — this is not "validation," it is the method doing its job.
+
+This distinction is about ownership, not about where an exception
+happens to be physically raised. The deciding question is: do all
+current callers of the private method agree on what it should reject?
+
+-   If every current caller wants identical behavior (e.g. `_combiner()`,
+    used identically by `combine()` and `NumericSequence`'s arithmetic
+    dunders; or `_index_sequence()`, which currently has one caller),
+    the check may live inside the private method itself.
+-   If callers genuinely diverge (e.g. `subiter()` forbids both negative
+    and zero step, while `__getitem__()`'s slice handling forbids only
+    zero), no single private method can own the check correctly for
+    both; validation must move out to each public caller instead.
+
+Internal invariants that are guaranteed by the class's own code (not
+by caller input) remain the domain of `assert`, not exceptions, and
+current type checkers not being able to infer such invariants is
+never in itself a reason to make an assertion.
+
+**Considered alternative: exposing `binary()`/`unary()`.** Making
+NumericSequence's `_binary()`/`_unary()` public was considered, so
+that each of the 14 arithmetic dunders could visibly own the
+first_index validation at a true public entry point. This was
+rejected once the ownership question was reframed around caller
+agreement rather than public/private visibility: since every current
+caller of `_combiner()` (`combine()` and all of NumericSequence's
+dunders via `_binary()`) wants identical first_index behavior, no
+caller-specific validation is actually needed, and exposing
+`binary()`/`unary()` would have added public surface area for no
+behavioral benefit.
+
 ## Documentation
 
 ### Private methods
