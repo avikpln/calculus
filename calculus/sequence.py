@@ -13,7 +13,7 @@ __author__ = "Avi Kaplan"
 from collections.abc import Callable, Generator, Iterable
 from typing import Generic, TypeVar, overload
 
-from .utils import validate_int, validate_optional_int
+from .utils import validate_int, validate_range
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -43,13 +43,10 @@ class _Rule(Generic[T]):
 
     def __init__(self, func: Callable[[int], T]) -> None:
         # Initialize a new rule instance.
-        if not callable(func):
-            raise TypeError(f"'{type(func).__name__}' object is not callable")
         self._func = func
 
     def __call__(self, n: int) -> T:
         # Invoke the rule function on the given input.
-        validate_int(n, "n")
         return self._func(n)
 
 
@@ -184,10 +181,6 @@ class Sequence(Generic[T], Iterable[T]):
     ) -> tuple[int, int, int | None]:
         # Normalize a range into start, step, and resulting size.
 
-        validate_optional_int(start, "start")
-        validate_optional_int(stop, "stop")
-        validate_optional_int(step, "step")
-
         # Handle start index, stop index, and step.
         step = 1 if step is None else step
         if step > 0:
@@ -211,8 +204,8 @@ class Sequence(Generic[T], Iterable[T]):
                 else max(stop, self.first_index - 1)
             )
         else:
-            raise ValueError("range step cannot be zero")
-        assert start is not None
+            assert False
+        assert start is not None  # mypy
 
         # Evaluate size.
         size = None
@@ -243,8 +236,9 @@ class Sequence(Generic[T], Iterable[T]):
                 integer or None.
             ValueError: If ``step`` is zero or negative.
         """
+        validate_range(start, stop, step)
         if step is not None and step < 0:
-            raise ValueError(f"step ({step}) must be positive")
+            raise ValueError(f"step ({step}) cannot be negative")
 
         start, step, size = self._process_range(start, stop, step)
 
@@ -278,7 +272,7 @@ class Sequence(Generic[T], Iterable[T]):
             str: A user-friendly string representation of the sequence.
         """
         size = self.size if self.finite else DISPLAY_HEAD
-        assert size is not None
+        assert size is not None  # mypy
         headiter = self.subiter(stop=self.first_index + size)
         string = (
             f"{_LEFT_SEQUENCE_BRACKET}"
@@ -333,6 +327,7 @@ class Sequence(Generic[T], Iterable[T]):
         if isinstance(subscript, int):
             return self._index_sequence(subscript)
         if isinstance(subscript, slice):
+            validate_range(subscript.start, subscript.stop, subscript.step)
             return self._slice_sequence(subscript)
         raise TypeError(
             "sequence indices must be integers or slices, "
@@ -343,7 +338,7 @@ class Sequence(Generic[T], Iterable[T]):
         # Return the element at the specified index.
 
         if self.finite:
-            assert self.last_index is not None
+            assert self.last_index is not None  # mypy
 
             if self.first_index <= index <= self.last_index:
                 return self._rule(index)
@@ -419,7 +414,7 @@ class Sequence(Generic[T], Iterable[T]):
         """
         if not self.finite:
             raise TypeError("infinite sequences have no length")
-        assert self.size is not None
+        assert self.size is not None  # mypy
 
         return self.size
 
@@ -438,7 +433,7 @@ class Sequence(Generic[T], Iterable[T]):
         # infinite sequences because __len__() raises TypeError.
         if not self.finite:
             raise TypeError("infinite sequences cannot be reversed")
-        assert self.last_index is not None
+        assert self.last_index is not None  # mypy
 
         for index in range(self.last_index, self.first_index - 1, -1):
             yield self._index_sequence(index)
@@ -502,7 +497,7 @@ class Sequence(Generic[T], Iterable[T]):
         if size < 0:
             raise ValueError(f"head size ({size}) cannot be negative")
         if self.finite:
-            assert self.size is not None
+            assert self.size is not None  # mypy
             size = min(size, self.size)
         return self._resize(size)
 
@@ -526,7 +521,7 @@ class Sequence(Generic[T], Iterable[T]):
         if size < 0:
             raise ValueError(f"tail size ({size}) cannot be negative")
         if self.finite:
-            assert self.size is not None
+            assert self.size is not None  # mypy
             size = min(size, self.size)
         func = lambda n: self._rule(n + self.size - size)
         return self._reindex(func, size)

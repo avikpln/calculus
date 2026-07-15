@@ -5,7 +5,7 @@ Functions:
     validate_optional_int: Validate int or None, rejecting booleans.
 """
 
-__all__ = ["validate_int", "validate_optional_int"]
+__all__ = ["validate_int", "validate_optional_int", "validate_range"]
 
 
 def validate_int(value: int, name: str = "value") -> None:
@@ -38,3 +38,27 @@ def validate_optional_int(value: int | None, name: str = "value") -> None:
     """
     if value is not None:
         validate_int(value, name=name)
+
+
+def validate_range(
+    start: int | None,
+    stop: int | None,
+    step: int | None
+) -> None:
+    """Validate that start, stop, and step form a valid range.
+
+    Args:
+        start (int | None): The start of the range.
+        stop (int | None): The end of the range.
+        step (int | None): The step of the range.
+
+    Raises:
+        TypeError: If ``start``, ``stop``, or ``step`` is not an
+            integer or None.
+        ValueError: If ``step`` is zero.
+    """
+    validate_optional_int(start, "start")
+    validate_optional_int(stop, "stop")
+    validate_optional_int(step, "step")
+    if step is not None and step == 0:
+        raise ValueError(f"step ({step}) cannot be zero")
