@@ -794,3 +794,56 @@ should govern the result — neither one's subtype survives regardless.
 This is consistent with `NumericSequence`'s arithmetic, which never
 routes through `self.combine()`/`self.map()` for its own construction
 and therefore has no reason to override either.
+
+------------------------------------------------------------------------
+
+### `_rule_factory()`: deriving rules for transformed sequences
+
+**Motivation**
+
+`Sequence` represents a sequence solely by its evaluation rule. Most
+rules are ordinary stateless callables, but future subclasses may
+represent evaluation through callable objects carrying internal
+state — a recurrence, for example, may cache previously computed
+terms inside its rule object.
+
+Whenever a transformation derives a new sequence from an existing
+one, it must decide how the new sequence obtains its evaluation rule.
+For stateless rules, simply reusing the existing callable is correct.
+For stateful rules, however, sharing the same rule object would also
+share its internal state, allowing evaluation of one sequence to
+silently affect another.
+
+**Mechanism**
+
+`Sequence` provides the protected method `_rule_factory()`. Its
+contract is intentionally semantic rather than implementation
+specific: return an evaluation rule for a newly derived sequence that
+is behaviorally equivalent to the current rule, honoring the same
+`int -> T` calling contract as `self._rule`.
+
+The base implementation simply returns `self._rule`, since stateless
+rules require no further work. A subclass may override this method to
+supply an equivalent rule with whatever independence guarantees its
+own representation requires.
+
+Every site that reconstructs a sequence from an existing rule —
+`_resize()`, `subsequence()`, `shift_by()`, `tail()`, `_mapper()`, and
+`_combiner()` — obtains that rule through `self._rule_factory()`
+rather than referencing `self._rule` directly.
+
+**Consequences**
+
+This hook keeps `Sequence` agnostic to how a subclass represents
+evaluation, regardless of whether the reconstructed object is that
+subclass's own type or a plain `Sequence`. Stateless subclasses
+inherit the base implementation unchanged; a subclass with a stateful
+or non-trivial rule need only override `_rule_factory()`, without
+touching `_resize()`, `_reindex()`, or any transformation method built
+on top of them.
+
+The mechanism governs only how evaluation rules propagate between
+derived sequences. It does not determine the semantics of individual
+transformations. If a subclass requires a transformation to behave
+differently for mathematical reasons, it overrides that transformation
+directly.

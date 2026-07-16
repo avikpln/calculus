@@ -115,10 +115,16 @@ class Sequence(Generic[T], Iterable[T]):
         self._last_index = None if size is None else first_index + size - 1
         self._rule = rule
 
+    def _rule_factory(self) -> Callable[[int], T]:
+        # Return the rule used for sequence construction.
+
+        return self._rule
+
     def _resize(self, size: int | None) -> Sequence[T]:
         # Construct a new sequence of the same type with the given size.
 
-        return Sequence(self._rule, size=size, first_index=self.first_index)
+        rule = self._rule_factory()
+        return Sequence(rule, size=size, first_index=self.first_index)
 
     def _reindex(
         self,
@@ -349,13 +355,13 @@ class Sequence(Generic[T], Iterable[T]):
 
     def subsequence(
         self,
-        subrule: Callable[[int], int],
+        subfunc: Callable[[int], int],
         size: int | None = None,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
         Args:
-            subrule (Callable[[int], int]): A function that maps
+            subfunc (Callable[[int], int]): A function that maps
                 indices of the subsequence to indices of this
                 sequence.
             size (int | None): The size of the subsequence.
@@ -369,8 +375,9 @@ class Sequence(Generic[T], Iterable[T]):
             TypeError: If ``size`` is not None or an integer.
             ValueError: If ``size`` is negative.
         """
-        rule = lambda k: self._rule(subrule(k))
-        return self._reindex(rule, size)
+        rule = self._rule_factory()
+        subrule = lambda k: rule(subfunc(k))
+        return self._reindex(subrule, size)
 
 # -- UTILITY
 
@@ -440,8 +447,9 @@ class Sequence(Generic[T], Iterable[T]):
         # sequences, the shifted rule may be evaluated outside the
         # original domain.
         validate_int(offset, "offset")
-        rule = lambda n: self._rule(n + offset)
-        return self._reindex(rule, self.size)
+        rule = self._rule_factory()
+        new_rule = lambda n: rule(n + offset)
+        return self._reindex(new_rule, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
         """Shift the evaluation rule to a given index.
@@ -503,8 +511,9 @@ class Sequence(Generic[T], Iterable[T]):
         if self.finite:
             assert self.size is not None  # mypy
             size = min(size, self.size)
-        rule = lambda n: self._rule(n + self.size - size)
-        return self._reindex(rule, size)
+        rule = self._rule_factory()
+        new_rule = lambda n: rule(n + self.size - size)
+        return self._reindex(new_rule, size)
 
     @staticmethod
     def _mapper(
@@ -513,7 +522,8 @@ class Sequence(Generic[T], Iterable[T]):
     ) -> Callable[[int], U]:
         # Return the rule obtained by applying an operation to a rule.
 
-        return lambda n: op(seq._rule(n))
+        rule = seq._rule_factory()
+        return lambda n: op(rule(n))
 
     def map(self, op: Callable[[T], U]) -> Sequence[U]:
         """Return the sequence obtained by applying a unary operation.
@@ -547,14 +557,17 @@ class Sequence(Generic[T], Iterable[T]):
                     "different first index properties "
                     f"({first.first_index} != {second.first_index})"
                 )
-            rule = lambda n: op(first._rule(n), second._rule(n))
+            first_rule = first._rule_factory()
+            second_rule = second._rule_factory()
+            rule = lambda n: op(first_rule(n), second_rule(n))
             if second.size is not None:
                 size = (
                     second.size if first.size is None
                     else min(first.size, second.size)
                 )
         else:
-            rule = lambda n: op(first._rule(n), second)
+            first_rule = first._rule_factory()
+            rule = lambda n: op(first_rule(n), second)
         return rule, size
 
     @overload
