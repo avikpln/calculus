@@ -32,6 +32,8 @@ class NumericSequence(Sequence[Number]):
 
 # -- INITIALIZATION
 
+    __slots__ = ()
+
     def _resize(self, size: int | None) -> NumericSequence:
         # Construct a new sequence of the same type with the given size.
 
