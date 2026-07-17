@@ -183,6 +183,26 @@ repeated at every call site.
 
 ------------------------------------------------------------------------
 
+### Enforced `first_index=0` for `Recurrence`
+
+Unlike `Sequence` and `NumericSequence`, `Recurrence` does not expose
+`first_index` as a constructor parameter at all; it always constructs
+with `first_index=0`. This tightens the rationale above from a mere
+default into a hard constraint.
+
+The motivating use case for `first_index=0` and its associated
+negative indexing — predictable base cases and negative-offset
+lookups — is specific to `Recurrence`. A `Recurrence` built with
+`first_index=1` would have no clear meaning for the negative-offset
+lookups the design already depends on, so allowing it would only
+reintroduce an ambiguity the original restriction was meant to avoid.
+
+This constraint is specific to `Recurrence`; `Sequence` and
+`NumericSequence` continue to accept either value in
+`FIRST_INDEX_OPTIONS`, per the general rationale above.
+
+------------------------------------------------------------------------
+
 ### Three-argument `pow()` is not supported
 
 `__pow__` implements only the two-operand form of exponentiation
@@ -527,6 +547,28 @@ indirection layer with no remaining behavior of its own.
 
 ------------------------------------------------------------------------
 
+### `Recurrence._Rule` is not a revival of the removed `_Rule` wrapper
+
+`Recurrence` defines its own nested `_Rule` class. This is a distinct
+class from the `Sequence`-level `_Rule` wrapper documented as removed
+above, not a reversal of that decision.
+
+The original `_Rule` was removed because, once per-call `validate_int`
+was dropped, it did nothing beyond storing and invoking a callable —
+exactly what a plain function reference already does, making the
+indirection pointless.
+
+`Recurrence._Rule` exists for a different reason: it must cache
+previously computed terms so that evaluating a recurrence at large `n`
+doesn't recompute the entire sequence from the basis every call. This
+is genuine behavior a plain callable cannot express on its own, so the
+wrapper is justified here in a way the original never was. `_rule_factory()`
+constructs a fresh `_Rule` instance per derived sequence specifically so
+that this cache is never silently shared between a `Recurrence` and any
+sequence derived from it.
+
+------------------------------------------------------------------------
+
 ### Internal invariants
 
 Several methods contain assertions such as
@@ -794,3 +836,174 @@ should govern the result — neither one's subtype survives regardless.
 This is consistent with `NumericSequence`'s arithmetic, which never
 routes through `self.combine()`/`self.map()` for its own construction
 and therefore has no reason to override either.
+
+------------------------------------------------------------------------
+
+### `_rule_factory()`: deriving rules for transformed sequences
+
+**Motivation**
+
+`Sequence` represents a sequence solely by its evaluation rule. Most
+rules are ordinary stateless callables, but future subclasses may
+represent evaluation through callable objects carrying internal
+state — a recurrence, for example, may cache previously computed
+terms inside its rule object.
+
+Whenever a transformation derives a new sequence from an existing
+one, it must decide how the new sequence obtains its evaluation rule.
+For stateless rules, simply reusing the existing callable is correct.
+For stateful rules, however, sharing the same rule object would also
+share its internal state, allowing evaluation of one sequence to
+silently affect another.
+
+**Mechanism**
+
+`Sequence` provides the protected method `_rule_factory()`. Its
+contract is intentionally semantic rather than implementation
+specific: return an evaluation rule for a newly derived sequence that
+is behaviorally equivalent to the current rule, honoring the same
+`int -> T` calling contract as `self._rule`.
+
+The base implementation simply returns `self._rule`, since stateless
+rules require no further work. A subclass may override this method to
+supply an equivalent rule with whatever independence guarantees its
+own representation requires.
+
+Every site that reconstructs a sequence from an existing rule —
+`_resize()`, `subsequence()`, `shift_by()`, `tail()`, `_mapper()`, and
+`_combiner()` — obtains that rule through `self._rule_factory()`
+rather than referencing `self._rule` directly.
+
+**Consequences**
+
+This hook keeps `Sequence` agnostic to how a subclass represents
+evaluation, regardless of whether the reconstructed object is that
+subclass's own type or a plain `Sequence`. Stateless subclasses
+inherit the base implementation unchanged; a subclass with a stateful
+or non-trivial rule need only override `_rule_factory()`, without
+touching `_resize()`, `_reindex()`, or any transformation method built
+on top of them.
+
+The mechanism governs only how evaluation rules propagate between
+derived sequences. It does not determine the semantics of individual
+transformations. If a subclass requires a transformation to behave
+differently for mathematical reasons, it overrides that transformation
+directly.
+
+------------------------------------------------------------------------
+
+### Overriding _resize/_rule_factory is optional but not free
+
+Neither `_resize()` nor `_rule_factory()` is enforced as mandatory for
+subclasses to override. A subclass author who forgets to override
+`_resize()` gets no error: `head()`/`tail()` will simply return a
+plain `Sequence` instead of the subclass's own type, silently losing
+the subclass's methods. Similarly, forgetting to override
+`_rule_factory()` on a subclass with a stateful rule silently shares
+that state between the original and derived sequences instead of
+giving each its own.
+
+**Considered: `type(self) is not Sequence` check inside
+`Sequence._resize()`.** Raising `NotImplementedError` whenever
+`_resize()` runs on any subclass that hasn't overridden it would catch
+the mistake the first time `head()`/`tail()` is actually called.
+Rejected as the primary mechanism because it only fires at call time,
+not at class-definition time, and it does not address
+`_rule_factory()`, which has no comparable "identity" instance
+attached to it and cannot be checked the same way.
+
+**Considered: `__init_subclass__` enforcement.** Requiring every
+`Sequence` subclass to define `_resize()` (or `_rule_factory()`) via
+`__init_subclass__` would catch the omission immediately, at class
+definition, before any instance is even created — a strictly earlier
+and louder failure than the call-time check above. Rejected because it
+would force every future subclass to override these methods even in
+the (currently only hypothetical) case where a subclass is genuinely
+content with plain-`Sequence` behavior, contradicting the project's
+general preference for conventions enforced through documentation and
+tests rather than structural runtime machinery.
+
+**Decision.** No enforcement mechanism is added. Subclass authors are
+expected to read the inline comments on `_resize()` and
+`_rule_factory()` (see `sequence.py`) describing the consequence of
+not overriding them, and existing tests such as
+`test_head_preserves_numeric_subtype` are the intended guardrail for
+each concrete subclass.
+
+------------------------------------------------------------------------
+
+### `Recurrence` does not override `shift_by()`, `tail()`, or `subsequence()`
+
+`Recurrence` inherits these methods unchanged from `Sequence`. Since
+`Recurrence` does not override `_reindex()`, all three fall through to
+`Sequence._reindex()` and return a plain `Sequence`, not a `Recurrence`.
+
+This is intentional, not an oversight, and follows directly from the
+preserving/non-preserving classification established earlier: `head()`
+is a preserving method (same rule, smaller size), so `_resize()` is
+overridden to keep returning a `Recurrence`. `shift_by()`, `tail()`, and
+`subsequence()` are reindexing methods — they evaluate the original
+rule at *different* indices — and an arbitrarily reindexed recurrence
+rule is not, in general, itself expressible as some recursion with some
+basis. Degrading to `Sequence` is therefore correct: `Recurrence`
+correctly relies on the inherited `Sequence._reindex()` fallback here,
+rather than needing an override of its own (see the "Redesign: subtype
+preservation" note above).
+
+The degraded `Sequence` remains fully correct to iterate: it is backed
+by the same `Recurrence._Rule` instance (via `_rule_factory()`,
+freshly constructed per derived sequence, so no cache-sharing occurs),
+which computes values identically regardless of the wrapper class
+calling it. A caller who only iterates forward may never notice the
+type change.
+
+**Future work.** Reconstructing a `Recurrence` for these cases
+is possible in principle (the reindexing is simple enough algebraically
+for `shift_by` and `tail`, and for `subsequence` when the subfunc is
+affine with a positive integer step), but was left unimplemented since
+no concrete use case has required it yet, consistent with the
+project's general preference for avoiding speculative infrastructure.
+Revisit once a use case appears, and prefer overriding `_reindex()`
+directly rather than each of `shift_by()`/`tail()`/`subsequence()`
+individually, keeping the override at the same architectural layer as
+`_resize()`.
+
+------------------------------------------------------------------------
+
+### Recurrence rule caching: single-slot vs. windowed
+
+Recurrence._Rule caches only a single position: the order
+consecutive values immediately preceding the most recently computed
+index, not a longer history.
+
+**Why a non-consecutive (sparse) cache was rejected.** Storing
+scattered previously-computed points, rather than one consecutive
+position, would let arbitrary jumps between distant indices stay
+partly cheap. This was rejected: it requires an eviction policy (which
+points to keep as memory grows), a lookup structure to find the
+nearest usable point below a queried index, and reasoning about
+staleness across multiple disjoint basis windows. For a
+general-purpose library with no visibility into callers' actual access
+patterns, this complexity was judged disproportionate to the benefit.
+
+**Why a sliding window cache is also problematic.** A wider but still
+consecutive window (e.g. the last 1024 computed values instead of just
+`order`) was also considered. Advancing such a window remains O(1) per
+step, so it does not change the asymptotic cost of forward iteration.
+However, it does not remove the fundamental cliff between "cheap" and
+"expensive" backward queries — it only pushes that cliff further back.
+A query one step behind the window's edge is exactly as expensive as a
+query one step behind the current single-slot cache: both require a
+full restart from `self.basis`. Choosing a window size is therefore a
+judgment call with no clearly correct answer, since it only changes
+where the cliff sits, not whether one exists.
+
+**Decision.** Start with the simplest possible cache: exactly `order`
+consecutive values, advanced one step at a time. This has no eviction
+policy to design, no window size to choose, and covers the primary use
+case (forward iteration) with minimal complexity. Backward queries
+always restart from `self.basis`, which is a known and accepted
+limitation, consistent with the library's existing forward-only
+philosophy (see "Forward-only iteration" above). This can be revisited
+if concrete usage patterns later show frequent backward or jumping
+access.

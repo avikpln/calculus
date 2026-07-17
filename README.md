@@ -11,14 +11,15 @@ The Calculus package aims to provide a collection of reusable
 abstractions for discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]`
-abstraction together with the specialized `NumericSequence` subclass,
-serving as the foundation for future components such as recurrences,
-series, and function abstractions.
+abstraction together with the specialized `NumericSequence` and
+`Recurrence` subclasses, serving as the foundation for future
+components such as series and function abstractions.
 
 ## Features
 
 -   Generic `Sequence[T]` implementation.
 -   `NumericSequence` with element-wise arithmetic.
+-   `Recurrence` for sequences defined by recursive relations.
 -   Finite and infinite sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
@@ -56,8 +57,10 @@ pip install -r requirements-dev.txt
 ├── calculus
 │   ├── __init__.py                   # Package public API
 │   ├── numeric_sequence.py           # NumericSequence implementation
+│   ├── recurrence.py                 # Recurrence implementation
 │   ├── sequence.py                   # Generic Sequence implementation
 │   ├── test_numeric_sequence.py      # Pytest test suite
+│   ├── test_recurrence.py            # Pytest test suite
 │   ├── test_sequence.py              # Pytest test suite
 │   └── utils.py                      # Shared validation helpers
 ├── .gitignore
@@ -71,6 +74,8 @@ pip install -r requirements-dev.txt
 ```
 
 ## Example
+
+### NumericSequence
 
 ```python
 from calculus import NumericSequence
@@ -105,6 +110,18 @@ print((squares * evens).head(5))
 nonnegints = NumericSequence(lambda n: n, first_index=0)
 print(2 ** nonnegints)
 # ⟨1, 2, 4, 8, 16, ...⟩
+```
+
+### Recurrence
+
+```python
+from calculus import Recurrence
+
+# Fibonacci sequence: each term is the sum of the two before it.
+fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
+
+print(fib.head(8))
+# ⟨0, 1, 1, 2, 3, 5, 8, 13⟩
 ```
 
 ## Development

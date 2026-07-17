@@ -35,9 +35,8 @@ class NumericSequence(Sequence[Number]):
     def _resize(self, size: int | None) -> NumericSequence:
         # Construct a new sequence of the same type with the given size.
 
-        return NumericSequence(
-            self._rule, size=size, first_index=self.first_index
-        )
+        rule = self._rule_factory()
+        return NumericSequence(rule, size=size, first_index=self.first_index)
 
     def _reindex(
         self,
