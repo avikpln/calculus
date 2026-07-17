@@ -148,3 +148,18 @@ def test_rule_factory_produces_independent_caches() -> None:
     second = fib.shift_by(0)
     assert first._rule is not second._rule
     assert first[20] == second[20]
+
+# -- SPECIAL RECURRENCES
+
+def test_von_neumann() -> None:
+    seq = Recurrence.von_neumann()
+    assert tuple(seq.head(4)) == (
+        "\N{EMPTY SET}",
+        "{\N{EMPTY SET}}",
+        "{\N{EMPTY SET}, {\N{EMPTY SET}}}",
+        "{\N{EMPTY SET}, {\N{EMPTY SET}}, {\N{EMPTY SET}, {\N{EMPTY SET}}}}",
+    )
+
+def test_look_and_say() -> None:
+    seq = Recurrence.look_and_say()
+    assert tuple(seq.head(6)) == ("1", "11", "21", "1211", "111221", "312211")
