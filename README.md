@@ -141,6 +141,17 @@ print((fib + 1).head(8))
 
 print((-fib).head(8))
 # ⟨0, -1, -1, -2, -3, -5, -8, -13⟩
+
+# Babylonian method sequence approximating the real-valued square root
+# of 2. Formula: x_{n+1} = 0.5 * (x_n + 2 / x_n) starting with an
+# initial guess of 2.0.
+babylonian_sqrt2 = NumericRecurrence(
+    lambda n, a: 0.5 * (a[-1] + 2.0 / a[-1]),
+    basis=(2.0,)
+)
+
+print(babylonian_sqrt2.head(5))
+# ⟨2.0, 1.5, 1.4166666666666665, 1.4142156862745097, 1.4142135623746899⟩
 ```
 
 ## Development

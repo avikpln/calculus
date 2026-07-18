@@ -51,3 +51,57 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
         # Construct a new numeric recurrence of the given rule and size.
 
         return NumericSequence._reindex(self, rule, size)
+
+# -- SPECIAL RECURRENCES
+
+    @staticmethod
+    def fibonacci() -> NumericRecurrence:
+        """Return the Fibonacci sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        sum of the two preceding terms, beginning with 0 and 1.
+
+        Returns:
+            NumericRecurrence: The Fibonacci sequence.
+        """
+        return NumericRecurrence(lambda n, a: a[-1] + a[-2], (0, 1))
+
+    @staticmethod
+    def factorial() -> NumericRecurrence:
+        """Return the factorial sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        product of all positive integers up to its index that share its
+        parity.
+
+        Returns:
+            NumericRecurrence: The factorial sequence.
+        """
+        return NumericRecurrence(lambda n, a: n * a[-1], (1,))
+
+    @staticmethod
+    def double_factorial() -> NumericRecurrence:
+        """Return the double factorial sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        product of all positive integers up to its index that share its
+        parity.
+
+        Returns:
+            NumericRecurrence: The double factorial sequence.
+        """
+        return NumericRecurrence(lambda n, a: n * a[-2], (1,1))
+
+    @staticmethod
+    def catalan() -> NumericRecurrence:
+        """Return the Catalan number sequence.
+
+        The result is a fixed, infinite sequence of the Catalan numbers,
+        which count structures such as balanced bracket sequences and
+        binary tree shapes.
+
+        Returns:
+            NumericRecurrence: The catalan number sequence.
+        """
+        func = lambda n, a: a[-1] * 2*(2*n-1) // (n+1)
+        return NumericRecurrence(func, (1,))

@@ -81,3 +81,25 @@ def test_rule_factory_produces_independent_caches() -> None:
     second = fib.shift_by(0)
     assert first._rule is not second._rule
     assert first[20] == second[20]
+
+
+# -- SPECIAL RECURRENCES
+
+def test_fibonacci() -> None:
+    seq = NumericRecurrence.fibonacci()
+    assert tuple(seq.head(8)) == (0, 1, 1, 2, 3, 5, 8, 13)
+
+
+def test_factorial() -> None:
+    seq = NumericRecurrence.factorial()
+    assert tuple(seq.head(6)) == (1, 1, 2, 6, 24, 120)
+
+
+def test_double_factorial() -> None:
+    seq = NumericRecurrence.double_factorial()
+    assert tuple(seq.head(6)) == (1, 1, 2, 3, 8, 15)
+
+
+def test_catalan() -> None:
+    seq = NumericRecurrence.catalan()
+    assert tuple(seq.head(6)) == (1, 1, 2, 5, 14, 42)
