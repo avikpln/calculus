@@ -20,6 +20,8 @@ components such as series and function abstractions.
 -   Generic `Sequence[T]` implementation.
 -   `NumericSequence` with element-wise arithmetic.
 -   `Recurrence` for sequences defined by recursive relations.
+-   `NumericRecurrence` combining numeric arithmetic with recursively
+    defined elements.
 -   Finite and infinite sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
@@ -56,9 +58,11 @@ pip install -r requirements-dev.txt
 │       └── ci.yml                    # GitHub Actions CI workflow
 ├── calculus
 │   ├── __init__.py                   # Package public API
+│   ├── numeric_recurrence.py         # NumericRecurrence implementation
 │   ├── numeric_sequence.py           # NumericSequence implementation
 │   ├── recurrence.py                 # Recurrence implementation
 │   ├── sequence.py                   # Generic Sequence implementation
+│   ├── test_numeric_recurrence.py    # Pytest test suite
 │   ├── test_numeric_sequence.py      # Pytest test suite
 │   ├── test_recurrence.py            # Pytest test suite
 │   ├── test_sequence.py              # Pytest test suite
@@ -122,6 +126,21 @@ fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
 
 print(fib.head(8))
 # ⟨0, 1, 1, 2, 3, 5, 8, 13⟩
+```
+
+### NumericRecurrence
+
+```python
+from calculus import NumericRecurrence
+
+# Fibonacci sequence, with arithmetic operations available directly.
+fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
+
+print((fib + 1).head(8))
+# ⟨1, 2, 2, 3, 4, 6, 9, 14⟩
+
+print((-fib).head(8))
+# ⟨0, -1, -1, -2, -3, -5, -8, -13⟩
 ```
 
 ## Development

@@ -1007,3 +1007,56 @@ limitation, consistent with the library's existing forward-only
 philosophy (see "Forward-only iteration" above). This can be revisited
 if concrete usage patterns later show frequent backward or jumping
 access.
+
+------------------------------------------------------------------------
+
+### NumericRecurrence: explicit method resolution over MRO reliance
+
+`NumericRecurrence(Recurrence, NumericSequence)` overrides `_resize()`,
+`_reindex()`, and `_rule_factory()` explicitly, rather than leaving
+any of them to fall through the MRO implicitly.
+
+Base order matters here beyond arithmetic vs. recursion precedence:
+`Recurrence.__init__` is the one that accepts `(func, basis, size)`
+and enforces `first_index=0`; `NumericSequence` defines no `__init__`
+override and would otherwise leave `Sequence.__init__` (which has no
+`basis` parameter) resolved first. `Recurrence` must therefore come
+first in the base list for construction to work at all.
+
+`_resize()` must be overridden regardless, since it is the one method
+responsible for naming the concrete return type (`NumericRecurrence`).
+
+`_reindex()` and `_rule_factory()` are more subtle. With `Recurrence`
+first, MRO resolution alone already produces the desired behavior:
+`_rule_factory()` resolves to `Recurrence`'s version (which `Recurrence`
+overrides, giving the caching implementation that avoids cache-sharing
+between derived sequences), and `_reindex()` resolves to
+`NumericSequence`'s version (since `Recurrence` does not override it,
+falling through to the next class in the MRO that does). But this
+correctness depends entirely on two things that aren't guaranteed to
+stay true: the declared base class order in
+`class NumericRecurrence(Recurrence, NumericSequence)`, and the
+current absence of a `_reindex()` override on `Recurrence` itself.
+Either could change for reasons unrelated to `NumericRecurrence` — a
+future maintainer reordering bases, or `Recurrence` someday gaining its
+own `_reindex()` override — and `NumericRecurrence` would silently pick
+up the wrong parent's behavior with no error, only wrong values or
+shared cache state discovered later.
+
+**Decision.** Both methods are overridden explicitly, each calling the
+intended parent's implementation directly by name:
+
+```python
+def _reindex(self, rule, size=None):
+    return NumericSequence._reindex(self, rule, size)
+
+def _rule_factory(self):
+    return Recurrence._rule_factory(self)
+```
+
+This costs two trivial methods but removes any dependency on MRO
+ordering or on a parent class's current (but not contractually
+guaranteed) lack of an override. It also documents intent directly:
+each override states, in code, which parent governs which behavior,
+rather than requiring a reader to reconstruct that from the class
+declaration and both parents' current implementations.
