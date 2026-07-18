@@ -157,7 +157,8 @@ motivating use case is `Recurrence`, which defaults to `first_index=0`
 so that base cases and negative-offset lookups behave predictably.
 
 `first_index` remains immutable, and every operation deriving a new
-sequence continues to preserve the original `first_index`.
+sequence (i.e. constructing a new sequence based on the rule of an
+existing one) continues to preserve the original `first_index`.
 
 **Considered alternative: `one_indexed: bool`.** Replacing the public
 `first_index: int` parameter with a boolean `one_indexed` was
@@ -602,14 +603,7 @@ The resulting mypy errors are silenced with localized, documented
 `# type: ignore[operator]` comments on each affected line.
 
 ------------------------------------------------------------------------
-Remove incorrect mixin decision from NOTES.md
 
-Corrects NOTES.md, which recorded that NumericRecurrence adopts single
-single inheritance from NumericSequence, reimplementing recursion
-internally to avoid a diamond with Recurrence. This misstates the
-actual decision: the diamond inheritance from both Recurrence and
-NumericSequence was accepted as conceptually sound and adopted
-directly, not avoided.
 ### Reversing the mixin decision
 
 The mixin-based arithmetic design, previously used for
@@ -813,17 +807,10 @@ that needs non-default behavior for `_reindex()` overrides it directly
 with its own literal target, rather than relying on `self`/`super()`
 semantics to route the call correctly.
 
-`map()` and `combine()` remain outside this mechanism entirely: since
-they always return a plain `Sequence`, there is no subtype to
-preserve and no call to `_resize()` or `_reindex()` to make. This is
-consistent with `NumericSequence`'s arithmetic, which never routes
-through `self.combine()`/`self.map()` for its own construction and
-therefore has no reason to override either.
-
 **<u>Consequences</u>**
 
 `_resize()` and `_reindex()` are intentionally **only factories**. They
-construct an object once the necessary data has already been derived;
+construct an object once the necessary data has already been produced;
 they never perform representation-specific mathematics themselves.
 That responsibility belongs to the transformation methods (or subclass
 overrides of them) that call them.
@@ -839,7 +826,7 @@ and therefore has no reason to override either.
 
 ------------------------------------------------------------------------
 
-### `_rule_factory()`: deriving rules for transformed sequences
+### `_rule_factory()`: producing rules for transformed sequences
 
 **Motivation**
 
