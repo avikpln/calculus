@@ -124,6 +124,8 @@ class Recurrence(Sequence[R]):
 
         super().__init__(rule, size=size, first_index=0)
 
+# -- FACTORY
+
     def _rule_factory(self) -> Callable[[int], R]:
         # Return the rule used for recurrence construction.
 

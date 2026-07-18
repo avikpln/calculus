@@ -34,6 +34,8 @@ class NumericSequence(Sequence[Number]):
 
     __slots__ = ()
 
+# -- FACTORY
+
     def _resize(self, size: int | None) -> NumericSequence:
         # Construct a new sequence of the same type with the given size.
 
@@ -341,7 +343,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y ** x)
 
-# -- SPECIAL SEQUENCES
+# -- SPECIAL NUMERIC SEQUENCES
 
     @staticmethod
     def constant(

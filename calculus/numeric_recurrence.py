@@ -33,6 +33,8 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
     __slots__ = ()
 
+# -- FACTORY
+
     def _rule_factory(self) -> Callable[[int], Number]:
         # Return the rule used for numeric recurrence construction.
 
@@ -52,7 +54,7 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
         return NumericSequence._reindex(self, rule, size)
 
-# -- SPECIAL RECURRENCES
+# -- SPECIAL NUMERIC RECURRENCES
 
     @staticmethod
     def fibonacci() -> NumericRecurrence:

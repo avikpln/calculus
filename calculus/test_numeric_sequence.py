@@ -304,6 +304,7 @@ def test_head_preserves_numeric_subtype() -> None:
     assert isinstance(result, NumericSequence)
     assert list(result + 1) == [0, -3, -8, -15]
 
+
 # -- SPECIAL SEQUENCES
 
 def test_constant_returns_numeric_sequence() -> None:

@@ -115,6 +115,8 @@ class Sequence(Generic[T], Iterable[T]):
         self._last_index = None if size is None else first_index + size - 1
         self._rule = rule
 
+# -- FACTORY
+
     def _rule_factory(self) -> Callable[[int], T]:
         # Return the rule used for sequence construction.
         #
