@@ -1,10 +1,10 @@
-"""Numeric abstractions for finite and infinite sequences.
+"""Infinite numeric sequences with element-wise arithmetic.
 
-This module extends the generic Sequence abstraction with support for
-numeric sequences and element-wise arithmetic operations.
+This module extends the generic Sequence class with support for numeric
+sequences and element-wise arithmetic operations.
 
 Classes:
-    NumericSequence: A finite or infinite sequence of numeric values.
+    NumericSequence: An infinite sequence of numeric values.
 """
 from __future__ import annotations
 

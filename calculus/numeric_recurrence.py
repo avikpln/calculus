@@ -1,4 +1,4 @@
-"""Numeric abstractions for finite and infinite recurrences.
+"""Infinite numeric sequences defined by recursion.
 
 This module combines NumericSequence and Recurrence to represent
 sequences that are both numeric and recursively defined.

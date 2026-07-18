@@ -1,6 +1,6 @@
-"""Recurrence-based abstraction for sequences defined by prior terms.
+"""Generic abstraction for infinite recurrences.
 
-This module extends the generic Sequence abstraction with support for
+This module extends the generic Sequence class with support for
 sequences whose elements are computed recursively from earlier terms.
 
 Classes:

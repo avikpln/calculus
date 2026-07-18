@@ -2,8 +2,8 @@
 
 ![CI](https://github.com/avikpln/calculus/actions/workflows/ci.yml/badge.svg)
 
-A Python library for representing and manipulating finite and infinite
-sequences through lazy evaluation.
+A Python library for representing and manipulating infinite sequences
+through lazy evaluation.
 
 ## Vision
 
@@ -22,7 +22,7 @@ components such as series and function abstractions.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
     defined elements.
--   Finite and infinite sequences.
+-   Infinite (and finite) sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
 -   Element access and slicing.

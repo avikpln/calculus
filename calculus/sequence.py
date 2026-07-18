@@ -1,9 +1,9 @@
-"""Generic abstraction for finite and infinite sequences.
+"""Generic abstraction for infinite sequences.
 
 A Sequence maps indices to values through a lazy evaluation rule.
 
 Classes:
-    Sequence: A finite or infinite sequence of arbitrary objects.
+    Sequence: An infinite sequence of arbitrary objects.
 """
 from __future__ import annotations
 
