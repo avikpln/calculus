@@ -39,6 +39,9 @@ classDiagram
     }
 
     Sequence <|-- Recurrence
+
+    NumericSequence <|-- NumericRecurrence
+    Recurrence <|-- NumericRecurrence
 ```
 
 ## Notes
@@ -49,8 +52,5 @@ classDiagram
   listed individually, since enumerating all fourteen dunder
   methods would add noise without adding information; see
   `numeric_sequence.py` for the complete list.
-- `Recurrence` has been added as a single-inheritance subclass of
-  `Sequence`. The diagram will grow further to include
-  `NumericRecurrence` once implemented, at which point it will
-  also show the multiple inheritance relationship used by
-  `NumericRecurrence`.
+- NumericRecurrence inherits from both Recurrence and NumericSequence,
+  combining numeric arithmetic with recursively defined elements.

@@ -1,0 +1,107 @@
+"""Numeric abstractions for finite and infinite recurrences.
+
+This module combines NumericSequence and Recurrence to represent
+sequences that are both numeric and recursively defined.
+
+Classes:
+    NumericRecurrence: A numeric sequence whose elements are defined
+        recursively.
+"""
+from __future__ import annotations
+
+__all__ = ["NumericRecurrence"]
+__author__ = "Avi Kaplan"
+
+from collections.abc import Callable
+
+from .numeric_sequence import Number, NumericSequence
+from .recurrence import Recurrence
+
+#========================================================================
+# Numeric Recurrence {aₙ}
+#========================================================================
+
+class NumericRecurrence(Recurrence[Number], NumericSequence):
+    """A numeric sequence whose elements are computed from prior terms.
+
+    This subclass inherits all functionality from NumericSequence and
+    Recurrence, combining element-wise arithmetic operations with
+    recursively defined elements.
+    """
+
+# -- INITIALIZATION
+
+    __slots__ = ()
+
+    def _rule_factory(self) -> Callable[[int], Number]:
+        # Return the rule used for numeric recurrence construction.
+
+        return Recurrence._rule_factory(self)
+
+    def _resize(self, size: int | None) -> NumericRecurrence:
+        # Construct a new numeric recurrence of the given size.
+
+        return NumericRecurrence(self._func, self._basis, size=size)
+
+    def _reindex(
+        self,
+        rule: Callable[[int], Number] | None,
+        size: int | None = None,
+    ) -> NumericSequence:
+        # Construct a new numeric recurrence of the given rule and size.
+
+        return NumericSequence._reindex(self, rule, size)
+
+# -- SPECIAL RECURRENCES
+
+    @staticmethod
+    def fibonacci() -> NumericRecurrence:
+        """Return the Fibonacci sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        sum of the two preceding terms, beginning with 0 and 1.
+
+        Returns:
+            NumericRecurrence: The Fibonacci sequence.
+        """
+        return NumericRecurrence(lambda n, a: a[-1] + a[-2], (0, 1))
+
+    @staticmethod
+    def factorial() -> NumericRecurrence:
+        """Return the factorial sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        product of all positive integers up to its index that share its
+        parity.
+
+        Returns:
+            NumericRecurrence: The factorial sequence.
+        """
+        return NumericRecurrence(lambda n, a: n * a[-1], (1,))
+
+    @staticmethod
+    def double_factorial() -> NumericRecurrence:
+        """Return the double factorial sequence.
+
+        The result is a fixed, infinite sequence where each term is the
+        product of all positive integers up to its index that share its
+        parity.
+
+        Returns:
+            NumericRecurrence: The double factorial sequence.
+        """
+        return NumericRecurrence(lambda n, a: n * a[-2], (1,1))
+
+    @staticmethod
+    def catalan() -> NumericRecurrence:
+        """Return the Catalan number sequence.
+
+        The result is a fixed, infinite sequence of the Catalan numbers,
+        which count structures such as balanced bracket sequences and
+        binary tree shapes.
+
+        Returns:
+            NumericRecurrence: The catalan number sequence.
+        """
+        func = lambda n, a: a[-1] * 2*(2*n-1) // (n+1)
+        return NumericRecurrence(func, (1,))
