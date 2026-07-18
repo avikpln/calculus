@@ -17,9 +17,9 @@ from collections.abc import Callable
 from .numeric_sequence import Number, NumericSequence
 from .recurrence import Recurrence
 
-#========================================================================
+#=======================================================================
 # Numeric Recurrence {aₙ}
-#========================================================================
+#=======================================================================
 
 class NumericRecurrence(Recurrence[Number], NumericSequence):
     """A numeric sequence whose elements are computed from prior terms.

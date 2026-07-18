@@ -30,9 +30,9 @@ _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
 _RIGHT_SEQUENCE_BRACKET = "\N{mathematical right angle bracket}"
 _INFINITY_SYMBOL = "\N{infinity}"
 
-#========================================================================
+#=======================================================================
 # Sequence {aₙ}
-#========================================================================
+#=======================================================================
 
 class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences of objects.

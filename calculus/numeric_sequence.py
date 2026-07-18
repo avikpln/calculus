@@ -18,9 +18,9 @@ from .sequence import Sequence
 # A type for representing a number.
 Number = int | float | complex
 
-#========================================================================
+#=======================================================================
 # Numeric Sequence {aₙ}
-#========================================================================
+#=======================================================================
 
 class NumericSequence(Sequence[Number]):
     """A sequence whose elements are numeric values.
