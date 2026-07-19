@@ -344,11 +344,14 @@ class Sequence(Generic[T], Iterable[T]):
                 return self._rule(index)
             # Allow Python-style negative indexing for finite sequences
             # starting at index 0.
-            if self.first_index == 0 and -(self.last_index + 1) <= index < 0:
-                return self._rule(index + self.last_index + 1)
+            effective_first_index = self.first_index
+            if self.first_index == 0:
+                effective_first_index = -(self.last_index + 1)
+                if effective_first_index <= index < 0:
+                    return self._rule(index - effective_first_index)
             raise IndexError(
                 f"index {index} is out of range "
-                f"[{self.first_index}, {self.last_index}]"
+                f"[{effective_first_index}, {self.last_index}]"
             )
         else:
             if self.first_index <= index:
