@@ -48,20 +48,26 @@ class Sequence(Generic[T], Iterable[T]):
             if infinite).
 
     Methods:
-        subsequence(subrule, size):
-            Construct a subsequence by reindexing the current sequence.
+        combine(other, op):
+            Apply a binary operation element-wise.
+        constant(value, size, first_index):
+            Return a constant sequence.
+        from_iterable(iterable, first_index):
+            Return a sequence from an iterable.
+        head(size):
+            Return the first elements of the sequence.
+        map(op):
+            Apply a unary operation element-wise.
         shift_by(offset):
             Shift the evaluation rule by a fixed offset.
         shift_to(where):
             Shift the evaluation rule to a given starting index.
-        head(size):
-            Return the first elements of the sequence.
+        subiter(start, stop, step):
+            Return an iterator over a subsequence.
+        subsequence(subrule, size):
+            Construct a subsequence by reindexing the current sequence.
         tail(size):
             Return the last elements of a finite sequence.
-        map(op):
-            Apply a unary operation element-wise.
-        combine(other, op):
-            Apply a binary operation element-wise.
     """
 
 # -- INITIALIZATION

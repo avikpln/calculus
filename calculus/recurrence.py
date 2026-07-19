@@ -33,6 +33,12 @@ class Recurrence(Sequence[T]):
     This subclass inherits all functionality from Sequence. Each element
     is computed from a fixed number of preceding elements via a transition
     function, seeded by a set of initial base cases.
+
+    Methods:
+        look_and_say():
+            Return the Look-and-Say sequence by John Horton Conway.
+        von_neumann():
+            Return the Von Neumann ordinals sequence.
     """
 
     class _Rule:
@@ -99,8 +105,8 @@ class Recurrence(Sequence[T]):
 
         Args:
             func (Callable[[int, tuple[T,...]], T]): The transition
-                function computing a term from its index and the
-                preceding basis-many terms.
+                function computing the next term from its index and
+                a fixed number of preceding terms.
             basis (Iterable[T]): The initial base case values.
             size (int | None): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.

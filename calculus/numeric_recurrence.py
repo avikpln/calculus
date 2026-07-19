@@ -27,6 +27,16 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
     This subclass inherits all functionality from NumericSequence and
     Recurrence, combining element-wise arithmetic operations with
     recursively defined elements.
+
+    Methods:
+        catalan():
+            Return the Catalan number sequence.
+        double_factorial():
+            Return the double factorial sequence.
+        factorial():
+            Return the factorial sequence.
+        fibonacci():
+            Return the Fibonacci sequence.
     """
 
 # -- INITIALIZATION
@@ -72,9 +82,8 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
     def factorial() -> NumericRecurrence:
         """Return the factorial sequence.
 
-        The result is a fixed, infinite sequence where each term is the
-        product of all positive integers up to its index that share its
-        parity.
+        The result is a fixed, infinite sequence where each term is
+        the product of all positive integers up to its index.
 
         Returns:
             NumericRecurrence: The factorial sequence.

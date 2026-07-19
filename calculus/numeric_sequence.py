@@ -28,6 +28,18 @@ class NumericSequence(Sequence[Number]):
     This subclass inherits all functionality from Sequence and extends
     it with element-wise arithmetic operations, exposed through the
     standard arithmetic operators.
+
+    Methods:
+        constant(value, size, first_index):
+            Return a constant numeric sequence.
+        from_iterable(iterable, first_index):
+            Return a numeric sequence from an iterable.
+        geometric(first_term, common_ratio, size, first_index):
+            Return a geometric sequence.
+        naturals(size, first_index):
+            Return the sequence of natural numbers.
+        progression(first_term, common_difference, size, first_index):
+            Return an arithmetic progression.
     """
 
 # -- INITIALIZATION
@@ -369,7 +381,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         return NumericSequence(
             Sequence._constant_rule(value), size=size, first_index=first_index,
@@ -396,7 +408,7 @@ class NumericSequence(Sequence[Number]):
         Raises:
             TypeError: If ``first_index`` is not an integer.
             ValueError: If ``first_index`` is not in
-                FIRST_INDEX_OPTIONS.
+                ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule, size = Sequence._iterable_rule(iterable, first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
@@ -423,7 +435,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         return NumericSequence(lambda n: n, size=size, first_index=first_index)
 
@@ -454,7 +466,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule = lambda n: first_term + common_difference*(n - first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
@@ -486,7 +498,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule = lambda n: first_term * common_ratio**(n - first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
