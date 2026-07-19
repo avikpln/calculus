@@ -99,6 +99,7 @@ When subclassing:
 
 -   Constructors eagerly validate values that establish object
     invariants.
+
 -   Transformation methods generally rely on lazy validation and EAFP
     semantics unless eager validation protects a core invariant.
 
