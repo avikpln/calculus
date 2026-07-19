@@ -357,8 +357,9 @@ class NumericSequence(Sequence[Number]):
         Args:
             value (Number): The constant value of each sequence element.
             size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence.
+                or None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             NumericSequence: A sequence whose elements are all equal to
@@ -386,6 +387,7 @@ class NumericSequence(Sequence[Number]):
             iterable (Iterable[Number]): The iterable providing the
                 sequence elements.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             NumericSequence: A finite numeric sequence containing the

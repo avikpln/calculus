@@ -639,8 +639,9 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             value (T): The constant value of each sequence element.
             size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence.
+                or None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             Sequence[T]: A sequence whose elements are all equal to
@@ -677,6 +678,7 @@ class Sequence(Generic[T], Iterable[T]):
             iterable (Iterable[T]): The iterable providing the sequence
                 elements.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             Sequence[T]: A finite sequence containing the elements of
