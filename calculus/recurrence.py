@@ -16,6 +16,7 @@ from typing import TypeVar, Any
 from collections import deque
 
 from .sequence import Sequence
+from .utils import validate_callable
 
 R = TypeVar("R")
 
@@ -109,8 +110,7 @@ class Recurrence(Sequence[R]):
                 not iterable.
             ValueError: If ``basis`` is empty.
         """
-        if not callable(func):
-            raise TypeError(f"'{type(func).__name__}' object is not callable")
+        validate_callable(func)
         if not isinstance(basis, Iterable):
             raise TypeError(f"'{type(basis).__name__}' object is not iterable")
         basis = tuple(basis)

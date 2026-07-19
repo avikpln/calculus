@@ -13,7 +13,7 @@ __author__ = "Avi Kaplan"
 from collections.abc import Callable, Generator, Iterable
 from typing import Generic, TypeVar, overload
 
-from .utils import validate_int, validate_range
+from .utils import validate_callable, validate_int, validate_range
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -94,9 +94,12 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         if rule is None:
-            rule = self._none  # type: ignore[assignment]
-        if not callable(rule):
-            raise TypeError(f"'{type(rule).__name__}' object is not callable")
+            resolved_rule : Callable[[int], T] = (
+                self._none  # type: ignore[assignment]
+            )
+        else:
+            validate_callable(rule)
+            resolved_rule  = rule
         if size is not None:
             validate_int(size, "size")
             if size < 0:
@@ -113,7 +116,7 @@ class Sequence(Generic[T], Iterable[T]):
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
-        self._rule = rule
+        self._rule = resolved_rule 
 
 # -- FACTORY
 

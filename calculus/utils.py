@@ -5,7 +5,25 @@ Functions:
     validate_optional_int: Validate int or None, rejecting booleans.
 """
 
-__all__ = ["validate_int", "validate_optional_int", "validate_range"]
+__all__ = [
+    "validate_callable",
+    "validate_int",
+    "validate_optional_int",
+    "validate_range",
+]
+
+
+def validate_callable(value: object) -> None:
+    """Validate that a value is callable.
+
+    Args:
+        value (object): The value to validate.
+
+    Raises:
+        TypeError: If ``value`` is not callable.
+    """
+    if not callable(value):
+        raise TypeError(f"'{type(value).__name__}' object is not callable")
 
 
 def validate_int(value: int, name: str = "value") -> None:
