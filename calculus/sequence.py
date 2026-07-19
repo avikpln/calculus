@@ -72,7 +72,7 @@ class Sequence(Generic[T], Iterable[T]):
 
 # -- INITIALIZATION
 
-    __slots__ = ("_size", "_first_index", "_last_index", "_rule")
+    __slots__ = ("_first_index", "_last_index", "_rule", "_size")
 
     @staticmethod
     def _none(n: int) -> None:

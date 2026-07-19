@@ -44,7 +44,7 @@ class Recurrence(Sequence[T]):
     class _Rule:
         # Callable recurrence rule, caching prior terms as it advances.
 
-        __slots__ = ("func", "basis", "order", "cache")
+        __slots__ = ("basis", "cache", "func", "order")
 
         def __init__(
             self,
@@ -93,7 +93,7 @@ class Recurrence(Sequence[T]):
 
 # -- INITIALIZATION
 
-    __slots__ = ("_func", "_basis", "_order")
+    __slots__ = ("_basis", "_func", "_order")
 
     def __init__(
         self,
