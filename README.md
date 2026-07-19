@@ -27,7 +27,7 @@ components such as series and function abstractions.
 -   Arbitrary starting indices.
 -   Element access and slicing.
 -   Forward iteration over subsequences.
--   Sequence transformations (`map`, `combine`, `shift_by`, `shift_to`).
+-   `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
 -   Factory methods for constant sequences and sequences built from
     iterables.
 -   Fully type-annotated (`mypy --strict`).
@@ -79,7 +79,7 @@ pip install -r requirements-dev.txt
 
 ## Example
 
-### NumericSequence
+### `NumericSequence`
 
 ```python
 from calculus import NumericSequence
@@ -116,7 +116,7 @@ print(2 ** nonnegints)
 # ⟨1, 2, 4, 8, 16, ...⟩
 ```
 
-### Recurrence
+### `Recurrence`
 
 ```python
 from calculus import Recurrence
@@ -128,7 +128,7 @@ print(fib.head(8))
 # ⟨0, 1, 1, 2, 3, 5, 8, 13⟩
 ```
 
-### NumericRecurrence
+### `NumericRecurrence`
 
 ```python
 from calculus import NumericRecurrence

@@ -52,5 +52,5 @@ classDiagram
   listed individually, since enumerating all fourteen dunder
   methods would add noise without adding information; see
   `numeric_sequence.py` for the complete list.
-- NumericRecurrence inherits from both Recurrence and NumericSequence,
+- `NumericRecurrence` inherits from both `Recurrence` and `NumericSequence`,
   combining numeric arithmetic with recursively defined elements.

@@ -213,7 +213,7 @@ exponentiation.
 
 This is a deliberate omission, not an oversight: `**` alone only
 ever calls `__pow__(self, other)`, never the three-argument form,
-so no code path in NumericSequence currently reaches it. Supporting
+so no code path in `NumericSequence` currently reaches it. Supporting
 it properly would require accepting an optional third operand
 across `_binary()`, which is designed for strictly binary
 operations, and modular exponentiation is a specialized numeric
@@ -221,7 +221,7 @@ technique of unclear relevance to a general-purpose sequence
 library.
 
 If a concrete use case emerges, this can be revisited; until then,
-NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
+`NumericSequence` relies on Python's own `TypeError` for `pow(seq, y, m)`
 calls, consistent with the project's EAFP philosophy elsewhere.
 
 ------------------------------------------------------------------------
@@ -371,12 +371,12 @@ current type checkers not being able to infer such invariants is
 never in itself a reason to make an assertion.
 
 **Considered alternative: exposing `binary()`/`unary()`.** Making
-NumericSequence's `_binary()`/`_unary()` public was considered, so
+`NumericSequence`'s `_binary()`/`_unary()` public was considered, so
 that each of the 14 arithmetic dunders could visibly own the
 first_index validation at a true public entry point. This was
 rejected once the ownership question was reframed around caller
 agreement rather than public/private visibility: since every current
-caller of `_combiner()` (`combine()` and all of NumericSequence's
+caller of `_combiner()` (`combine()` and all of `NumericSequence`'s
 dunders via `_binary()`) wants identical first_index behavior, no
 caller-specific validation is actually needed, and exposing
 `binary()`/`unary()` would have added public surface area for no
@@ -597,7 +597,7 @@ private helper properties that establish the invariant in one place.
 `__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
 which includes `complex`, even though `//` and `%` are undefined for
 complex numbers. This mirrors the project's EAFP philosophy already
-used for zero-division: Python's own TypeError at runtime is the
+used for zero-division: Python's own `TypeError` at runtime is the
 enforcement mechanism, not eager static or runtime type-narrowing.
 The resulting mypy errors are silenced with localized, documented
 `# type: ignore[operator]` comments on each affected line.
@@ -879,7 +879,7 @@ directly.
 
 ------------------------------------------------------------------------
 
-### Overriding _resize/_rule_factory is optional but not free
+### Overriding `_resize`/`_rule_factory` is optional but not free
 
 Neither `_resize()` nor `_rule_factory()` is enforced as mandatory for
 subclasses to override. A subclass author who forgets to override
@@ -957,9 +957,9 @@ individually, keeping the override at the same architectural layer as
 
 ------------------------------------------------------------------------
 
-### Recurrence rule caching: single-slot vs. windowed
+### `Recurrence` rule caching: single-slot vs. windowed
 
-Recurrence._Rule caches only a single position: the order
+`Recurrence._Rule` caches only a single position: the order
 consecutive values immediately preceding the most recently computed
 index, not a longer history.
 
@@ -997,7 +997,7 @@ access.
 
 ------------------------------------------------------------------------
 
-### NumericRecurrence: explicit method resolution over MRO reliance
+### `NumericRecurrence`: explicit method resolution over MRO reliance
 
 `NumericRecurrence(Recurrence, NumericSequence)` overrides `_resize()`,
 `_reindex()`, and `_rule_factory()` explicitly, rather than leaving
