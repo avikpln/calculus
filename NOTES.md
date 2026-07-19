@@ -1,9 +1,9 @@
 # NOTES
 
-**Purpose.** This document records design decisions and implementation rationale for
-the `Sequence` library. It is intended as a long-term memory of *why*
-certain choices were made, especially when the obvious implementation
-was rejected.
+**Purpose.** This document records design decisions and implementation
+rationale for the `Sequence` library. It is intended as a long-term
+memory of *why* certain choices were made, especially when the obvious
+implementation was rejected.
 
 Only decisions that may influence future development belong here.
 
@@ -87,7 +87,7 @@ but classes such as `Recurrence` do not: `Recurrence` requires an
 additional `basis` argument, so `cls(rule, size, first_index)` would
 either raise `TypeError` or, worse, succeed in some degenerate form
 that only accidentally means what its class name suggests. This
-concern isn't hypothetical: `Recurrence(rule=lambda x: c, basis=(None,))`
+concern is real: `Recurrence(rule=lambda x: c, basis=(None,))`
 is a valid constructor call for a constant sequence-shaped
 `Recurrence`, so a naive `cls`-based factory could quietly hand back a
 technically-legal but conceptually vestigial `Recurrence` — a constant
@@ -356,10 +356,11 @@ This distinction is about ownership, not about where an exception
 happens to be physically raised. The deciding question is: do all
 current callers of the private method agree on what it should reject?
 
--   If every current caller wants identical behavior (e.g. `_combiner()`,
-    used identically by `combine()` and `NumericSequence`'s arithmetic
-    dunders; or `_index_sequence()`, which currently has one caller),
-    the check may live inside the private method itself.
+-   If every current caller wants identical behavior (e.g.
+    `_combiner()`, used identically by `combine()` and
+    `NumericSequence`'s arithmetic dunders; or `_index_sequence()`,
+    which currently has one caller), the check may live inside the
+    private method itself.
 -   If callers genuinely diverge (e.g. `subiter()` forbids both negative
     and zero step, while `__getitem__()`'s slice handling forbids only
     zero), no single private method can own the check correctly for
@@ -525,8 +526,8 @@ implemented using the following workflow:
      implementation notes in `NOTES.md`.
    - Avoid documenting routine implementation details.
 
-**IMPORTANT!** Run the project's verification tools **before committing**.
-Only commit once all checks pass.
+**IMPORTANT!** Run the project's verification tools
+**before committing**. Only commit once all checks pass.
 
 ## Implementation
 
@@ -563,10 +564,10 @@ indirection pointless.
 previously computed terms so that evaluating a recurrence at large `n`
 doesn't recompute the entire sequence from the basis every call. This
 is genuine behavior a plain callable cannot express on its own, so the
-wrapper is justified here in a way the original never was. `_rule_factory()`
-constructs a fresh `_Rule` instance per derived sequence specifically so
-that this cache is never silently shared between a `Recurrence` and any
-sequence derived from it.
+wrapper is justified here in a way the original never was.
+`_rule_factory()` constructs a fresh `_Rule` instance per derived
+sequence specifically so that this cache is never silently shared
+between a `Recurrence` and any sequence derived from it.
 
 ------------------------------------------------------------------------
 
@@ -680,9 +681,9 @@ architectural redesign.
 Override all methods in `NumericSequence` that return a `Sequence` so
 that they instead return a `NumericSequence`.
 
-**Rejected.** Although straightforward, this introduces a large amount of duplicated
-code, is difficult to maintain, and would require every future subclass
-to repeat the same pattern.
+**Rejected.** Although straightforward, this introduces a large amount
+of duplicated code, is difficult to maintain, and would require every
+future subclass to repeat the same pattern.
 
 **2. Preserve construction arguments**
 
@@ -698,19 +699,19 @@ return type(self)(
 )
 ```
 
-**Rejected.** This significantly reduces duplication, but still forces `Sequence` to
-know that reconstruction is performed by forwarding constructor
-arguments. The abstraction remains unnecessarily tied to one particular
-construction mechanism.
+**Rejected.** This significantly reduces duplication, but still forces
+`Sequence` to know that reconstruction is performed by forwarding
+constructor arguments. The abstraction remains unnecessarily tied to one
+particular construction mechanism.
 
 **3. Use decorators**
 
 Move the reconstruction logic into decorators applied to transformation
 methods.
 
-**Rejected.** Although technically feasible, decorators hide an important part of the
-control flow and make the implementation less explicit. The additional
-complexity is not justified.
+**Rejected.** Although technically feasible, decorators hide an
+important part of the control flow and make the implementation less
+explicit. The additional complexity is not justified.
 
 **4. Introduce protected factory methods**
 
@@ -719,11 +720,11 @@ result of transformations. Transformation methods simply delegate object
 creation to these hooks, while subclasses override them when additional
 construction state is required.
 
-**Current direction.** This keeps `Sequence` completely agnostic to subclass constructor
-signatures and delegates reconstruction to the subclass itself. The
-resulting design is simpler, more extensible, and avoids duplicated
-overrides while providing well-defined extension points for all
-future subclasses.
+**Current direction.** This keeps `Sequence` completely agnostic to
+subclass constructor signatures and delegates reconstruction to the
+subclass itself. The resulting design is simpler, more extensible, and
+avoids duplicated overrides while providing well-defined extension
+points for all future subclasses.
 
 **<u>Classifying Classes and Methods</u>**
 

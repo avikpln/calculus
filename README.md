@@ -27,7 +27,8 @@ components such as series and function abstractions.
 -   Arbitrary starting indices.
 -   Element access and slicing.
 -   Forward iteration over subsequences.
--   `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
+-   `Sequence` transformations (`map`, `combine`, `shift_by`,
+    `shift_to`).
 -   Factory methods for constant sequences and sequences built from
     iterables.
 -   Fully type-annotated (`mypy --strict`).
