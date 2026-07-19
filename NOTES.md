@@ -270,6 +270,14 @@ one method spelling out "progression" and the other not.
 
 ------------------------------------------------------------------------
 
+### Naming: `T` over `SequenceT`
+
+A descriptive name like `SequenceT` was considered for `T`. Not
+adopted: `Sequence` is a simple generic container, the same category
+as `list[T]`, where short names are the standard convention.
+
+------------------------------------------------------------------------
+
 ### Default `first_index` for `progression()` and `geometric()`
 
 `progression()` and `geometric()` default to `first_index=0`,

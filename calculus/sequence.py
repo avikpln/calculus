@@ -15,9 +15,12 @@ from typing import Generic, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
 
+# Type of sequence elements.
 T = TypeVar("T")
+# Type of other sequence elements.
 S = TypeVar("S")
-U = TypeVar("U")
+# Type of returned sequence elements.
+R = TypeVar("R")
 
 # The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
@@ -538,24 +541,24 @@ class Sequence(Generic[T], Iterable[T]):
     @staticmethod
     def _mapper(
         seq: Sequence[T],
-        op: Callable[[T], U],
-    ) -> Callable[[int], U]:
+        op: Callable[[T], R],
+    ) -> Callable[[int], R]:
         # Return the rule obtained by applying an operation to a rule.
 
         rule = seq._rule_factory()
         return lambda n: op(rule(n))
 
-    def map(self, op: Callable[[T], U]) -> Sequence[U]:
+    def map(self, op: Callable[[T], R]) -> Sequence[R]:
         """Return the sequence obtained by applying a unary operation.
 
         The returned sequence inherits the size and first index of the
         current sequence.
 
         Args:
-            op (Callable[[T], U]): The unary operation to apply.
+            op (Callable[[T], R]): The unary operation to apply.
 
         Returns:
-            Sequence[U]: The sequence obtained by applying op to each
+            Sequence[R]: The sequence obtained by applying op to each
                 element.
         """
         rule = self._mapper(self, op)
@@ -565,8 +568,8 @@ class Sequence(Generic[T], Iterable[T]):
     def _combiner(
         first: Sequence[T],
         second: S | Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> tuple[Callable[[int], U], int | None]:
+        op: Callable[[T, S], R],
+    ) -> tuple[Callable[[int], R], int | None]:
         # Return the rule and size defining the combined sequence.
 
         size = first.size
@@ -591,20 +594,20 @@ class Sequence(Generic[T], Iterable[T]):
         return rule, size
 
     @overload
-    def combine(self, other: S, op: Callable[[T, S], U]) -> Sequence[U]: ...
+    def combine(self, other: S, op: Callable[[T, S], R]) -> Sequence[R]: ...
 
     @overload
     def combine(
         self,
         other: Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> Sequence[U]: ...
+        op: Callable[[T, S], R],
+    ) -> Sequence[R]: ...
 
     def combine(
         self,
         other: S | Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> Sequence[U]:
+        op: Callable[[T, S], R],
+    ) -> Sequence[R]:
         """Combine this sequence with another sequence or scalar.
 
         The returned sequence preserves the first index of the current
@@ -613,10 +616,10 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             other (S | Sequence[S]): The sequence or scalar to combine
                 with the current sequence.
-            op (Callable[[T, S], U]): The binary operation to apply.
+            op (Callable[[T, S], R]): The binary operation to apply.
 
         Returns:
-            Sequence[U]: The sequence obtained by applying op
+            Sequence[R]: The sequence obtained by applying op
                 element-wise.
 
         Raises:
