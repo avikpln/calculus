@@ -118,7 +118,7 @@ class Sequence(Generic[T], Iterable[T]):
 # -- FACTORY
 
     def _rule_factory(self) -> Callable[[int], T]:
-        # Return the rule used for sequence construction.
+        # Produce the rule for a newly derived sequence.
         #
         # Subclasses with a stateful rule should override this method to
         # return an independent copy. Otherwise, derived sequences will
@@ -127,7 +127,7 @@ class Sequence(Generic[T], Iterable[T]):
         return self._rule
 
     def _resize(self, size: int | None) -> Sequence[T]:
-        # Construct a new sequence of the same type with the given size.
+        # Produce a new sequence of the same type and given size.
         #
         # Subclasses should override this method to return their own
         # type. If not overridden, the subclass silently gets a plain
@@ -141,7 +141,11 @@ class Sequence(Generic[T], Iterable[T]):
         rule: Callable[[int], T] | None,
         size: int | None = None,
     ) -> Sequence[T]:
-        # Construct a new sequence with the given rule and size.
+        # Produce a new sequence with the given rule and size.
+        #
+        # Subclasses may override this method to preserve their type
+        # when arbitrary reindexing preserves their invariants.
+        # Otherwise, returning a plain Sequence is correct.
 
         return Sequence(rule, size=size, first_index=self.first_index)
 

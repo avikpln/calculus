@@ -127,12 +127,12 @@ class Recurrence(Sequence[R]):
 # -- FACTORY
 
     def _rule_factory(self) -> Callable[[int], R]:
-        # Return the rule used for recurrence construction.
+        # Produce the rule for a newly derived sequence.
 
         return self._Rule(self._func, self._basis)
 
     def _resize(self, size: int | None) -> Recurrence[R]:
-        # Construct a new recurrence with the given rule and size.
+        # Produce a new sequence of the same type and given size.
 
         return Recurrence(self._func, self._basis, size=size)
 

@@ -36,12 +36,12 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 # -- FACTORY
 
     def _rule_factory(self) -> Callable[[int], Number]:
-        # Return the rule used for numeric recurrence construction.
+        # Produce the rule for a newly derived sequence.
 
         return Recurrence._rule_factory(self)
 
     def _resize(self, size: int | None) -> NumericRecurrence:
-        # Construct a new numeric recurrence of the given size.
+        # Produce a new sequence of the same type and given size.
 
         return NumericRecurrence(self._func, self._basis, size=size)
 
@@ -50,7 +50,7 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
         rule: Callable[[int], Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
-        # Construct a new numeric recurrence of the given rule and size.
+        # Produce a new sequence with the given rule and size.
 
         return NumericSequence._reindex(self, rule, size)
 

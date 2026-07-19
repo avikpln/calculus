@@ -37,7 +37,7 @@ class NumericSequence(Sequence[Number]):
 # -- FACTORY
 
     def _resize(self, size: int | None) -> NumericSequence:
-        # Construct a new sequence of the same type with the given size.
+        # Produce a new sequence of the same type and given size.
 
         rule = self._rule_factory()
         return NumericSequence(rule, size=size, first_index=self.first_index)
@@ -47,7 +47,7 @@ class NumericSequence(Sequence[Number]):
         rule: Callable[[int], Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
-        # Construct a new sequence with the given rule and size.
+        # Produce a new sequence with the given rule and size.
 
         return NumericSequence(rule, size=size, first_index=self.first_index)
 
