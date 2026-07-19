@@ -78,7 +78,24 @@ pip install -r requirements-dev.txt
 └── TODO.md                           # Planned enhancements
 ```
 
-## Example
+## Examples
+
+```python
+from calculus import Sequence
+
+# Infinite sequence of uppercase letters, cycling through the alphabet.
+alphabet = Sequence(lambda n: chr(65 + (n - 1) % 26))
+
+print(alphabet.head(5))
+# ⟨A, B, C, D, E⟩
+
+print(alphabet[30])
+# D
+
+# map() works for any element type, not just numbers.
+print(alphabet.map(str.lower).head(5))
+# ⟨a, b, c, d, e⟩
+```
 
 ### `NumericSequence`
 
