@@ -10,6 +10,14 @@
   approximation via `Series`), `integral.py` (Riemann-sum
   approximation sequences, Simpson, etc.).
 
+- Add an LRU cache to `Series._Rule`, replacing the initial single-slot
+  cache, to efficiently support out-of-order queries. See NOTES.md
+  ("`Series` rule caching: single-slot now, cache deferred") for the
+  design choices and open questions.
+
+- Allow `Recurrence` to optionally start from `first_index=1`, not just
+  the currently hard-enforced `0`.
+
 ## Testing
 
 - Add a unit test suite for `utils.py`.

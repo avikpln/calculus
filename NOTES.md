@@ -148,13 +148,12 @@ Supporting arbitrary starting points added complexity — an unbounded
 validation range, and a `combine()` mismatch check with no natural
 "correct" resolution — without a corresponding benefit.
 
-Restricting to two values also clarifies negative indexing, which
-remains gated on `first_index == 0`. This is deliberate, not an
-oversight: negative indexing (`seq[-1]`) is a zero-based convention
-inherited from Python sequences, and has no natural meaning for
-one-indexed sequences. It is not offered as a general feature; its one
-motivating use case is `Recurrence`, which defaults to `first_index=0`
-so that base cases and negative-offset lookups behave predictably.
+Negative indexing (`seq[-1]`) remains gated on `first_index == 0`,
+since it is a zero-based convention inherited from Python sequences
+and has no natural meaning for one-indexed sequences. This is simply
+a consequence of `first_index == 0`, not a design goal in itself —
+the `{0, 1}` restriction is justified on its own terms above, and
+does not depend on negative indexing as motivation.
 
 `first_index` remains immutable, and every operation deriving a new
 sequence (i.e. constructing a new sequence based on the rule of an
@@ -184,23 +183,39 @@ repeated at every call site.
 
 ------------------------------------------------------------------------
 
-### Enforced `first_index=0` for `Recurrence`
+### `Recurrence` currently hardcodes `first_index=0`
 
 Unlike `Sequence` and `NumericSequence`, `Recurrence` does not expose
 `first_index` as a constructor parameter at all; it always constructs
-with `first_index=0`. This tightens the rationale above from a mere
-default into a hard constraint.
+with `first_index=0`.
 
-The motivating use case for `first_index=0` and its associated
-negative indexing — predictable base cases and negative-offset
-lookups — is specific to `Recurrence`. A `Recurrence` built with
-`first_index=1` would have no clear meaning for the negative-offset
-lookups the design already depends on, so allowing it would only
-reintroduce an ambiguity the original restriction was meant to avoid.
+This is the current implementation, not a settled design ruling: no
+sound rationale has been established for restricting `Recurrence` to
+`first_index=0` specifically, as opposed to allowing `first_index=1`
+as an option like `Sequence` and `NumericSequence` do. See `TODO.md`
+for revisiting this and allowing `Recurrence` to optionally start
+from `first_index=1`.
 
-This constraint is specific to `Recurrence`; `Sequence` and
-`NumericSequence` continue to accept either value in
-`FIRST_INDEX_OPTIONS`, per the general rationale above.
+------------------------------------------------------------------------
+
+### `Series` does not hard-enforce `first_index`
+
+Unlike `Recurrence`, `Series` does not hard-enforce a single
+`first_index` value. It inherits `NumericSequence`'s behavior,
+accepting either value in `FIRST_INDEX_OPTIONS`.
+
+No mechanism internal to `Series` forces a specific `first_index`:
+unlike `Recurrence`, it has no cache mechanism or lookup that depends
+on indices starting at a particular value. Hardcoding a single
+`first_index` for `Series` would therefore be an arbitrary
+restriction rather than a necessity, so `Series` is left free to
+accept either option, like `Sequence` and `NumericSequence`
+themselves.
+
+The chosen default and the precise summation semantics under each
+option (i.e. what `S(0)` and `S(1)` mean in terms of the underlying
+`_term_rule`) are separate, still-open decisions — not settled by
+this note.
 
 ------------------------------------------------------------------------
 
@@ -1012,6 +1027,71 @@ limitation, consistent with the library's existing forward-only
 philosophy (see "Forward-only iteration" above). This can be revisited
 if concrete usage patterns later show frequent backward or jumping
 access.
+
+------------------------------------------------------------------------
+
+### `Series` rule caching: single-slot now, cache deferred
+
+`Series._Rule` initially caches only a single `(n, S(n))` pair, the
+most recently computed partial sum, mirroring `Recurrence._Rule`'s
+single-slot approach.
+
+**Why the two caches are not as symmetric as they first appear.**
+`Recurrence._Rule` caches a *window* of `order` consecutive
+predecessors, because a fixed-order transition function needs exactly
+that window as input — advancing from a cached point means shifting
+that window forward one step at a time. `Series._Rule` caches a
+*single scalar value at an index*: `S(n) = S(n-1) + a(n)` needs only
+the immediately preceding partial sum to advance, regardless of gap
+size. This is a meaningful asymmetry, not a stylistic one: it means a
+cache of scattered `(m, S(m))` points is directly usable for `Series`
+(any cached point is sufficient to resume forward computation from),
+whereas a cache of scattered *windows* for `Recurrence` would still
+require additional reconstruction before resuming — the concern that
+motivated rejecting a non-consecutive cache for `Recurrence` (see
+above) does not transfer cleanly to `Series`, since `Series` has no
+window to reconstruct.
+
+**Decision.** Despite this asymmetry making a richer cache more
+tractable for `Series` than it would be for `Recurrence`, the initial
+implementation still starts with the simplest possible cache — a
+single `(n, S(n))` slot — consistent with the project's general
+preference for avoiding speculative infrastructure until a concrete
+use case demands it. No current usage pattern requires efficient
+support for out-of-order queries.
+
+**Future work: LRU cache.** If usage patterns later show frequent
+out-of-order queries poorly served by the single-slot cache, a richer
+cache can be introduced without architectural changes elsewhere
+(contained entirely within `Series._Rule`). Three design choices for
+that future cache:
+
+-   **Eviction policy:** LRU, evicting the least-recently-used
+    cached entry once a size bound is reached.
+-   **Recency tracking structure:** a deque, to track insertion/access
+    order cheaply for the LRU policy.
+-   **Floor lookup structure:** a balanced tree, to efficiently find
+    the largest cached `m` with `1 <= m < n` when `S(n)` is not itself
+    cached, falling back to `m = 1` (which is always cached, since
+    `S(1) = a(1)` is trivially precomputed) if no such `m` exists.
+
+**Unresolved questions.**
+
+-   What should be the default cache size?
+-   Should users be allowed to tune it? If so, should an unbounded
+    cache be permitted?
+-   Should the floor-lookup structure be a tree/ordered-map with
+    O(log N) insertion (e.g. `sortedcontainers.SortedDict`, since
+    Python's stdlib has no balanced-tree type — `OrderedDict` merely
+    preserves insertion order), or a sorted array with `bisect`
+    (O(N) insertion)? Choosing `bisect` implicitly signals the cache
+    is meant to stay small and access patterns non-adversarial, since
+    its O(N) insertion is only acceptable at small N and could be
+    deliberately exploited by a caller driving repeated churn (e.g.
+    many out-of-order jumps); a tree/ordered-map avoids that worst
+    case but adds implementation complexity and (for
+    `sortedcontainers`) a runtime dependency the project doesn't
+    currently have.
 
 ------------------------------------------------------------------------
 
