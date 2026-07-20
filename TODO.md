@@ -12,9 +12,6 @@
 
 ## Testing
 
-- Move test files into a `test/` directory, separating them from the
-  package sources.
-
 - Add a unit test suite for `utils.py`.
 
 - Test extensively beyond the pytest suite, e.g. manual

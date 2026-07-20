@@ -1,12 +1,12 @@
 """Tests for Recurrence construction and evaluation.
 
 Run with:
-    pytest test_recurrence.py -v
+    pytest tests/test_recurrence.py -v
 """
 import pytest
 
-from .sequence import Sequence
-from .recurrence import Recurrence
+from calculus.sequence import Sequence
+from calculus.recurrence import Recurrence
 
 # -- CONSTRUCTION & VALIDATION
 

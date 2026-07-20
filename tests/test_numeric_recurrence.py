@@ -1,11 +1,11 @@
 """Tests for NumericRecurrence construction and evaluation.
 
 Run with:
-    pytest test_numeric_recurrence.py -v
+    pytest tests/test_numeric_recurrence.py -v
 """
-from .numeric_sequence import NumericSequence
-from .recurrence import Recurrence
-from .numeric_recurrence import NumericRecurrence
+from calculus.numeric_sequence import NumericSequence
+from calculus.recurrence import Recurrence
+from calculus.numeric_recurrence import NumericRecurrence
 
 # -- CONSTRUCTION
 

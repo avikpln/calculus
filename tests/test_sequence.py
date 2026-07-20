@@ -1,11 +1,11 @@
 """Tests for Sequence construction and validation.
 
 Run with:
-    pytest test_sequence.py -v
+    pytest tests/test_sequence.py -v
 """
 import pytest
 
-from .sequence import Sequence
+from calculus.sequence import Sequence
 
 # -- CONSTRUCTION & VALIDATION
 
