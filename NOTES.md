@@ -1056,3 +1056,51 @@ guaranteed) lack of an override. It also documents intent directly:
 each override states, in code, which parent governs which behavior,
 rather than requiring a reader to reconstruct that from the class
 declaration and both parents' current implementations.
+
+------------------------------------------------------------------------
+
+### No abstraction for non-finite-history recurrences
+
+`Series` (partial sums, `S(n) = S(n-1) + a(n)`) is not a subclass of
+`Recurrence`, despite being self-referential. This is not a naming
+accident to be fixed by a broader class; it is a fundamental
+limitation of what a general "unbounded-history recurrence" base
+class could offer.
+
+`Recurrence`'s caching mechanism works because, for a fixed-order
+recurrence, caching exactly `order` prior terms is *sufficient* to
+compute the next one — bounded history and cheap advancement are the
+same property by construction. A hypothetical base class for
+recurrences depending on arbitrary prior history has no equivalent
+guarantee: if a transition function genuinely needs the full history,
+there is nothing generic to cache on the caller's behalf, and the
+class degrades to storing everything, no better than recomputing from
+scratch.
+
+`Series` only appears to need unbounded history syntactically. It is
+actually a fixed-order recurrence in disguise — order 1, over the pair
+`(running sum, next term)` — and its efficiency comes from recognizing
+that the accumulation itself is boundable, not from some generic
+unbounded-history mechanism. This generalizes: whenever a recurrence
+is efficiently cacheable, it is expressible as bounded-order, and is
+therefore already covered by `Recurrence`. A class for the
+"non-finite-history" case would only ever be useful for recurrences
+that are *not* efficiently cacheable — meaning it could not deliver
+the efficiency `Recurrence` itself was designed to provide.
+
+**Decision.** No such abstraction is introduced. `Series` inherits
+directly from `NumericSequence`, implementing its own efficient
+accumulation, rather than through any `Recurrence`-family base class.
+
+**Not a permanent ruling.** This decision is tied to efficiency being
+a current design priority, not a timeless mathematical necessity.
+Circumstances that weaken that priority could reasonably reopen it —
+for example, hardware advances that make brute-force recomputation
+cheap regardless of history size, or a user whose interest is bounded
+in practice (e.g. only ever inspecting a `head()` of some fixed size),
+for whom unbounded-history storage costs nothing they'd notice. Revisit
+if such a concrete case emerges, rather than speculatively designing
+for it now. If such an abstraction is ever introduced, `Series` should
+be re-parented to inherit from it, so the inheritance hierarchy
+reflects that `Series` genuinely is a (now-supported) kind of
+recurrence, rather than leaving it a sibling for historical reasons.
