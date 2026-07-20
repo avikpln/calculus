@@ -127,7 +127,7 @@ class Sequence(Generic[T], Iterable[T]):
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
-        self._rule = resolved_rule 
+        self._rule = resolved_rule
 
 # -- FACTORY
 
