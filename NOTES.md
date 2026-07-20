@@ -495,6 +495,18 @@ repository follows modern Python packaging conventions.
 
 ------------------------------------------------------------------------
 
+### Tagging strategy
+
+Tags mark major feature milestones, e.g. a new module landing.
+
+Starting from `v0.5.0`, tags are annotated with a real message
+(`git tag -a vX.Y.Z -m "..."`), rather than lightweight. Existing
+tags (`v0.0.0`–`v0.4.0`) are not retroactively rewritten to add
+messages, since force-replacing a published tag changes its
+identity and can conflict with anyone who already fetched it.
+
+------------------------------------------------------------------------
+
 ### Code cleanliness
 
 Avoid speculative imports, constants, and infrastructure.

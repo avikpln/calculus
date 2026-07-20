@@ -51,10 +51,6 @@
 - Add a gitignored `attic/` directory for retired ideas and discarded
   designs.
 
-- Establish a tagging strategy for the project (e.g. tagging every
-  version bump vs. deferring until the project has consumers or a
-  `pyproject.toml` to pin against).
-
 - Set up GitHub Issues for tracking bugs and planned work.
 
 - Set up a virtual environment (`venv`) for development, to mirror
