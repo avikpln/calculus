@@ -149,6 +149,16 @@ grouping aligned to the opening delimiter.
 
 ------------------------------------------------------------------------
 
+### Conditional expressions
+
+-   An `if` condition that does not fit on one line follows the same
+    all-or-none rule as other constructs: if it does not fit on one
+    line, each condition/operand gets its own line, with the closing
+    parenthesis and colon on their own line at the statement's base
+    indentation.
+
+------------------------------------------------------------------------
+
 ### Class declarations
 
 -   A class declaration that does not fit on one line places each
