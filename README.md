@@ -63,15 +63,17 @@ pip install -r requirements-dev.txt
 │   ├── numeric_sequence.py           # NumericSequence implementation
 │   ├── recurrence.py                 # Recurrence implementation
 │   ├── sequence.py                   # Generic Sequence implementation
+│   └── utils.py                      # Shared validation helpers
+├── tests
 │   ├── test_numeric_recurrence.py    # Pytest test suite
 │   ├── test_numeric_sequence.py      # Pytest test suite
 │   ├── test_recurrence.py            # Pytest test suite
-│   ├── test_sequence.py              # Pytest test suite
-│   └── utils.py                      # Shared validation helpers
+│   └── test_sequence.py              # Pytest test suite
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
 ├── NOTES.md                          # Design rationale and architectural decisions
+├── pytest.ini                        # Adds project root to sys.path for tests
 ├── README.md
 ├── requirements-dev.txt              # Development and CI dependencies
 ├── STYLE.md                          # Project coding and documentation conventions

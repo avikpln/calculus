@@ -1,11 +1,11 @@
 """Tests for NumericSequence arithmetic operations.
 
 Run with:
-    pytest test_numeric_sequence.py -v
+    pytest tests/test_numeric_sequence.py -v
 """
 import pytest
 
-from .numeric_sequence import NumericSequence
+from calculus.numeric_sequence import NumericSequence
 
 # -- UNARY ARITHMETIC
 

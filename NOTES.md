@@ -456,11 +456,9 @@ is used for this; whitespace checking stays native to Git.
 
 ### Project layout
 
-The project currently keeps the test suite alongside the library
-sources inside the `calculus/` package.
-
-This is appropriate while the project is small. As the library grows,
-consider adopting the more conventional layout:
+Tests were moved out of the `calculus/` package into a top-level
+`tests/` directory, once the project grew to four modules and a
+substantially larger test suite:
 
 ```text
 calculus/
@@ -472,12 +470,11 @@ tests/
     test_sequence.py
 ```
 
-Separating tests from the package scales better, matches common Python
-project structure, and makes it easier to add fixtures, integration
-tests, and continuous integration.
-
-No migration is currently necessary. Revisit this once the project
-contains multiple modules or a substantially larger test suite.
+Since `tests/` sits outside the package, imports in test files are
+absolute (`from calculus.sequence import Sequence`) rather than
+relative. A root-level `pytest.ini` (`pythonpath = .`) makes
+`calculus` importable without installing it, avoiding the need for
+packaging.
 
 ------------------------------------------------------------------------
 
