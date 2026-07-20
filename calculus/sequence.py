@@ -104,6 +104,8 @@ class Sequence(Generic[T], Iterable[T]):
         """
         if rule is None:
             resolved_rule : Callable[[int], T] = (
+                # Callable[[int], None] is not assignable to
+                # Callable[[int], T].
                 self._none  # type: ignore[assignment]
             )
         else:

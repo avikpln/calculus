@@ -263,7 +263,11 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: x // y)  # type: ignore[operator]
+        # // is undefined for complex; Python raises TypeError at
+        # runtime, consistent with the project's EAFP philosophy.
+        return self._binary(
+            other, lambda x, y: x // y,  # type: ignore[operator]
+        )
 
     def __rfloordiv__(
         self,
@@ -283,7 +287,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: y // x)  # type: ignore[operator]
+        # Same rationale as __floordiv__: // is undefined for complex.
+        return self._binary(
+            other, lambda x, y: y // x,  # type: ignore[operator]
+        )
 
     def __mod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -300,7 +307,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: x % y)  # type: ignore[operator]
+        # Same rationale as __floordiv__: % is undefined for complex.
+        return self._binary(
+            other, lambda x, y: x % y,  # type: ignore[operator]
+        )
 
     def __rmod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -317,7 +327,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]
+        # Same rationale as __floordiv__: % is undefined for complex.
+        return self._binary(
+            other, lambda x, y: y % x,  # type: ignore[operator]
+        )
 
 # -- EXPONENTIATION ARITHMETIC
 
