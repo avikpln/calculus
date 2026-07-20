@@ -76,6 +76,7 @@ def test_properties_for_infinite_sequence() -> None:
     assert seq.finite is False
     assert seq.last_index is None
 
+
 # -- ITERATION
 
 def test_iter_yields_elements_of_finite_sequence() -> None:
@@ -116,6 +117,7 @@ def test_subiter_noninteger_start_raises_type_error() -> None:
     with pytest.raises(TypeError):
         list(seq.subiter(start="0"))  # type: ignore[arg-type]
 
+
 # -- REPRESENTATION
 
 def test_str_of_finite_sequence_shows_all_elements() -> None:
@@ -133,6 +135,7 @@ def test_str_of_infinite_sequence_shows_head_and_ellipsis() -> None:
 def test_repr_matches_str() -> None:
     seq = Sequence(lambda n: n, size=3)
     assert repr(seq) == str(seq)
+
 
 # -- INDEXING & SLICING (SUBSCRIPTION)
 
@@ -184,7 +187,7 @@ def test_slice_with_step_returns_subsequence() -> None:
     assert list(sub) == [0, 2, 4, 6, 8]
 
 
-def test_slice_on_infinite_sequence_without_stop_is_infinite() -> None:
+def test_slice_without_stop_is_infinite_and_preserves_first_index() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     sub = seq[5:]
     assert isinstance(sub, Sequence)
@@ -204,6 +207,7 @@ def test_invalid_subscript_type_raises_type_error() -> None:
     seq = Sequence(lambda n: n, size=5)
     with pytest.raises(TypeError):
         seq["not a subscript"]  # type: ignore[index]
+
 
 # -- UTILITY
 
@@ -246,7 +250,7 @@ def test_reversed_on_infinite_sequence_raises_type_error() -> None:
         next(reversed(seq))
 
 
-def test_shift_by_preserves_size_and_first_index() -> None:
+def test_shift_by_preserves_metadata_and_shifts_values() -> None:
     seq = Sequence(lambda n: n, size=3, first_index=1)
     shifted = seq.shift_by(10)
     assert shifted.size == 3
@@ -340,6 +344,7 @@ def test_combine_mismatched_first_index_raises_value_error() -> None:
     b = Sequence(lambda n: n, size=3, first_index=1)
     with pytest.raises(ValueError):
         a.combine(b, lambda x, y: x + y)
+
 
 # -- SPECIAL SEQUENCES
 

@@ -304,15 +304,16 @@ def test_head_preserves_numeric_subtype() -> None:
     assert isinstance(result, NumericSequence)
     assert list(result + 1) == [0, -3, -8, -15]
 
+
 # -- SPECIAL SEQUENCES
 
-def test_constant_returns_numeric_sequence() -> None:
+def test_constant_returns_numeric_sequence_with_correct_values() -> None:
     seq = NumericSequence.constant(7, size=3)
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [7, 7, 7]
 
 
-def test_from_iterable_returns_numeric_sequence() -> None:
+def test_from_iterable_returns_numeric_sequence_with_correct_values() -> None:
     seq = NumericSequence.from_iterable([1, 2, 3])
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [1, 2, 3]

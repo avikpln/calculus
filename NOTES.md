@@ -1,9 +1,9 @@
 # NOTES
 
-**Purpose.** This document records design decisions and implementation rationale for
-the `Sequence` library. It is intended as a long-term memory of *why*
-certain choices were made, especially when the obvious implementation
-was rejected.
+**Purpose.** This document records design decisions and implementation
+rationale for the `Sequence` library. It is intended as a long-term
+memory of *why* certain choices were made, especially when the obvious
+implementation was rejected.
 
 Only decisions that may influence future development belong here.
 
@@ -87,7 +87,7 @@ but classes such as `Recurrence` do not: `Recurrence` requires an
 additional `basis` argument, so `cls(rule, size, first_index)` would
 either raise `TypeError` or, worse, succeed in some degenerate form
 that only accidentally means what its class name suggests. This
-concern isn't hypothetical: `Recurrence(rule=lambda x: c, basis=(None,))`
+concern is real: `Recurrence(rule=lambda x: c, basis=(None,))`
 is a valid constructor call for a constant sequence-shaped
 `Recurrence`, so a naive `cls`-based factory could quietly hand back a
 technically-legal but conceptually vestigial `Recurrence` — a constant
@@ -157,7 +157,8 @@ motivating use case is `Recurrence`, which defaults to `first_index=0`
 so that base cases and negative-offset lookups behave predictably.
 
 `first_index` remains immutable, and every operation deriving a new
-sequence continues to preserve the original `first_index`.
+sequence (i.e. constructing a new sequence based on the rule of an
+existing one) continues to preserve the original `first_index`.
 
 **Considered alternative: `one_indexed: bool`.** Replacing the public
 `first_index: int` parameter with a boolean `one_indexed` was
@@ -212,7 +213,7 @@ exponentiation.
 
 This is a deliberate omission, not an oversight: `**` alone only
 ever calls `__pow__(self, other)`, never the three-argument form,
-so no code path in NumericSequence currently reaches it. Supporting
+so no code path in `NumericSequence` currently reaches it. Supporting
 it properly would require accepting an optional third operand
 across `_binary()`, which is designed for strictly binary
 operations, and modular exponentiation is a specialized numeric
@@ -220,7 +221,7 @@ technique of unclear relevance to a general-purpose sequence
 library.
 
 If a concrete use case emerges, this can be revisited; until then,
-NumericSequence relies on Python's own TypeError for `pow(seq, y, m)`
+`NumericSequence` relies on Python's own `TypeError` for `pow(seq, y, m)`
 calls, consistent with the project's EAFP philosophy elsewhere.
 
 ------------------------------------------------------------------------
@@ -266,6 +267,14 @@ mathematical terms, without redundantly restating "progression"
 once the qualifying adjective already implies it. Keeping the two
 names parallel (`geometric`, `progression`) avoids the asymmetry of
 one method spelling out "progression" and the other not.
+
+------------------------------------------------------------------------
+
+### Naming: `T` over `SequenceT`
+
+A descriptive name like `SequenceT` was considered for `T`. Not
+adopted: `Sequence` is a simple generic container, the same category
+as `list[T]`, where short names are the standard convention.
 
 ------------------------------------------------------------------------
 
@@ -355,10 +364,11 @@ This distinction is about ownership, not about where an exception
 happens to be physically raised. The deciding question is: do all
 current callers of the private method agree on what it should reject?
 
--   If every current caller wants identical behavior (e.g. `_combiner()`,
-    used identically by `combine()` and `NumericSequence`'s arithmetic
-    dunders; or `_index_sequence()`, which currently has one caller),
-    the check may live inside the private method itself.
+-   If every current caller wants identical behavior (e.g.
+    `_combiner()`, used identically by `combine()` and
+    `NumericSequence`'s arithmetic dunders; or `_index_sequence()`,
+    which currently has one caller), the check may live inside the
+    private method itself.
 -   If callers genuinely diverge (e.g. `subiter()` forbids both negative
     and zero step, while `__getitem__()`'s slice handling forbids only
     zero), no single private method can own the check correctly for
@@ -370,12 +380,12 @@ current type checkers not being able to infer such invariants is
 never in itself a reason to make an assertion.
 
 **Considered alternative: exposing `binary()`/`unary()`.** Making
-NumericSequence's `_binary()`/`_unary()` public was considered, so
+`NumericSequence`'s `_binary()`/`_unary()` public was considered, so
 that each of the 14 arithmetic dunders could visibly own the
 first_index validation at a true public entry point. This was
 rejected once the ownership question was reframed around caller
 agreement rather than public/private visibility: since every current
-caller of `_combiner()` (`combine()` and all of NumericSequence's
+caller of `_combiner()` (`combine()` and all of `NumericSequence`'s
 dunders via `_binary()`) wants identical first_index behavior, no
 caller-specific validation is actually needed, and exposing
 `binary()`/`unary()` would have added public surface area for no
@@ -524,8 +534,8 @@ implemented using the following workflow:
      implementation notes in `NOTES.md`.
    - Avoid documenting routine implementation details.
 
-**IMPORTANT!** Run the project's verification tools **before committing**.
-Only commit once all checks pass.
+**IMPORTANT!** Run the project's verification tools
+**before committing**. Only commit once all checks pass.
 
 ## Implementation
 
@@ -562,10 +572,10 @@ indirection pointless.
 previously computed terms so that evaluating a recurrence at large `n`
 doesn't recompute the entire sequence from the basis every call. This
 is genuine behavior a plain callable cannot express on its own, so the
-wrapper is justified here in a way the original never was. `_rule_factory()`
-constructs a fresh `_Rule` instance per derived sequence specifically so
-that this cache is never silently shared between a `Recurrence` and any
-sequence derived from it.
+wrapper is justified here in a way the original never was.
+`_rule_factory()` constructs a fresh `_Rule` instance per derived
+sequence specifically so that this cache is never silently shared
+between a `Recurrence` and any sequence derived from it.
 
 ------------------------------------------------------------------------
 
@@ -596,20 +606,13 @@ private helper properties that establish the invariant in one place.
 `__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
 which includes `complex`, even though `//` and `%` are undefined for
 complex numbers. This mirrors the project's EAFP philosophy already
-used for zero-division: Python's own TypeError at runtime is the
+used for zero-division: Python's own `TypeError` at runtime is the
 enforcement mechanism, not eager static or runtime type-narrowing.
 The resulting mypy errors are silenced with localized, documented
 `# type: ignore[operator]` comments on each affected line.
 
 ------------------------------------------------------------------------
-Remove incorrect mixin decision from NOTES.md
 
-Corrects NOTES.md, which recorded that NumericRecurrence adopts single
-single inheritance from NumericSequence, reimplementing recursion
-internally to avoid a diamond with Recurrence. This misstates the
-actual decision: the diamond inheritance from both Recurrence and
-NumericSequence was accepted as conceptually sound and adopted
-directly, not avoided.
 ### Reversing the mixin decision
 
 The mixin-based arithmetic design, previously used for
@@ -686,9 +689,9 @@ architectural redesign.
 Override all methods in `NumericSequence` that return a `Sequence` so
 that they instead return a `NumericSequence`.
 
-**Rejected.** Although straightforward, this introduces a large amount of duplicated
-code, is difficult to maintain, and would require every future subclass
-to repeat the same pattern.
+**Rejected.** Although straightforward, this introduces a large amount
+of duplicated code, is difficult to maintain, and would require every
+future subclass to repeat the same pattern.
 
 **2. Preserve construction arguments**
 
@@ -704,19 +707,19 @@ return type(self)(
 )
 ```
 
-**Rejected.** This significantly reduces duplication, but still forces `Sequence` to
-know that reconstruction is performed by forwarding constructor
-arguments. The abstraction remains unnecessarily tied to one particular
-construction mechanism.
+**Rejected.** This significantly reduces duplication, but still forces
+`Sequence` to know that reconstruction is performed by forwarding
+constructor arguments. The abstraction remains unnecessarily tied to one
+particular construction mechanism.
 
 **3. Use decorators**
 
 Move the reconstruction logic into decorators applied to transformation
 methods.
 
-**Rejected.** Although technically feasible, decorators hide an important part of the
-control flow and make the implementation less explicit. The additional
-complexity is not justified.
+**Rejected.** Although technically feasible, decorators hide an
+important part of the control flow and make the implementation less
+explicit. The additional complexity is not justified.
 
 **4. Introduce protected factory methods**
 
@@ -725,11 +728,11 @@ result of transformations. Transformation methods simply delegate object
 creation to these hooks, while subclasses override them when additional
 construction state is required.
 
-**Current direction.** This keeps `Sequence` completely agnostic to subclass constructor
-signatures and delegates reconstruction to the subclass itself. The
-resulting design is simpler, more extensible, and avoids duplicated
-overrides while providing well-defined extension points for all
-future subclasses.
+**Current direction.** This keeps `Sequence` completely agnostic to
+subclass constructor signatures and delegates reconstruction to the
+subclass itself. The resulting design is simpler, more extensible, and
+avoids duplicated overrides while providing well-defined extension
+points for all future subclasses.
 
 **<u>Classifying Classes and Methods</u>**
 
@@ -813,17 +816,10 @@ that needs non-default behavior for `_reindex()` overrides it directly
 with its own literal target, rather than relying on `self`/`super()`
 semantics to route the call correctly.
 
-`map()` and `combine()` remain outside this mechanism entirely: since
-they always return a plain `Sequence`, there is no subtype to
-preserve and no call to `_resize()` or `_reindex()` to make. This is
-consistent with `NumericSequence`'s arithmetic, which never routes
-through `self.combine()`/`self.map()` for its own construction and
-therefore has no reason to override either.
-
 **<u>Consequences</u>**
 
 `_resize()` and `_reindex()` are intentionally **only factories**. They
-construct an object once the necessary data has already been derived;
+construct an object once the necessary data has already been produced;
 they never perform representation-specific mathematics themselves.
 That responsibility belongs to the transformation methods (or subclass
 overrides of them) that call them.
@@ -839,7 +835,7 @@ and therefore has no reason to override either.
 
 ------------------------------------------------------------------------
 
-### `_rule_factory()`: deriving rules for transformed sequences
+### `_rule_factory()`: producing rules for transformed sequences
 
 **Motivation**
 
@@ -892,7 +888,7 @@ directly.
 
 ------------------------------------------------------------------------
 
-### Overriding _resize/_rule_factory is optional but not free
+### Overriding `_resize`/`_rule_factory` is optional but not free
 
 Neither `_resize()` nor `_rule_factory()` is enforced as mandatory for
 subclasses to override. A subclass author who forgets to override
@@ -970,9 +966,9 @@ individually, keeping the override at the same architectural layer as
 
 ------------------------------------------------------------------------
 
-### Recurrence rule caching: single-slot vs. windowed
+### `Recurrence` rule caching: single-slot vs. windowed
 
-Recurrence._Rule caches only a single position: the order
+`Recurrence._Rule` caches only a single position: the order
 consecutive values immediately preceding the most recently computed
 index, not a longer history.
 
@@ -1010,7 +1006,7 @@ access.
 
 ------------------------------------------------------------------------
 
-### NumericRecurrence: explicit method resolution over MRO reliance
+### `NumericRecurrence`: explicit method resolution over MRO reliance
 
 `NumericRecurrence(Recurrence, NumericSequence)` overrides `_resize()`,
 `_reindex()`, and `_rule_factory()` explicitly, rather than leaving
@@ -1060,3 +1056,51 @@ guaranteed) lack of an override. It also documents intent directly:
 each override states, in code, which parent governs which behavior,
 rather than requiring a reader to reconstruct that from the class
 declaration and both parents' current implementations.
+
+------------------------------------------------------------------------
+
+### No abstraction for non-finite-history recurrences
+
+`Series` (partial sums, `S(n) = S(n-1) + a(n)`) is not a subclass of
+`Recurrence`, despite being self-referential. This is not a naming
+accident to be fixed by a broader class; it is a fundamental
+limitation of what a general "unbounded-history recurrence" base
+class could offer.
+
+`Recurrence`'s caching mechanism works because, for a fixed-order
+recurrence, caching exactly `order` prior terms is *sufficient* to
+compute the next one — bounded history and cheap advancement are the
+same property by construction. A hypothetical base class for
+recurrences depending on arbitrary prior history has no equivalent
+guarantee: if a transition function genuinely needs the full history,
+there is nothing generic to cache on the caller's behalf, and the
+class degrades to storing everything, no better than recomputing from
+scratch.
+
+`Series` only appears to need unbounded history syntactically. It is
+actually a fixed-order recurrence in disguise — order 1, over the pair
+`(running sum, next term)` — and its efficiency comes from recognizing
+that the accumulation itself is boundable, not from some generic
+unbounded-history mechanism. This generalizes: whenever a recurrence
+is efficiently cacheable, it is expressible as bounded-order, and is
+therefore already covered by `Recurrence`. A class for the
+"non-finite-history" case would only ever be useful for recurrences
+that are *not* efficiently cacheable — meaning it could not deliver
+the efficiency `Recurrence` itself was designed to provide.
+
+**Decision.** No such abstraction is introduced. `Series` inherits
+directly from `NumericSequence`, implementing its own efficient
+accumulation, rather than through any `Recurrence`-family base class.
+
+**Not a permanent ruling.** This decision is tied to efficiency being
+a current design priority, not a timeless mathematical necessity.
+Circumstances that weaken that priority could reasonably reopen it —
+for example, hardware advances that make brute-force recomputation
+cheap regardless of history size, or a user whose interest is bounded
+in practice (e.g. only ever inspecting a `head()` of some fixed size),
+for whom unbounded-history storage costs nothing they'd notice. Revisit
+if such a concrete case emerges, rather than speculatively designing
+for it now. If such an abstraction is ever introduced, `Series` should
+be re-parented to inherit from it, so the inheritance hierarchy
+reflects that `Series` genuinely is a (now-supported) kind of
+recurrence, rather than leaving it a sibling for historical reasons.

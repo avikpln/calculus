@@ -1,9 +1,9 @@
-"""Generic abstraction for finite and infinite sequences.
+"""Generic abstraction for infinite sequences.
 
 A Sequence maps indices to values through a lazy evaluation rule.
 
 Classes:
-    Sequence: A finite or infinite sequence of arbitrary objects.
+    Sequence: An infinite sequence of arbitrary objects.
 """
 from __future__ import annotations
 
@@ -13,11 +13,14 @@ __author__ = "Avi Kaplan"
 from collections.abc import Callable, Generator, Iterable
 from typing import Generic, TypeVar, overload
 
-from .utils import validate_int, validate_range
+from .utils import validate_callable, validate_int, validate_range
 
+# Type of sequence elements.
 T = TypeVar("T")
+# Type of other sequence elements.
 S = TypeVar("S")
-U = TypeVar("U")
+# Type of returned sequence elements.
+R = TypeVar("R")
 
 # The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
@@ -30,9 +33,9 @@ _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
 _RIGHT_SEQUENCE_BRACKET = "\N{mathematical right angle bracket}"
 _INFINITY_SYMBOL = "\N{infinity}"
 
-#========================================================================
+#=======================================================================
 # Sequence {aₙ}
-#========================================================================
+#=======================================================================
 
 class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences of objects.
@@ -45,25 +48,31 @@ class Sequence(Generic[T], Iterable[T]):
             if infinite).
 
     Methods:
-        subsequence(subrule, size):
-            Construct a subsequence by reindexing the current sequence.
+        combine(other, op):
+            Apply a binary operation element-wise.
+        constant(value, size, first_index):
+            Return a constant sequence.
+        from_iterable(iterable, first_index):
+            Return a sequence from an iterable.
+        head(size):
+            Return the first elements of the sequence.
+        map(op):
+            Apply a unary operation element-wise.
         shift_by(offset):
             Shift the evaluation rule by a fixed offset.
         shift_to(where):
             Shift the evaluation rule to a given starting index.
-        head(size):
-            Return the first elements of the sequence.
+        subiter(start, stop, step):
+            Return an iterator over a subsequence.
+        subsequence(subrule, size):
+            Construct a subsequence by reindexing the current sequence.
         tail(size):
             Return the last elements of a finite sequence.
-        map(op):
-            Apply a unary operation element-wise.
-        combine(other, op):
-            Apply a binary operation element-wise.
     """
 
 # -- INITIALIZATION
 
-    __slots__ = ("_size", "_first_index", "_last_index", "_rule")
+    __slots__ = ("_first_index", "_last_index", "_rule", "_size")
 
     @staticmethod
     def _none(n: int) -> None:
@@ -94,9 +103,14 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         if rule is None:
-            rule = self._none  # type: ignore[assignment]
-        if not callable(rule):
-            raise TypeError(f"'{type(rule).__name__}' object is not callable")
+            resolved_rule : Callable[[int], T] = (
+                # Callable[[int], None] is not assignable to
+                # Callable[[int], T].
+                self._none  # type: ignore[assignment]
+            )
+        else:
+            validate_callable(rule)
+            resolved_rule  = rule
         if size is not None:
             validate_int(size, "size")
             if size < 0:
@@ -113,10 +127,12 @@ class Sequence(Generic[T], Iterable[T]):
         self._size = size
         self._first_index = first_index
         self._last_index = None if size is None else first_index + size - 1
-        self._rule = rule
+        self._rule = resolved_rule
+
+# -- FACTORY
 
     def _rule_factory(self) -> Callable[[int], T]:
-        # Return the rule used for sequence construction.
+        # Produce the rule for a newly derived sequence.
         #
         # Subclasses with a stateful rule should override this method to
         # return an independent copy. Otherwise, derived sequences will
@@ -125,7 +141,7 @@ class Sequence(Generic[T], Iterable[T]):
         return self._rule
 
     def _resize(self, size: int | None) -> Sequence[T]:
-        # Construct a new sequence of the same type with the given size.
+        # Produce a new sequence of the same type and given size.
         #
         # Subclasses should override this method to return their own
         # type. If not overridden, the subclass silently gets a plain
@@ -139,7 +155,11 @@ class Sequence(Generic[T], Iterable[T]):
         rule: Callable[[int], T] | None,
         size: int | None = None,
     ) -> Sequence[T]:
-        # Construct a new sequence with the given rule and size.
+        # Produce a new sequence with the given rule and size.
+        #
+        # Subclasses may override this method to preserve their type
+        # when arbitrary reindexing preserves their invariants.
+        # Otherwise, returning a plain Sequence is correct.
 
         return Sequence(rule, size=size, first_index=self.first_index)
 
@@ -338,11 +358,14 @@ class Sequence(Generic[T], Iterable[T]):
                 return self._rule(index)
             # Allow Python-style negative indexing for finite sequences
             # starting at index 0.
-            if self.first_index == 0 and -(self.last_index + 1) <= index < 0:
-                return self._rule(index + self.last_index + 1)
+            effective_first_index = self.first_index
+            if self.first_index == 0:
+                effective_first_index = -(self.last_index + 1)
+                if effective_first_index <= index < 0:
+                    return self._rule(index - effective_first_index)
             raise IndexError(
                 f"index {index} is out of range "
-                f"[{self.first_index}, {self.last_index}]"
+                f"[{effective_first_index}, {self.last_index}]"
             )
         else:
             if self.first_index <= index:
@@ -526,24 +549,24 @@ class Sequence(Generic[T], Iterable[T]):
     @staticmethod
     def _mapper(
         seq: Sequence[T],
-        op: Callable[[T], U],
-    ) -> Callable[[int], U]:
+        op: Callable[[T], R],
+    ) -> Callable[[int], R]:
         # Return the rule obtained by applying an operation to a rule.
 
         rule = seq._rule_factory()
         return lambda n: op(rule(n))
 
-    def map(self, op: Callable[[T], U]) -> Sequence[U]:
+    def map(self, op: Callable[[T], R]) -> Sequence[R]:
         """Return the sequence obtained by applying a unary operation.
 
         The returned sequence inherits the size and first index of the
         current sequence.
 
         Args:
-            op (Callable[[T], U]): The unary operation to apply.
+            op (Callable[[T], R]): The unary operation to apply.
 
         Returns:
-            Sequence[U]: The sequence obtained by applying op to each
+            Sequence[R]: The sequence obtained by applying op to each
                 element.
         """
         rule = self._mapper(self, op)
@@ -553,8 +576,8 @@ class Sequence(Generic[T], Iterable[T]):
     def _combiner(
         first: Sequence[T],
         second: S | Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> tuple[Callable[[int], U], int | None]:
+        op: Callable[[T, S], R],
+    ) -> tuple[Callable[[int], R], int | None]:
         # Return the rule and size defining the combined sequence.
 
         size = first.size
@@ -579,20 +602,20 @@ class Sequence(Generic[T], Iterable[T]):
         return rule, size
 
     @overload
-    def combine(self, other: S, op: Callable[[T, S], U]) -> Sequence[U]: ...
+    def combine(self, other: S, op: Callable[[T, S], R]) -> Sequence[R]: ...
 
     @overload
     def combine(
         self,
         other: Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> Sequence[U]: ...
+        op: Callable[[T, S], R],
+    ) -> Sequence[R]: ...
 
     def combine(
         self,
         other: S | Sequence[S],
-        op: Callable[[T, S], U],
-    ) -> Sequence[U]:
+        op: Callable[[T, S], R],
+    ) -> Sequence[R]:
         """Combine this sequence with another sequence or scalar.
 
         The returned sequence preserves the first index of the current
@@ -601,10 +624,10 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             other (S | Sequence[S]): The sequence or scalar to combine
                 with the current sequence.
-            op (Callable[[T, S], U]): The binary operation to apply.
+            op (Callable[[T, S], R]): The binary operation to apply.
 
         Returns:
-            Sequence[U]: The sequence obtained by applying op
+            Sequence[R]: The sequence obtained by applying op
                 element-wise.
 
         Raises:
@@ -633,8 +656,9 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             value (T): The constant value of each sequence element.
             size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence.
+                or None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             Sequence[T]: A sequence whose elements are all equal to
@@ -671,6 +695,7 @@ class Sequence(Generic[T], Iterable[T]):
             iterable (Iterable[T]): The iterable providing the sequence
                 elements.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             Sequence[T]: A finite sequence containing the elements of

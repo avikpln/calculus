@@ -99,6 +99,7 @@ When subclassing:
 
 -   Constructors eagerly validate values that establish object
     invariants.
+
 -   Transformation methods generally rely on lazy validation and EAFP
     semantics unless eager validation protects a core invariant.
 
@@ -145,6 +146,16 @@ grouping aligned to the opening delimiter.
 -   These conventions apply to library source files. Test files
     are not held to them; prioritize readability of test setup and
     assertions over strict formatting.
+
+------------------------------------------------------------------------
+
+### Conditional expressions
+
+-   An `if` condition that does not fit on one line follows the same
+    all-or-none rule as other constructs: if it does not fit on one
+    line, each condition/operand gets its own line, with the closing
+    parenthesis and colon on their own line at the statement's base
+    indentation.
 
 ------------------------------------------------------------------------
 

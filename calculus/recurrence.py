@@ -1,6 +1,6 @@
-"""Recurrence-based abstraction for sequences defined by prior terms.
+"""Generic abstraction for infinite recurrences.
 
-This module extends the generic Sequence abstraction with support for
+This module extends the generic Sequence class with support for
 sequences whose elements are computed recursively from earlier terms.
 
 Classes:
@@ -16,40 +16,47 @@ from typing import TypeVar, Any
 from collections import deque
 
 from .sequence import Sequence
+from .utils import validate_callable
 
-R = TypeVar("R")
+T = TypeVar("T")
 
 # Special symbols used for display.
 _EMPTY_SET_SYMBOL = '\N{empty set}'
 
-#========================================================================
+#=======================================================================
 # Recurrence {aₙ}
-#========================================================================
+#=======================================================================
 
-class Recurrence(Sequence[R]):
+class Recurrence(Sequence[T]):
     """A sequence whose elements are computed from prior terms.
 
     This subclass inherits all functionality from Sequence. Each element
     is computed from a fixed number of preceding elements via a transition
     function, seeded by a set of initial base cases.
+
+    Methods:
+        look_and_say():
+            Return the Look-and-Say sequence by John Horton Conway.
+        von_neumann():
+            Return the Von Neumann ordinals sequence.
     """
 
     class _Rule:
         # Callable recurrence rule, caching prior terms as it advances.
 
-        __slots__ = ("func", "basis", "order", "cache")
+        __slots__ = ("basis", "cache", "func", "order")
 
         def __init__(
             self,
-            func: Callable[[int, tuple[R,...]], R],
-            basis: Iterable[R],
+            func: Callable[[int, tuple[T,...]], T],
+            basis: Iterable[T],
         ) -> None:
             # Initialize a new recurrence rule instance.
 
             self.func = func
             self.basis = tuple(basis)
             self.order = len(self.basis)
-            self.cache: tuple[int, tuple[R,...]] | None = None
+            self.cache: tuple[int, tuple[T,...]] | None = None
 
         def __call__(self, n: int) -> Any:
             # Return the term at n, advancing and caching as needed.
@@ -86,21 +93,21 @@ class Recurrence(Sequence[R]):
 
 # -- INITIALIZATION
 
-    __slots__ = ("_func", "_basis", "_order")
+    __slots__ = ("_basis", "_func", "_order")
 
     def __init__(
         self,
-        func: Callable[[int, tuple[R,...]], R],
-        basis: Iterable[R],
+        func: Callable[[int, tuple[T,...]], T],
+        basis: Iterable[T],
         size: int | None = None,
     ) -> None:
         """Initialize a new recurrence object.
 
         Args:
-            func (Callable[[int, tuple[R,...]], R]): The transition
-                function computing a term from its index and the
-                preceding basis-many terms.
-            basis (Iterable[R]): The initial base case values.
+            func (Callable[[int, tuple[T,...]], T]): The transition
+                function computing the next term from its index and
+                a fixed number of preceding terms.
+            basis (Iterable[T]): The initial base case values.
             size (int | None): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
 
@@ -109,8 +116,7 @@ class Recurrence(Sequence[R]):
                 not iterable.
             ValueError: If ``basis`` is empty.
         """
-        if not callable(func):
-            raise TypeError(f"'{type(func).__name__}' object is not callable")
+        validate_callable(func)
         if not isinstance(basis, Iterable):
             raise TypeError(f"'{type(basis).__name__}' object is not iterable")
         basis = tuple(basis)
@@ -124,20 +130,22 @@ class Recurrence(Sequence[R]):
 
         super().__init__(rule, size=size, first_index=0)
 
-    def _rule_factory(self) -> Callable[[int], R]:
-        # Return the rule used for recurrence construction.
+# -- FACTORY
+
+    def _rule_factory(self) -> Callable[[int], T]:
+        # Produce the rule for a newly derived sequence.
 
         return self._Rule(self._func, self._basis)
 
-    def _resize(self, size: int | None) -> Recurrence[R]:
-        # Construct a new recurrence with the given rule and size.
+    def _resize(self, size: int | None) -> Recurrence[T]:
+        # Produce a new sequence of the same type and given size.
 
         return Recurrence(self._func, self._basis, size=size)
 
 # -- PROPERTIES
 
     @property
-    def basis(self) -> tuple[R,...]:
+    def basis(self) -> tuple[T,...]:
         """The basis of the recurrence."""
         return self._basis
 

@@ -2,8 +2,8 @@
 
 ![CI](https://github.com/avikpln/calculus/actions/workflows/ci.yml/badge.svg)
 
-A Python library for representing and manipulating finite and infinite
-sequences through lazy evaluation.
+A Python library for representing and manipulating infinite sequences
+through lazy evaluation.
 
 ## Vision
 
@@ -22,12 +22,13 @@ components such as series and function abstractions.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
     defined elements.
--   Finite and infinite sequences.
+-   Infinite (and finite) sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
 -   Element access and slicing.
 -   Forward iteration over subsequences.
--   Sequence transformations (`map`, `combine`, `shift_by`, `shift_to`).
+-   `Sequence` transformations (`map`, `combine`, `shift_by`,
+    `shift_to`).
 -   Factory methods for constant sequences and sequences built from
     iterables.
 -   Fully type-annotated (`mypy --strict`).
@@ -77,9 +78,26 @@ pip install -r requirements-dev.txt
 └── TODO.md                           # Planned enhancements
 ```
 
-## Example
+## Examples
 
-### NumericSequence
+```python
+from calculus import Sequence
+
+# Infinite sequence of uppercase letters, cycling through the alphabet.
+alphabet = Sequence(lambda n: chr(65 + (n - 1) % 26))
+
+print(alphabet.head(5))
+# ⟨A, B, C, D, E⟩
+
+print(alphabet[30])
+# D
+
+# map() works for any element type, not just numbers.
+print(alphabet.map(str.lower).head(5))
+# ⟨a, b, c, d, e⟩
+```
+
+### `NumericSequence`
 
 ```python
 from calculus import NumericSequence
@@ -116,7 +134,7 @@ print(2 ** nonnegints)
 # ⟨1, 2, 4, 8, 16, ...⟩
 ```
 
-### Recurrence
+### `Recurrence`
 
 ```python
 from calculus import Recurrence
@@ -128,7 +146,7 @@ print(fib.head(8))
 # ⟨0, 1, 1, 2, 3, 5, 8, 13⟩
 ```
 
-### NumericRecurrence
+### `NumericRecurrence`
 
 ```python
 from calculus import NumericRecurrence

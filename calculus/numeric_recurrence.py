@@ -1,4 +1,4 @@
-"""Numeric abstractions for finite and infinite recurrences.
+"""Infinite numeric sequences defined by recursion.
 
 This module combines NumericSequence and Recurrence to represent
 sequences that are both numeric and recursively defined.
@@ -17,9 +17,9 @@ from collections.abc import Callable
 from .numeric_sequence import Number, NumericSequence
 from .recurrence import Recurrence
 
-#========================================================================
+#=======================================================================
 # Numeric Recurrence {aₙ}
-#========================================================================
+#=======================================================================
 
 class NumericRecurrence(Recurrence[Number], NumericSequence):
     """A numeric sequence whose elements are computed from prior terms.
@@ -27,19 +27,31 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
     This subclass inherits all functionality from NumericSequence and
     Recurrence, combining element-wise arithmetic operations with
     recursively defined elements.
+
+    Methods:
+        catalan():
+            Return the Catalan number sequence.
+        double_factorial():
+            Return the double factorial sequence.
+        factorial():
+            Return the factorial sequence.
+        fibonacci():
+            Return the Fibonacci sequence.
     """
 
 # -- INITIALIZATION
 
     __slots__ = ()
 
+# -- FACTORY
+
     def _rule_factory(self) -> Callable[[int], Number]:
-        # Return the rule used for numeric recurrence construction.
+        # Produce the rule for a newly derived sequence.
 
         return Recurrence._rule_factory(self)
 
     def _resize(self, size: int | None) -> NumericRecurrence:
-        # Construct a new numeric recurrence of the given size.
+        # Produce a new sequence of the same type and given size.
 
         return NumericRecurrence(self._func, self._basis, size=size)
 
@@ -48,11 +60,11 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
         rule: Callable[[int], Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
-        # Construct a new numeric recurrence of the given rule and size.
+        # Produce a new sequence with the given rule and size.
 
         return NumericSequence._reindex(self, rule, size)
 
-# -- SPECIAL RECURRENCES
+# -- SPECIAL NUMERIC RECURRENCES
 
     @staticmethod
     def fibonacci() -> NumericRecurrence:
@@ -70,9 +82,8 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
     def factorial() -> NumericRecurrence:
         """Return the factorial sequence.
 
-        The result is a fixed, infinite sequence where each term is the
-        product of all positive integers up to its index that share its
-        parity.
+        The result is a fixed, infinite sequence where each term is
+        the product of all positive integers up to its index.
 
         Returns:
             NumericRecurrence: The factorial sequence.

@@ -1,10 +1,10 @@
-"""Numeric abstractions for finite and infinite sequences.
+"""Infinite numeric sequences with element-wise arithmetic.
 
-This module extends the generic Sequence abstraction with support for
-numeric sequences and element-wise arithmetic operations.
+This module extends the generic Sequence class with support for numeric
+sequences and element-wise arithmetic operations.
 
 Classes:
-    NumericSequence: A finite or infinite sequence of numeric values.
+    NumericSequence: An infinite sequence of numeric values.
 """
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ from .sequence import Sequence
 # A type for representing a number.
 Number = int | float | complex
 
-#========================================================================
+#=======================================================================
 # Numeric Sequence {aₙ}
-#========================================================================
+#=======================================================================
 
 class NumericSequence(Sequence[Number]):
     """A sequence whose elements are numeric values.
@@ -28,14 +28,28 @@ class NumericSequence(Sequence[Number]):
     This subclass inherits all functionality from Sequence and extends
     it with element-wise arithmetic operations, exposed through the
     standard arithmetic operators.
+
+    Methods:
+        constant(value, size, first_index):
+            Return a constant numeric sequence.
+        from_iterable(iterable, first_index):
+            Return a numeric sequence from an iterable.
+        geometric(first_term, common_ratio, size, first_index):
+            Return a geometric sequence.
+        naturals(size, first_index):
+            Return the sequence of natural numbers.
+        progression(first_term, common_difference, size, first_index):
+            Return an arithmetic progression.
     """
 
 # -- INITIALIZATION
 
     __slots__ = ()
 
+# -- FACTORY
+
     def _resize(self, size: int | None) -> NumericSequence:
-        # Construct a new sequence of the same type with the given size.
+        # Produce a new sequence of the same type and given size.
 
         rule = self._rule_factory()
         return NumericSequence(rule, size=size, first_index=self.first_index)
@@ -45,7 +59,7 @@ class NumericSequence(Sequence[Number]):
         rule: Callable[[int], Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
-        # Construct a new sequence with the given rule and size.
+        # Produce a new sequence with the given rule and size.
 
         return NumericSequence(rule, size=size, first_index=self.first_index)
 
@@ -249,7 +263,11 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: x // y)  # type: ignore[operator]
+        # // is undefined for complex; Python raises TypeError at
+        # runtime, consistent with the project's EAFP philosophy.
+        return self._binary(
+            other, lambda x, y: x // y,  # type: ignore[operator]
+        )
 
     def __rfloordiv__(
         self,
@@ -269,7 +287,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: y // x)  # type: ignore[operator]
+        # Same rationale as __floordiv__: // is undefined for complex.
+        return self._binary(
+            other, lambda x, y: y // x,  # type: ignore[operator]
+        )
 
     def __mod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -286,7 +307,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: x % y)  # type: ignore[operator]
+        # Same rationale as __floordiv__: % is undefined for complex.
+        return self._binary(
+            other, lambda x, y: x % y,  # type: ignore[operator]
+        )
 
     def __rmod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -303,7 +327,10 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        return self._binary(other, lambda x, y: y % x)  # type: ignore[operator]
+        # Same rationale as __floordiv__: % is undefined for complex.
+        return self._binary(
+            other, lambda x, y: y % x,  # type: ignore[operator]
+        )
 
 # -- EXPONENTIATION ARITHMETIC
 
@@ -341,7 +368,7 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y ** x)
 
-# -- SPECIAL SEQUENCES
+# -- SPECIAL NUMERIC SEQUENCES
 
     @staticmethod
     def constant(
@@ -355,8 +382,9 @@ class NumericSequence(Sequence[Number]):
         Args:
             value (Number): The constant value of each sequence element.
             size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence.
+                or None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             NumericSequence: A sequence whose elements are all equal to
@@ -366,7 +394,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         return NumericSequence(
             Sequence._constant_rule(value), size=size, first_index=first_index,
@@ -384,6 +412,7 @@ class NumericSequence(Sequence[Number]):
             iterable (Iterable[Number]): The iterable providing the
                 sequence elements.
             first_index (int): The index of the first sequence element.
+                Defaults to 1.
 
         Returns:
             NumericSequence: A finite numeric sequence containing the
@@ -392,7 +421,7 @@ class NumericSequence(Sequence[Number]):
         Raises:
             TypeError: If ``first_index`` is not an integer.
             ValueError: If ``first_index`` is not in
-                FIRST_INDEX_OPTIONS.
+                ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule, size = Sequence._iterable_rule(iterable, first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
@@ -419,7 +448,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         return NumericSequence(lambda n: n, size=size, first_index=first_index)
 
@@ -450,7 +479,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule = lambda n: first_term + common_difference*(n - first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
@@ -482,7 +511,7 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``size`` is not None or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
-                is not in FIRST_INDEX_OPTIONS.
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         rule = lambda n: first_term * common_ratio**(n - first_index)
         return NumericSequence(rule, size=size, first_index=first_index)

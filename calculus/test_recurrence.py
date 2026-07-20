@@ -149,6 +149,7 @@ def test_rule_factory_produces_independent_caches() -> None:
     assert first._rule is not second._rule
     assert first[20] == second[20]
 
+
 # -- SPECIAL RECURRENCES
 
 def test_von_neumann() -> None:
