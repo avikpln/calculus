@@ -187,7 +187,7 @@ def test_slice_with_step_returns_subsequence() -> None:
     assert list(sub) == [0, 2, 4, 6, 8]
 
 
-def test_slice_on_infinite_sequence_without_stop_is_infinite() -> None:
+def test_slice_without_stop_is_infinite_and_preserves_first_index() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     sub = seq[5:]
     assert isinstance(sub, Sequence)
@@ -250,7 +250,7 @@ def test_reversed_on_infinite_sequence_raises_type_error() -> None:
         next(reversed(seq))
 
 
-def test_shift_by_preserves_size_and_first_index() -> None:
+def test_shift_by_preserves_metadata_and_shifts_values() -> None:
     seq = Sequence(lambda n: n, size=3, first_index=1)
     shifted = seq.shift_by(10)
     assert shifted.size == 3
