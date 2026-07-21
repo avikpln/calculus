@@ -103,3 +103,24 @@ def test_rule_factory_produces_independent_caches() -> None:
     second = series.shift_by(0)
     assert first._rule is not second._rule
     assert first[20] == second[20]
+
+# -- SPECIAL SERIES
+
+def test_harmonic() -> None:
+    seq = Series.harmonic()
+    assert list(seq.head(4)) == [1, 1.5, 1 + 1/2 + 1/3, 1 + 1/2 + 1/3 + 1/4]
+
+
+def test_alternating_harmonic() -> None:
+    seq = Series.alternating_harmonic()
+    assert list(seq.head(4)) == [1, 0.5, 1 - 1/2 + 1/3, 1 - 1/2 + 1/3 - 1/4]
+
+
+def test_basel() -> None:
+    seq = Series.basel()
+    assert list(seq.head(3)) == [1, 1 + 1/4, 1 + 1/4 + 1/9]
+
+
+def test_leibniz() -> None:
+    seq = Series.leibniz()
+    assert list(seq.head(3)) == [1, 1 - 1/3, 1 - 1/3 + 1/5]

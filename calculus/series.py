@@ -136,3 +136,59 @@ class Series(NumericSequence):
         # Produce a new sequence with the given rule and size.
 
         return NumericSequence._reindex(self, rule, size)
+
+# -- SPECIAL SERIES
+
+    @staticmethod
+    def harmonic() -> Series:
+        """Return the harmonic series.
+
+        The result is a fixed, infinite series whose partial sums
+        accumulate the reciprocals of the positive integers.
+
+        Returns:
+            Series: The harmonic series.
+        """
+        return Series(lambda n: 1 / n, first_index=1)
+
+    @staticmethod
+    def alternating_harmonic() -> Series:
+        """Return the alternating harmonic series.
+
+        The result is a fixed, infinite series whose partial sums
+        accumulate the reciprocals of the positive integers, with
+        alternating signs.
+
+        Returns:
+            Series: The alternating harmonic series.
+        """
+        term_rule = lambda n: 1 / n if n % 2 == 1 else -1 / n
+        return Series(term_rule, first_index=1)
+
+    @staticmethod
+    def basel() -> Series:
+        """Return the Basel problem's partial sums.
+
+        The result is a fixed, infinite series whose partial sums
+        accumulate the reciprocals of the squares of the positive
+        integers, converging to pi**2 / 6.
+
+        Returns:
+            Series: The Basel problem series.
+        """
+        return Series(lambda n: 1 / n**2, first_index=1)
+
+    @staticmethod
+    def leibniz() -> Series:
+        """Return the Leibniz series for pi.
+
+        Also known as the Gregory–Leibniz series, the result is a fixed,
+        infinite series whose partial sums accumulate the reciprocals of
+        the odd positive integers, with alternating signs, converging to
+        pi / 4.
+
+        Returns:
+            Series: The Leibniz series.
+        """
+        term_rule = lambda n: 1 / (2*n - 1) if n % 2 == 1 else -1 / (2*n - 1)
+        return Series(term_rule, first_index=1)

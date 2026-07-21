@@ -188,6 +188,15 @@ triangular = Series(lambda n: n)
 
 print(triangular.head(5))
 # ⟨1, 3, 6, 10, 15⟩
+
+# Leibniz series: partial sums approximating pi / 4.
+leibniz = Series.leibniz()
+
+print(leibniz.map(lambda x: round(x, 4)).head(5))
+# ⟨1.0, 0.6667, 0.8667, 0.7238, 0.8349⟩
+
+print(4 * leibniz[1000])
+# 3.140592653839794
 ```
 
 ## Development
