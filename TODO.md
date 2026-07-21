@@ -46,6 +46,8 @@
   validated by two concrete cases: `Recurrence` enforcing 0 and
   `Series` enforcing 1.
 
+- Review and revise DESIGN.md if needed.
+
 ## Style
 
 - Revise `STYLE.md` (see `attic/style/missing.txt`).

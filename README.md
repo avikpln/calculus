@@ -75,6 +75,7 @@ pip install -r requirements-dev.txt
 │   └── test_series.py                # Pytest test suite
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
+├── DESIGN.md                         # Per-class technical design summary
 ├── LICENSE
 ├── NOTES.md                          # Design rationale and architectural decisions
 ├── pytest.ini                        # Adds project root to sys.path for tests
@@ -223,6 +224,7 @@ git diff --cached --check
 -   `STYLE.md` describes the project's coding and documentation
     standards.
 -   `NOTES.md` records design decisions and implementation rationale.
+-   `DESIGN.md` records the current, per-class technical design.
 
 ## License
 
