@@ -22,6 +22,8 @@ components such as series and function abstractions.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
     defined elements.
+-   `Series` for sequences defined by partial sums of an underlying
+    term sequence.
 -   Infinite (and finite) sequences.
 -   Lazy evaluation via user-defined rules.
 -   Arbitrary starting indices.
@@ -63,12 +65,14 @@ pip install -r requirements-dev.txt
 │   ├── numeric_sequence.py           # NumericSequence implementation
 │   ├── recurrence.py                 # Recurrence implementation
 │   ├── sequence.py                   # Generic Sequence implementation
+│   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
 ├── tests
 │   ├── test_numeric_recurrence.py    # Pytest test suite
 │   ├── test_numeric_sequence.py      # Pytest test suite
 │   ├── test_recurrence.py            # Pytest test suite
-│   └── test_sequence.py              # Pytest test suite
+│   ├── test_sequence.py              # Pytest test suite
+│   └── test_series.py                # Pytest test suite
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
@@ -172,6 +176,27 @@ babylonian_sqrt2 = NumericRecurrence(
 
 print(babylonian_sqrt2.head(5))
 # ⟨2.0, 1.5, 1.4166666666666665, 1.4142156862745097, 1.4142135623746899⟩
+```
+
+### `Series`
+
+```python
+from calculus import Series
+
+# Triangular numbers: partial sums of the natural numbers.
+triangular = Series(lambda n: n)
+
+print(triangular.head(5))
+# ⟨1, 3, 6, 10, 15⟩
+
+# Leibniz series: partial sums approximating pi / 4.
+leibniz = Series.leibniz()
+
+print(leibniz.map(lambda x: round(x, 4)).head(5))
+# ⟨1.0, 0.6667, 0.8667, 0.7238, 0.8349⟩
+
+print(4 * leibniz[1000])
+# 3.140592653839794
 ```
 
 ## Development
