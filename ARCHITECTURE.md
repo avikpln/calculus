@@ -42,6 +42,8 @@ classDiagram
 
     NumericSequence <|-- NumericRecurrence
     Recurrence <|-- NumericRecurrence
+
+    NumericSequence <|-- Series
 ```
 
 ## Notes
@@ -55,3 +57,5 @@ classDiagram
 - `NumericRecurrence` inherits from both `Recurrence` and
   `NumericSequence`, combining numeric arithmetic with recursively
   defined elements.
+- `Series` inherits from `NumericSequence`, representing partial sums of
+  an underlying term sequence.

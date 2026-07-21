@@ -212,10 +212,9 @@ restriction rather than a necessity, so `Series` is left free to
 accept either option, like `Sequence` and `NumericSequence`
 themselves.
 
-The chosen default and the precise summation semantics under each
-option (i.e. what `S(0)` and `S(1)` mean in terms of the underlying
-`_term_rule`) are separate, still-open decisions — not settled by
-this note.
+`Series` defaults to `first_index=1`, matching the standard mathematical
+convention of summing from the first term. This default is not enforced;
+`first_index=0` remains a valid, accepted choice.
 
 ------------------------------------------------------------------------
 
@@ -1092,6 +1091,24 @@ that future cache:
     case but adds implementation complexity and (for
     `sortedcontainers`) a runtime dependency the project doesn't
     currently have.
+
+------------------------------------------------------------------------
+
+### `Series` builds its initial rule before calling `super().__init__()`
+
+`Series.__init__` cannot call `self._rule_factory()` before
+`super().__init__()` runs, because `_rule_factory()` needs
+`self.first_index`, a property established only once `Sequence.__init__`
+completes.
+
+**Decision.** `Series` factors rule construction into
+`_rule_factory_produce(term_rule, first_index)`, a helper taking both
+arguments explicitly rather than reading them off `self`. `__init__`
+calls it with its own local parameters, before `super().__init__()`
+runs; `_rule_factory()` calls it with
+`self._term_rule`/`self.first_index`, after construction completes.
+Both call sites share the same construction logic without either one
+depending on state that isn't yet available.
 
 ------------------------------------------------------------------------
 
