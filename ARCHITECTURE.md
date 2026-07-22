@@ -26,6 +26,7 @@ classDiagram
 
     class NumericSequence {
         +Arithmetic operators
+        +map(op)
         +naturals(size, first_index)$
         +progression(first_term, common_difference, size, first_index)$
         +geometric(first_term, common_ratio, size, first_index)$

@@ -11,9 +11,14 @@ __all__ = ["Sequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Generator, Iterable
-from typing import Generic, TypeVar, overload
+from typing import Final, Generic, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
+
+# Type representing an extended integer.
+Intfinity = int | None
+# Represents positive infinity.
+INFINITY: Final[Intfinity] = None
 
 # Type of sequence elements.
 T = TypeVar("T")
@@ -21,6 +26,9 @@ T = TypeVar("T")
 S = TypeVar("S")
 # Type of returned sequence elements.
 R = TypeVar("R")
+
+# Type representing a mapping from integers to objects.
+Rule = Callable[[int], T]
 
 # The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
@@ -41,15 +49,15 @@ class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences of objects.
 
     Attributes:
-        size (int | None): The size of the sequence (None if infinite).
+        size (Intfinity): The size of the sequence (None if infinite).
         finite (bool): True if the sequence is finite, otherwise False.
         first_index (int): The first index of the sequence.
-        last_index (int | None): The last index of the sequence (None
-            if infinite).
+        last_index (Intfinity): The last index of the sequence (None if
+            infinite).
 
     Methods:
         combine(other, op):
-            Apply a binary operation element-wise.
+            Combine element-wise with another sequence or scalar.
         constant(value, size, first_index):
             Return a constant sequence.
         from_iterable(iterable, first_index):
@@ -57,7 +65,7 @@ class Sequence(Generic[T], Iterable[T]):
         head(size):
             Return the first elements of the sequence.
         map(op):
-            Apply a unary operation element-wise.
+            Apply an operation element-wise.
         shift_by(offset):
             Shift the evaluation rule by a fixed offset.
         shift_to(where):
@@ -81,18 +89,17 @@ class Sequence(Generic[T], Iterable[T]):
 
     def __init__(
         self,
-        rule: Callable[[int], T] | None = None,
-        size: int | None = None,
+        rule: Rule[T] | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> None:
         """Initialize a new sequence object.
 
         Args:
-            rule (Callable[[int], T]): The rule governing the sequence.
-                If None, uses a default rule that returns None for
-                every index.
-            size (int | None): The size of the sequence. Defaults to
+            rule (Rule[T]): The rule governing the sequence. If None,
+                uses a default rule that returns None for every index.
+            size (Intfinity): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence.
                 Defaults to 1. A read-only keyword parameter.
@@ -103,11 +110,8 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         if rule is None:
-            resolved_rule : Callable[[int], T] = (
-                # Callable[[int], None] is not assignable to
-                # Callable[[int], T].
-                self._none  # type: ignore[assignment]
-            )
+            # Callable[[int], None] is not assignable to Callable[[int], T].
+            resolved_rule: Rule[T] = self._none  # type: ignore[assignment]
         else:
             validate_callable(rule)
             resolved_rule  = rule
@@ -131,7 +135,7 @@ class Sequence(Generic[T], Iterable[T]):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Callable[[int], T]:
+    def _rule_factory(self) -> Rule[T]:
         # Produce the rule for a newly derived sequence.
         #
         # Subclasses with a stateful rule should override this method to
@@ -140,7 +144,7 @@ class Sequence(Generic[T], Iterable[T]):
 
         return self._rule
 
-    def _resize(self, size: int | None) -> Sequence[T]:
+    def _resize(self, size: Intfinity) -> Sequence[T]:
         # Produce a new sequence of the same type and given size.
         #
         # Subclasses should override this method to return their own
@@ -152,8 +156,8 @@ class Sequence(Generic[T], Iterable[T]):
 
     def _reindex(
         self,
-        rule: Callable[[int], T] | None,
-        size: int | None = None,
+        rule: Rule[T] | None,
+        size: Intfinity = INFINITY,
     ) -> Sequence[T]:
         # Produce a new sequence with the given rule and size.
         #
@@ -166,14 +170,14 @@ class Sequence(Generic[T], Iterable[T]):
 # -- PROPERTIES
 
     @property
-    def size(self) -> int | None:
+    def size(self) -> Intfinity:
         """The size of the sequence (None if infinite)."""
         return self._size
 
     @property
     def finite(self) -> bool:
         """True if and only if the sequence is finite."""
-        return self._size is not None
+        return self._size is not INFINITY
 
     @property
     def first_index(self) -> int:
@@ -181,7 +185,7 @@ class Sequence(Generic[T], Iterable[T]):
         return self._first_index
 
     @property
-    def last_index(self) -> int | None:
+    def last_index(self) -> Intfinity:
         """The last index of the sequence (None if infinite)."""
         return self._last_index
 
@@ -192,7 +196,7 @@ class Sequence(Generic[T], Iterable[T]):
         start: int | None = None,
         stop: int | None = None,
         step: int | None = None,
-    ) -> tuple[int, int, int | None]:
+    ) -> tuple[int, int, Intfinity]:
         # Normalize a range into start, step, and resulting size.
 
         # Handle start index, stop index, and step.
@@ -222,7 +226,7 @@ class Sequence(Generic[T], Iterable[T]):
         assert start is not None  # mypy
 
         # Evaluate size.
-        size = None
+        size = INFINITY
         if stop is not None:
             size = len(range(start, stop, step))
 
@@ -387,7 +391,7 @@ class Sequence(Generic[T], Iterable[T]):
     def subsequence(
         self,
         subfunc: Callable[[int], int],
-        size: int | None = None,
+        size: Intfinity = INFINITY,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
@@ -395,9 +399,8 @@ class Sequence(Generic[T], Iterable[T]):
             subfunc (Callable[[int], int]): A function that maps
                 indices of the subsequence to indices of this
                 sequence.
-            size (int | None): The size of the subsequence.
-                Defaults to None, which corresponds to an infinite
-                subsequence.
+            size (Intfinity): The size of the subsequence. Defaults to
+                None, which corresponds to an infinite subsequence.
 
         Returns:
             Sequence[T]: The specified subsequence.
@@ -557,13 +560,13 @@ class Sequence(Generic[T], Iterable[T]):
         return lambda n: op(rule(n))
 
     def map(self, op: Callable[[T], R]) -> Sequence[R]:
-        """Return the sequence obtained by applying a unary operation.
+        """Apply an operation element-wise.
 
         The returned sequence inherits the size and first index of the
         current sequence.
 
         Args:
-            op (Callable[[T], R]): The unary operation to apply.
+            op (Callable[[T], R]): The operation to apply.
 
         Returns:
             Sequence[R]: The sequence obtained by applying op to each
@@ -577,15 +580,14 @@ class Sequence(Generic[T], Iterable[T]):
         first: Sequence[T],
         second: S | Sequence[S],
         op: Callable[[T, S], R],
-    ) -> tuple[Callable[[int], R], int | None]:
+    ) -> tuple[Callable[[int], R], Intfinity]:
         # Return the rule and size defining the combined sequence.
 
         size = first.size
         if isinstance(second, Sequence):
             if first.first_index != second.first_index:
                 raise ValueError(
-                    "cannot apply a binary operation on sequences with "
-                    "different first index properties "
+                    "cannot combine sequences with different first indices "
                     f"({first.first_index} != {second.first_index})"
                 )
             first_rule = first._rule_factory()
@@ -616,7 +618,7 @@ class Sequence(Generic[T], Iterable[T]):
         other: S | Sequence[S],
         op: Callable[[T, S], R],
     ) -> Sequence[R]:
-        """Combine this sequence with another sequence or scalar.
+        """Combine element-wise with another sequence or scalar.
 
         The returned sequence preserves the first index of the current
         sequence. Its size is the minimum of the operand sizes.
@@ -624,7 +626,7 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             other (S | Sequence[S]): The sequence or scalar to combine
                 with the current sequence.
-            op (Callable[[T, S], R]): The binary operation to apply.
+            op (Callable[[T, S], R]): The operation to apply.
 
         Returns:
             Sequence[R]: The sequence obtained by applying op
@@ -640,14 +642,14 @@ class Sequence(Generic[T], Iterable[T]):
 # -- SPECIAL SEQUENCES
 
     @staticmethod
-    def _constant_rule(value: T) -> Callable[[int], T]:
+    def _constant_rule(value: T) -> Rule[T]:
         # Return the rule that yields a constant value for every index.
         return lambda n: value
 
     @staticmethod
     def constant(
         value: T,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> Sequence[T]:
@@ -655,8 +657,8 @@ class Sequence(Generic[T], Iterable[T]):
 
         Args:
             value (T): The constant value of each sequence element.
-            size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence, or
+                None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -678,7 +680,7 @@ class Sequence(Generic[T], Iterable[T]):
     def _iterable_rule(
         iterable: Iterable[T],
         first_index: int,
-    ) -> tuple[Callable[[int], T], int]:
+    ) -> tuple[Rule[T], int]:
         # Return the rule and size defining a sequence from an iterable.
         table = tuple(iterable)
         return lambda n: table[n - first_index], len(table)

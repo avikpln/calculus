@@ -13,7 +13,8 @@ __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 
-from .sequence import Sequence
+from .sequence import INFINITY, Intfinity, Rule, Sequence
+from .utils import validate_callable
 
 # A type for representing a number.
 Number = int | float | complex
@@ -36,6 +37,8 @@ class NumericSequence(Sequence[Number]):
             Return a numeric sequence from an iterable.
         geometric(first_term, common_ratio, size, first_index):
             Return a geometric sequence.
+        map(op):
+            Return an element-wise mapped numeric sequence.
         naturals(size, first_index):
             Return the sequence of natural numbers.
         progression(first_term, common_difference, size, first_index):
@@ -48,7 +51,7 @@ class NumericSequence(Sequence[Number]):
 
 # -- FACTORY
 
-    def _resize(self, size: int | None) -> NumericSequence:
+    def _resize(self, size: Intfinity) -> NumericSequence:
         # Produce a new sequence of the same type and given size.
 
         rule = self._rule_factory()
@@ -56,20 +59,49 @@ class NumericSequence(Sequence[Number]):
 
     def _reindex(
         self,
-        rule: Callable[[int], Number] | None,
-        size: int | None = None,
+        rule: Rule[Number] | None,
+        size: Intfinity = INFINITY,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.
 
         return NumericSequence(rule, size=size, first_index=self.first_index)
+
+# -- UTILITY
+
+    def _apply(self, op: Callable[[Number], Number]) -> NumericSequence:
+        # Return the sequence obtained by applying op to each element.
+
+        validate_callable(op)
+        rule = self._mapper(self, op)
+        return NumericSequence(rule, self.size, first_index=self.first_index)
+
+    # Unlike Sequence.map(), which works with any element type,
+    # override assumes op to both accept and return a Number, and
+    # returns a NumericSequence rather than a generic Sequence.
+    def map(  # type: ignore[override]
+        self,
+        op: Callable[[Number], Number],
+    ) -> NumericSequence:
+        """Return an element-wise mapped numeric sequence.
+
+        Args:
+            op (Callable[[Number], Number]): The operation to apply.
+
+        Returns:
+            NumericSequence: The sequence obtained by applying ``op`` to
+                each element.
+
+        Raises:
+            TypeError: If ``op`` is not callable.
+        """
+        return self._apply(op)
 
 # -- ARITHMETIC HELPERS
 
     def _unary(self, op: Callable[[Number], Number]) -> NumericSequence:
         # Return the sequence obtained by applying a unary operation.
 
-        rule = self._mapper(self, op)
-        return NumericSequence(rule, self.size, first_index=self.first_index)
+        return self._apply(op)
 
     def _binary(
         self,
@@ -77,6 +109,12 @@ class NumericSequence(Sequence[Number]):
         op: Callable[[Number, Number], Number],
     ) -> NumericSequence:
         # Return the sequence obtained by applying a binary operation.
+
+        if not isinstance(other, Number | NumericSequence):
+            raise TypeError(
+                f"unsupported type ({type(other).__name__}) for other "
+                "operand in binary operation"
+            )
 
         rule, size = self._combiner(self, other, op)
         return NumericSequence(rule, size, first_index=self.first_index)
@@ -373,7 +411,7 @@ class NumericSequence(Sequence[Number]):
     @staticmethod
     def constant(
         value: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> NumericSequence:
@@ -381,8 +419,8 @@ class NumericSequence(Sequence[Number]):
 
         Args:
             value (Number): The constant value of each sequence element.
-            size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence, or
+                None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -428,14 +466,14 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def naturals(
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> NumericSequence:
         """Return the sequence of natural numbers.
 
         Args:
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.
@@ -456,7 +494,7 @@ class NumericSequence(Sequence[Number]):
     def progression(
         first_term: Number,
         common_difference: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
     ) -> NumericSequence:
@@ -466,7 +504,7 @@ class NumericSequence(Sequence[Number]):
             first_term (Number): The first term of the progression.
             common_difference (Number): The constant difference
                 between consecutive terms.
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.
@@ -488,7 +526,7 @@ class NumericSequence(Sequence[Number]):
     def geometric(
         first_term: Number,
         common_ratio: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
     ) -> NumericSequence:
@@ -498,7 +536,7 @@ class NumericSequence(Sequence[Number]):
             first_term (Number): The first term of the sequence.
             common_ratio (Number): The constant ratio between
                 consecutive terms.
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.

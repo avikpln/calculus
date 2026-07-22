@@ -313,7 +313,7 @@ def test_subsequence_reindexes_with_custom_map() -> None:
     assert list(sub) == [0, 2, 4, 6, 8]
 
 
-def test_map_applies_unary_operation_elementwise() -> None:
+def test_map_applies_operation_elementwise() -> None:
     seq = Sequence(lambda n: n, size=3, first_index=1)
     squared = seq.map(lambda x: x * x)
     assert list(squared) == [1, 4, 9]

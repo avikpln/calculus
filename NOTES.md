@@ -393,18 +393,6 @@ by caller input) remain the domain of `assert`, not exceptions, and
 current type checkers not being able to infer such invariants is
 never in itself a reason to make an assertion.
 
-**Considered alternative: exposing `binary()`/`unary()`.** Making
-`NumericSequence`'s `_binary()`/`_unary()` public was considered, so
-that each of the 14 arithmetic dunders could visibly own the
-first_index validation at a true public entry point. This was
-rejected once the ownership question was reframed around caller
-agreement rather than public/private visibility: since every current
-caller of `_combiner()` (`combine()` and all of `NumericSequence`'s
-dunders via `_binary()`) wants identical first_index behavior, no
-caller-specific validation is actually needed, and exposing
-`binary()`/`unary()` would have added public surface area for no
-behavioral benefit.
-
 ## Documentation
 
 ### Private methods

@@ -5,7 +5,28 @@ Run with:
 """
 import pytest
 
+from calculus.sequence import Sequence
 from calculus.numeric_sequence import NumericSequence
+
+# -- UTILITY
+
+def test_map_returns_elementwise_result() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = seq.map(lambda x: x * 2)
+    assert list(result) == [2, 4, 6]
+
+
+def test_map_returns_numeric_sequence() -> None:
+    seq = NumericSequence(lambda n: n, size=3)
+    result = seq.map(lambda x: x * 2)
+    assert isinstance(result, NumericSequence)
+
+
+def test_map_noncallable_op_raises_type_error() -> None:
+    seq = NumericSequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        seq.map("not callable")  # type: ignore[arg-type]
+
 
 # -- UNARY ARITHMETIC
 
@@ -296,13 +317,20 @@ def test_mod_with_complex_operand_raises_type_error() -> None:
         list(seq % (1 + 2j))
 
 
-# -- SUBTYPE PRESERVATION
+# -- TYPING
 
 def test_head_preserves_numeric_subtype() -> None:
     squares = NumericSequence(lambda n: n * n)
     result = (-squares).head(4)
     assert isinstance(result, NumericSequence)
     assert list(result + 1) == [0, -3, -8, -15]
+
+
+def test_binary_with_non_numeric_sequence_raises_type_error() -> None:
+    a = NumericSequence(lambda n: n, size=3)
+    b = Sequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        a + b
 
 
 # -- SPECIAL SEQUENCES
