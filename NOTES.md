@@ -141,7 +141,7 @@ Reconsider this only if a genuine use case emerges.
 `first_index` was originally unrestricted, accepting any integer. It is
 now constrained to `FIRST_INDEX_OPTIONS = (0, 1)`.
 
-An arbitrary `first_index` was rarely useful in practice: the only
+An arbitrary `first_index` seems rarely useful in practice: the only
 real use cases are thinking in one-indexed mathematical terms (`a_1,
 a_2, ...`) or zero-indexed programming terms (`a_0, a_1, ...`).
 Supporting arbitrary starting points added complexity — an unbounded
