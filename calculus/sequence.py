@@ -57,7 +57,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     Methods:
         combine(other, op):
-            Apply a binary operation element-wise.
+            Combine element-wise with another sequence or scalar.
         constant(value, size, first_index):
             Return a constant sequence.
         from_iterable(iterable, first_index):
@@ -65,7 +65,7 @@ class Sequence(Generic[T], Iterable[T]):
         head(size):
             Return the first elements of the sequence.
         map(op):
-            Apply a unary operation element-wise.
+            Apply an operation element-wise.
         shift_by(offset):
             Shift the evaluation rule by a fixed offset.
         shift_to(where):
@@ -560,13 +560,13 @@ class Sequence(Generic[T], Iterable[T]):
         return lambda n: op(rule(n))
 
     def map(self, op: Callable[[T], R]) -> Sequence[R]:
-        """Return the sequence obtained by applying a unary operation.
+        """Apply an operation element-wise.
 
         The returned sequence inherits the size and first index of the
         current sequence.
 
         Args:
-            op (Callable[[T], R]): The unary operation to apply.
+            op (Callable[[T], R]): The operation to apply.
 
         Returns:
             Sequence[R]: The sequence obtained by applying op to each
@@ -587,8 +587,7 @@ class Sequence(Generic[T], Iterable[T]):
         if isinstance(second, Sequence):
             if first.first_index != second.first_index:
                 raise ValueError(
-                    "cannot apply a binary operation on sequences with "
-                    "different first index properties "
+                    "cannot combine sequences with different first indices "
                     f"({first.first_index} != {second.first_index})"
                 )
             first_rule = first._rule_factory()
@@ -619,7 +618,7 @@ class Sequence(Generic[T], Iterable[T]):
         other: S | Sequence[S],
         op: Callable[[T, S], R],
     ) -> Sequence[R]:
-        """Combine this sequence with another sequence or scalar.
+        """Combine element-wise with another sequence or scalar.
 
         The returned sequence preserves the first index of the current
         sequence. Its size is the minimum of the operand sizes.
@@ -627,7 +626,7 @@ class Sequence(Generic[T], Iterable[T]):
         Args:
             other (S | Sequence[S]): The sequence or scalar to combine
                 with the current sequence.
-            op (Callable[[T, S], R]): The binary operation to apply.
+            op (Callable[[T, S], R]): The operation to apply.
 
         Returns:
             Sequence[R]: The sequence obtained by applying op
