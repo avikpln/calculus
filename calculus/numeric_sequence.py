@@ -13,7 +13,7 @@ __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 
-from .sequence import Rule, Sequence
+from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .utils import validate_callable
 
 # A type for representing a number.
@@ -51,7 +51,7 @@ class NumericSequence(Sequence[Number]):
 
 # -- FACTORY
 
-    def _resize(self, size: int | None) -> NumericSequence:
+    def _resize(self, size: Intfinity) -> NumericSequence:
         # Produce a new sequence of the same type and given size.
 
         rule = self._rule_factory()
@@ -60,7 +60,7 @@ class NumericSequence(Sequence[Number]):
     def _reindex(
         self,
         rule: Rule[Number] | None,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.
 
@@ -411,7 +411,7 @@ class NumericSequence(Sequence[Number]):
     @staticmethod
     def constant(
         value: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> NumericSequence:
@@ -419,8 +419,8 @@ class NumericSequence(Sequence[Number]):
 
         Args:
             value (Number): The constant value of each sequence element.
-            size (int | None): The number of elements in the sequence,
-                or None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence, or
+                None for an infinite sequence. Defaults to None.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -466,14 +466,14 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def naturals(
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> NumericSequence:
         """Return the sequence of natural numbers.
 
         Args:
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.
@@ -494,7 +494,7 @@ class NumericSequence(Sequence[Number]):
     def progression(
         first_term: Number,
         common_difference: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
     ) -> NumericSequence:
@@ -504,7 +504,7 @@ class NumericSequence(Sequence[Number]):
             first_term (Number): The first term of the progression.
             common_difference (Number): The constant difference
                 between consecutive terms.
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.
@@ -526,7 +526,7 @@ class NumericSequence(Sequence[Number]):
     def geometric(
         first_term: Number,
         common_ratio: Number,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
     ) -> NumericSequence:
@@ -536,7 +536,7 @@ class NumericSequence(Sequence[Number]):
             first_term (Number): The first term of the sequence.
             common_ratio (Number): The constant ratio between
                 consecutive terms.
-            size (int | None): The number of elements in the sequence.
+            size (Intfinity): The number of elements in the sequence.
                 Defaults to None, which corresponds to an infinite
                 sequence.
             first_index (int): The index of the first sequence element.

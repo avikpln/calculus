@@ -15,7 +15,7 @@ from collections.abc import Callable, Iterable
 from typing import TypeVar, Any
 from collections import deque
 
-from .sequence import Rule, Sequence
+from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .utils import validate_callable
 
 T = TypeVar("T")
@@ -99,7 +99,7 @@ class Recurrence(Sequence[T]):
         self,
         func: Callable[[int, tuple[T,...]], T],
         basis: Iterable[T],
-        size: int | None = None,
+        size: Intfinity = INFINITY,
     ) -> None:
         """Initialize a new recurrence object.
 
@@ -108,7 +108,7 @@ class Recurrence(Sequence[T]):
                 function computing the next term from its index and
                 a fixed number of preceding terms.
             basis (Iterable[T]): The initial base case values.
-            size (int | None): The size of the sequence. Defaults to
+            size (Intfinity): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
 
         Raises:
@@ -137,7 +137,7 @@ class Recurrence(Sequence[T]):
 
         return self._Rule(self._func, self._basis)
 
-    def _resize(self, size: int | None) -> Recurrence[T]:
+    def _resize(self, size: Intfinity) -> Recurrence[T]:
         # Produce a new sequence of the same type and given size.
 
         return Recurrence(self._func, self._basis, size=size)

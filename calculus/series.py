@@ -12,7 +12,7 @@ from __future__ import annotations
 __all__ = ["Series"]
 __author__ = "Avi Kaplan"
 
-from .sequence import Rule
+from .sequence import INFINITY, Intfinity, Rule
 from .numeric_sequence import Number, NumericSequence
 from .utils import validate_callable
 
@@ -80,7 +80,7 @@ class Series(NumericSequence):
     def __init__(
         self,
         term_rule: Rule[Number],
-        size: int | None = None,
+        size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
     ) -> None:
@@ -89,7 +89,7 @@ class Series(NumericSequence):
         Args:
             term_rule (Rule[Number]): The rule governing the terms being
                 summed.
-            size (int | None): The size of the sequence. Defaults to
+            size (Intfinity): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence. Defaults
                 to 1. A read-only keyword parameter.
@@ -122,7 +122,7 @@ class Series(NumericSequence):
 
         return self._rule_factory_produce(self._term_rule, self.first_index)
 
-    def _resize(self, size: int | None) -> Series:
+    def _resize(self, size: Intfinity) -> Series:
         # Produce a new sequence of the same type and given size.
 
         return Series(self._term_rule, size=size, first_index=self.first_index)
@@ -130,7 +130,7 @@ class Series(NumericSequence):
     def _reindex(
         self,
         rule: Rule[Number] | None,
-        size: int | None = None,
+        size: Intfinity = INFINITY,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.
 
