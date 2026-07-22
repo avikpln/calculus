@@ -7,6 +7,26 @@ import pytest
 
 from calculus.numeric_sequence import NumericSequence
 
+# -- UTILITY
+
+def test_map_returns_elementwise_result() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = seq.map(lambda x: x * 2)
+    assert list(result) == [2, 4, 6]
+
+
+def test_map_returns_numeric_sequence() -> None:
+    seq = NumericSequence(lambda n: n, size=3)
+    result = seq.map(lambda x: x * 2)
+    assert isinstance(result, NumericSequence)
+
+
+def test_map_noncallable_op_raises_type_error() -> None:
+    seq = NumericSequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        seq.map("not callable")  # type: ignore[arg-type]
+
+
 # -- UNARY ARITHMETIC
 
 def test_pos_returns_elementwise_identity() -> None:

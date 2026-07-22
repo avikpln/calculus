@@ -14,6 +14,7 @@ __author__ = "Avi Kaplan"
 from collections.abc import Callable, Iterable
 
 from .sequence import Sequence
+from .utils import validate_callable
 
 # A type for representing a number.
 Number = int | float | complex
@@ -36,6 +37,8 @@ class NumericSequence(Sequence[Number]):
             Return a numeric sequence from an iterable.
         geometric(first_term, common_ratio, size, first_index):
             Return a geometric sequence.
+        map(op):
+            Return an element-wise mapped numeric sequence.
         naturals(size, first_index):
             Return the sequence of natural numbers.
         progression(first_term, common_difference, size, first_index):
@@ -63,13 +66,42 @@ class NumericSequence(Sequence[Number]):
 
         return NumericSequence(rule, size=size, first_index=self.first_index)
 
+# -- UTILITY
+
+    def _apply(self, op: Callable[[Number], Number]) -> NumericSequence:
+        # Return the sequence obtained by applying op to each element.
+
+        validate_callable(op)
+        rule = self._mapper(self, op)
+        return NumericSequence(rule, self.size, first_index=self.first_index)
+
+    # Unlike Sequence.map(), which works with any element type,
+    # override assumes op to both accept and return a Number, and
+    # returns a NumericSequence rather than a generic Sequence.
+    def map(  # type: ignore[override]
+        self,
+        op: Callable[[Number], Number],
+    ) -> NumericSequence:
+        """Return an element-wise mapped numeric sequence.
+
+        Args:
+            op (Callable[[Number], Number]): The operation to apply.
+
+        Returns:
+            NumericSequence: The sequence obtained by applying ``op`` to
+                each element.
+
+        Raises:
+            TypeError: If ``op`` is not callable.
+        """
+        return self._apply(op)
+
 # -- ARITHMETIC HELPERS
 
     def _unary(self, op: Callable[[Number], Number]) -> NumericSequence:
         # Return the sequence obtained by applying a unary operation.
 
-        rule = self._mapper(self, op)
-        return NumericSequence(rule, self.size, first_index=self.first_index)
+        return self._apply(op)
 
     def _binary(
         self,
