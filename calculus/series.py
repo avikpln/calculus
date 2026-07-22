@@ -12,8 +12,7 @@ from __future__ import annotations
 __all__ = ["Series"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable
-
+from .sequence import Rule
 from .numeric_sequence import Number, NumericSequence
 from .utils import validate_callable
 
@@ -46,7 +45,7 @@ class Series(NumericSequence):
 
         def __init__(
             self,
-            term_rule: Callable[[int], Number],
+            term_rule: Rule[Number],
             first_index: int,
         ) -> None:
             # Initialize a new series rule instance.
@@ -80,7 +79,7 @@ class Series(NumericSequence):
 
     def __init__(
         self,
-        term_rule: Callable[[int], Number],
+        term_rule: Rule[Number],
         size: int | None = None,
         *,
         first_index: int = 1,
@@ -88,8 +87,8 @@ class Series(NumericSequence):
         """Initialize a new series object.
 
         Args:
-            term_rule (Callable[[int], Number]): The rule governing the
-                terms being summed.
+            term_rule (Rule[Number]): The rule governing the terms being
+                summed.
             size (int | None): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence. Defaults
@@ -111,14 +110,14 @@ class Series(NumericSequence):
 
     def _rule_factory_produce(
         self,
-        term_rule: Callable[[int], Number],
+        term_rule: Rule[Number],
         first_index: int,
-    ) -> Callable[[int], Number]:
+    ) -> Rule[Number]:
         # Core producer. For details, see _rule_factory().
 
         return self._Rule(term_rule, first_index)
 
-    def _rule_factory(self) -> Callable[[int], Number]:
+    def _rule_factory(self) -> Rule[Number]:
         # Produce the rule for a newly derived sequence.
 
         return self._rule_factory_produce(self._term_rule, self.first_index)
@@ -130,7 +129,7 @@ class Series(NumericSequence):
 
     def _reindex(
         self,
-        rule: Callable[[int], Number] | None,
+        rule: Rule[Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.

@@ -22,6 +22,9 @@ S = TypeVar("S")
 # Type of returned sequence elements.
 R = TypeVar("R")
 
+# Type representing a mapping from integers to objects.
+Rule = Callable[[int], T]
+
 # The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
 
@@ -81,7 +84,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     def __init__(
         self,
-        rule: Callable[[int], T] | None = None,
+        rule: Rule[T] | None = None,
         size: int | None = None,
         *,
         first_index: int = 1,
@@ -89,9 +92,8 @@ class Sequence(Generic[T], Iterable[T]):
         """Initialize a new sequence object.
 
         Args:
-            rule (Callable[[int], T]): The rule governing the sequence.
-                If None, uses a default rule that returns None for
-                every index.
+            rule (Rule[T]): The rule governing the sequence. If None,
+                uses a default rule that returns None for every index.
             size (int | None): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence.
@@ -103,11 +105,8 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         if rule is None:
-            resolved_rule : Callable[[int], T] = (
-                # Callable[[int], None] is not assignable to
-                # Callable[[int], T].
-                self._none  # type: ignore[assignment]
-            )
+            # Callable[[int], None] is not assignable to Callable[[int], T].
+            resolved_rule: Rule[T] = self._none  # type: ignore[assignment]
         else:
             validate_callable(rule)
             resolved_rule  = rule
@@ -131,7 +130,7 @@ class Sequence(Generic[T], Iterable[T]):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Callable[[int], T]:
+    def _rule_factory(self) -> Rule[T]:
         # Produce the rule for a newly derived sequence.
         #
         # Subclasses with a stateful rule should override this method to
@@ -152,7 +151,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     def _reindex(
         self,
-        rule: Callable[[int], T] | None,
+        rule: Rule[T] | None,
         size: int | None = None,
     ) -> Sequence[T]:
         # Produce a new sequence with the given rule and size.
@@ -640,7 +639,7 @@ class Sequence(Generic[T], Iterable[T]):
 # -- SPECIAL SEQUENCES
 
     @staticmethod
-    def _constant_rule(value: T) -> Callable[[int], T]:
+    def _constant_rule(value: T) -> Rule[T]:
         # Return the rule that yields a constant value for every index.
         return lambda n: value
 
@@ -678,7 +677,7 @@ class Sequence(Generic[T], Iterable[T]):
     def _iterable_rule(
         iterable: Iterable[T],
         first_index: int,
-    ) -> tuple[Callable[[int], T], int]:
+    ) -> tuple[Rule[T], int]:
         # Return the rule and size defining a sequence from an iterable.
         table = tuple(iterable)
         return lambda n: table[n - first_index], len(table)

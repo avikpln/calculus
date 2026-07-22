@@ -12,8 +12,7 @@ from __future__ import annotations
 __all__ = ["NumericRecurrence"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable
-
+from .sequence import Rule
 from .numeric_sequence import Number, NumericSequence
 from .recurrence import Recurrence
 
@@ -45,7 +44,7 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Callable[[int], Number]:
+    def _rule_factory(self) -> Rule[Number]:
         # Produce the rule for a newly derived sequence.
 
         return Recurrence._rule_factory(self)
@@ -57,7 +56,7 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
     def _reindex(
         self,
-        rule: Callable[[int], Number] | None,
+        rule: Rule[Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.

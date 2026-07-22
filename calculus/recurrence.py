@@ -15,7 +15,7 @@ from collections.abc import Callable, Iterable
 from typing import TypeVar, Any
 from collections import deque
 
-from .sequence import Sequence
+from .sequence import Rule, Sequence
 from .utils import validate_callable
 
 T = TypeVar("T")
@@ -132,7 +132,7 @@ class Recurrence(Sequence[T]):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Callable[[int], T]:
+    def _rule_factory(self) -> Rule[T]:
         # Produce the rule for a newly derived sequence.
 
         return self._Rule(self._func, self._basis)

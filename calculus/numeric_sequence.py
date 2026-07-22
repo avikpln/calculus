@@ -13,7 +13,7 @@ __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 
-from .sequence import Sequence
+from .sequence import Rule, Sequence
 from .utils import validate_callable
 
 # A type for representing a number.
@@ -59,7 +59,7 @@ class NumericSequence(Sequence[Number]):
 
     def _reindex(
         self,
-        rule: Callable[[int], Number] | None,
+        rule: Rule[Number] | None,
         size: int | None = None,
     ) -> NumericSequence:
         # Produce a new sequence with the given rule and size.
