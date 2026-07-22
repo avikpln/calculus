@@ -5,6 +5,7 @@ Run with:
 """
 import pytest
 
+from calculus.sequence import Sequence
 from calculus.numeric_sequence import NumericSequence
 
 # -- UTILITY
@@ -316,13 +317,20 @@ def test_mod_with_complex_operand_raises_type_error() -> None:
         list(seq % (1 + 2j))
 
 
-# -- SUBTYPE PRESERVATION
+# -- TYPING
 
 def test_head_preserves_numeric_subtype() -> None:
     squares = NumericSequence(lambda n: n * n)
     result = (-squares).head(4)
     assert isinstance(result, NumericSequence)
     assert list(result + 1) == [0, -3, -8, -15]
+
+
+def test_binary_with_non_numeric_sequence_raises_type_error() -> None:
+    a = NumericSequence(lambda n: n, size=3)
+    b = Sequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        a + b
 
 
 # -- SPECIAL SEQUENCES

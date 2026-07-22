@@ -110,6 +110,12 @@ class NumericSequence(Sequence[Number]):
     ) -> NumericSequence:
         # Return the sequence obtained by applying a binary operation.
 
+        if not isinstance(other, Number | NumericSequence):
+            raise TypeError(
+                f"unsupported type ({type(other).__name__}) for other "
+                "operand in binary operation"
+            )
+
         rule, size = self._combiner(self, other, op)
         return NumericSequence(rule, size, first_index=self.first_index)
 
