@@ -141,7 +141,7 @@ Reconsider this only if a genuine use case emerges.
 `first_index` was originally unrestricted, accepting any integer. It is
 now constrained to `FIRST_INDEX_OPTIONS = (0, 1)`.
 
-An arbitrary `first_index` was rarely useful in practice: the only
+An arbitrary `first_index` seems rarely useful in practice: the only
 real use cases are thinking in one-indexed mathematical terms (`a_1,
 a_2, ...`) or zero-indexed programming terms (`a_0, a_1, ...`).
 Supporting arbitrary starting points added complexity — an unbounded
@@ -349,18 +349,6 @@ because `Callable[[int], None]` is not compatible with arbitrary
 Alternative designs (factory methods, `Sequence[None]`, etc.) were
 considered but currently provide less convenient APIs.
 
-------------------------------------------------------------------------
-
-### Lazy validation
-
-`Sequence.__init__()` eagerly validates its primary callable because it
-establishes the object's core invariant.
-
-Transformation methods such as `subsequence()`, `map()`, and `combine()`
-do **not** eagerly validate their callables. Errors surface naturally
-when the transformed sequence is evaluated, following the same EAFP
-philosophy used elsewhere in the implementation.
-
 ## Validation
 
 ### Validation ownership: public API vs. private methods
@@ -543,6 +531,10 @@ implemented using the following workflow:
 5. **Record** *(only if warranted)*
    - Record important design decisions, rejected alternatives, or
      implementation notes in `NOTES.md`.
+   - Update `ARCHITECTURE.md` when the high-level class hierarchy or
+     architectural relationships change.
+   - Update `DESIGN.md` when component-level designs or structural
+     choices are modified.
    - Avoid documenting routine implementation details.
 
 **IMPORTANT!** Run the project's verification tools
@@ -745,104 +737,68 @@ subclass itself. The resulting design is simpler, more extensible, and
 avoids duplicated overrides while providing well-defined extension
 points for all future subclasses.
 
-**<u>Classifying Classes and Methods</u>**
+**<u>How subclasses interact with `_resize()` and `_reindex()`</u>**
 
-A single factory is not sufficient. Further analysis showed that the
-problem is deeper than object construction: **both classes and
-transformation methods must be classified**, since not every
-transformation can honestly preserve every subclass's structure.
+`_resize()` is the method `head()` depends on. Every subclass in the
+hierarchy is expected to override it, since a subclass's constructor
+generally accepts `size` as one of its own parameters, making the
+override straightforward. This is a design expectation, not something
+Python lets us enforce; a subclass that skips the override simply
+gets a plain `Sequence` back from `head()` instead of its own type.
 
-A **preserving class** carries no mathematical structure beyond its
-evaluation rule. Constructing its own type from its own rule is always
-correct.
+`_reindex()` is the method `shift_by()`, `tail()`, and `subsequence()`
+depend on. Here, no general recommendation is possible: reindexing is
+a more involved transformation than resizing, and preserving a
+subclass's own type through it may be difficult or outright
+impossible, depending on what that subclass represents. "Impossible"
+is meant broadly here, covering any subclass whose values are not
+straightforwardly reindexable — not only numeric recurrences, but
+for example a hypothetical string-valued subclass whose elements
+lose their meaning once reindexed.
 
-Examples:
+Concretely, neither `Recurrence` nor `Series` overrides `_reindex()`
+today: `shift_by()`, `tail()`, and `subsequence()` all fall through
+to `Sequence._reindex()` (`Recurrence`) or `NumericSequence._reindex()`
+(`Series`), degrading to a plain `Sequence` or `NumericSequence`
+respectively, rather than preserving `Recurrence` or `Series`. This
+is not a defect to fix on a schedule; it simply reflects that no
+general reindexing rule exists for either class today. Developers
+extending the hierarchy should be aware that skipping a `_reindex()`
+override means these three methods will silently return the
+degraded type, not their own subclass.
 
-* `Sequence`
-* `NumericSequence`
+An earlier version of this design used a single `_make()` method with a
+`preserve` boolean, deferring calls needing a different construction
+target up the MRO via `super()._make()`. This was abandoned:
+`type(self)` inside a method reached via `super()` still resolves to the
+*original* calling instance's type, not the ancestor being deferred to,
+since `self` does not change across a `super()` call. That made MRO
+deferral incompatible with `type(self)`-based construction. Splitting
+into two explicitly named methods removes the need for any deferral
+chain — each class that needs non-default behavior for `_reindex()`
+overrides it directly with its own literal target, rather than relying
+on `self`/`super()` semantics to route the call correctly.
 
-A **non-preserving class** carries additional mathematical structure
-that cannot generally survive arbitrary transformations.
+The degraded `Sequence` remains fully correct to iterate: it is
+backed by the same `_Rule` instance (via `_rule_factory()`, freshly
+constructed per derived sequence, so no cache-sharing occurs), which
+computes values identically regardless of the wrapper class calling
+it. A caller who only iterates forward may never notice the type
+change.
 
-Example:
+**Future work.** Reconstructing `Recurrence` or `Series` through
+these operations is possible in principle for some cases (the
+reindexing is simple enough algebraically for `shift_by()` and
+`tail()`, and for `subsequence()` when the subfunc is affine with a
+positive integer step), but was left unimplemented since no concrete
+use case has required it yet. Revisit if such a case emerges,
+preferring an override of `_reindex()` itself over each of
+`shift_by()`/`tail()`/`subsequence()` individually, keeping the
+override at the same architectural layer as `_resize()`.
 
-* future `Recurrence`
-
-Transformation methods fall into three categories:
-
-* **Preserving methods** vary only size, always reusing the calling
-  instance's own rule unchanged.
-  Example: `head()`.
-
-* **Non-preserving methods** change the representation by supplying a
-  new rule, but only through *reindexing* — the underlying rule is
-  still evaluated through the original sequence, just at different
-  indices.
-  Examples: `subsequence()`, `shift_by()`, `tail()`, slicing.
-
-* **Strictly non-preserving methods** compute genuinely new *values*
-  via a rule, not merely a reindexing of existing ones. No class can
-  meaningfully preserve its subtype through them, so they always
-  return a plain `Sequence`, regardless of class.
-  Examples: `map()`, `combine()`.
-
-The distinguishing question for the last category is not "does the
-class carry extra structure?" but "does the result even correspond to
-the same kind of mathematical object?" A `Recurrence`'s elementwise sum
-with another sequence is not, in general, itself expressible as some
-recursion with some basis — it is simply values indexed by a rule. The
-same holds for `NumericSequence`, which has no extra structure to
-preserve in the first place, so preservation is never available at
-this category regardless of the class doing the calling.
-
-**<u>`_resize()` and `_reindex()`</u>**
-
-Preserving and non-preserving methods are backed by two separate
-protected methods rather than a single factory with a flag:
-
-* `_resize(size)` — used by preserving methods. Takes only `size`;
-  always reuses the calling instance's own rule and constructs its
-  own type by name. Every preserving class overrides this to name its
-  own constructor; there is exactly one consumer today (`head()`).
-
-* `_reindex(rule, size)` — used by non-preserving (reindexing)
-  methods. Takes an explicit new rule and size. Each class states its
-  construction target as a literal class name, not `type(self)`:
-  `Sequence._reindex()` and `NumericSequence._reindex()` each
-  construct their own type directly, while a future non-preserving
-  class such as `Recurrence` overrides `_reindex()` to construct a
-  plain `Sequence` instead, since an arbitrary reindexing generally
-  isn't a valid recurrence.
-
-An earlier version of this design used a single `_make()` method with
-a `preserve` boolean, deferring non-preserving calls up the MRO via
-`super()._make()` when a class wanted to fall back to its nearest
-preserving ancestor. This was abandoned: `type(self)` inside a method
-reached via `super()` still resolves to the *original* calling
-instance's type, not the ancestor being deferred to, since `self` does
-not change across a `super()` call. That made MRO deferral incompatible
-with `type(self)`-based construction. Splitting into two explicitly
-named methods removes the need for any deferral chain — each class
-that needs non-default behavior for `_reindex()` overrides it directly
-with its own literal target, rather than relying on `self`/`super()`
-semantics to route the call correctly.
-
-**<u>Consequences</u>**
-
-`_resize()` and `_reindex()` are intentionally **only factories**. They
-construct an object once the necessary data has already been produced;
-they never perform representation-specific mathematics themselves.
-That responsibility belongs to the transformation methods (or subclass
-overrides of them) that call them.
-
-`map()` and `combine()` are deliberately excluded from this mechanism
-altogether: since they always return a plain `Sequence`, there is no
-subtype to preserve, no `_resize()`/`_reindex()` call to make, and
-(for `combine()` specifically) no ambiguity over which operand's class
-should govern the result — neither one's subtype survives regardless.
-This is consistent with `NumericSequence`'s arithmetic, which never
-routes through `self.combine()`/`self.map()` for its own construction
-and therefore has no reason to override either.
+We also have `map()` and `combine()`, which work in full generality over
+arbitrary element types and do not preserve subclasses' own types. These
+should be handled with even more care.
 
 ------------------------------------------------------------------------
 
@@ -936,44 +892,6 @@ expected to read the inline comments on `_resize()` and
 not overriding them, and existing tests such as
 `test_head_preserves_numeric_subtype` are the intended guardrail for
 each concrete subclass.
-
-------------------------------------------------------------------------
-
-### `Recurrence` does not override `shift_by()`, `tail()`, or `subsequence()`
-
-`Recurrence` inherits these methods unchanged from `Sequence`. Since
-`Recurrence` does not override `_reindex()`, all three fall through to
-`Sequence._reindex()` and return a plain `Sequence`, not a `Recurrence`.
-
-This is intentional, not an oversight, and follows directly from the
-preserving/non-preserving classification established earlier: `head()`
-is a preserving method (same rule, smaller size), so `_resize()` is
-overridden to keep returning a `Recurrence`. `shift_by()`, `tail()`, and
-`subsequence()` are reindexing methods — they evaluate the original
-rule at *different* indices — and an arbitrarily reindexed recurrence
-rule is not, in general, itself expressible as some recursion with some
-basis. Degrading to `Sequence` is therefore correct: `Recurrence`
-correctly relies on the inherited `Sequence._reindex()` fallback here,
-rather than needing an override of its own (see the "Redesign: subtype
-preservation" note above).
-
-The degraded `Sequence` remains fully correct to iterate: it is backed
-by the same `Recurrence._Rule` instance (via `_rule_factory()`,
-freshly constructed per derived sequence, so no cache-sharing occurs),
-which computes values identically regardless of the wrapper class
-calling it. A caller who only iterates forward may never notice the
-type change.
-
-**Future work.** Reconstructing a `Recurrence` for these cases
-is possible in principle (the reindexing is simple enough algebraically
-for `shift_by` and `tail`, and for `subsequence` when the subfunc is
-affine with a positive integer step), but was left unimplemented since
-no concrete use case has required it yet, consistent with the
-project's general preference for avoiding speculative infrastructure.
-Revisit once a use case appears, and prefer overriding `_reindex()`
-directly rather than each of `shift_by()`/`tail()`/`subsequence()`
-individually, keeping the override at the same architectural layer as
-`_resize()`.
 
 ------------------------------------------------------------------------
 
