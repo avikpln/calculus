@@ -349,18 +349,6 @@ because `Callable[[int], None]` is not compatible with arbitrary
 Alternative designs (factory methods, `Sequence[None]`, etc.) were
 considered but currently provide less convenient APIs.
 
-------------------------------------------------------------------------
-
-### Lazy validation
-
-`Sequence.__init__()` eagerly validates its primary callable because it
-establishes the object's core invariant.
-
-Transformation methods such as `subsequence()`, `map()`, and `combine()`
-do **not** eagerly validate their callables. Errors surface naturally
-when the transformed sequence is evaluated, following the same EAFP
-philosophy used elsewhere in the implementation.
-
 ## Validation
 
 ### Validation ownership: public API vs. private methods
