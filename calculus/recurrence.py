@@ -122,20 +122,27 @@ class Recurrence(Sequence[T]):
         basis = tuple(basis)
         if len(basis) == 0:
             raise ValueError("basis cannot have zero length")
-
+        rule = self._rule_factory_produce(func, basis)
+        super().__init__(rule, size=size, first_index=0)
         self._func = func
         self._basis = basis
         self._order = len(basis)
-        rule = self._rule_factory()
-
-        super().__init__(rule, size=size, first_index=0)
 
 # -- FACTORY
+
+    def _rule_factory_produce(
+        self,
+        func: Callable[[int, tuple[T,...]], T],
+        basis: Iterable[T],
+    ) -> Rule[T]:
+        # Core producer. For details, see _rule_factory().
+
+        return self._Rule(func, basis)
 
     def _rule_factory(self) -> Rule[T]:
         # Produce the rule for a newly derived sequence.
 
-        return self._Rule(self._func, self._basis)
+        return self._rule_factory_produce(self._func, self._basis)
 
     def _resize(self, size: Intfinity) -> Recurrence[T]:
         # Produce a new sequence of the same type and given size.
