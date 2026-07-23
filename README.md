@@ -151,7 +151,7 @@ print(4 * leibniz[1000])
 # 3.140592653839794
 ```
 
-## Project layout
+## Project Layout
 
 ``` text
 ├── .github
