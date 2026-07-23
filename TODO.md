@@ -74,3 +74,6 @@
 - Should a `PowerSeries` abstraction be added?
 
 - Should `BinarySequence`/`RandomSequence` abstractions be added?
+
+- Decide which protected members and nested classes should be
+  represented in `ARCHITECTURE.md`.

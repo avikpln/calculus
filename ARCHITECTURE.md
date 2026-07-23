@@ -8,28 +8,43 @@ and the relationships between its classes.
 ```mermaid
 classDiagram
     class Sequence~T~ {
-        +size
         +finite
         +first_index
         +last_index
-        +subsequence(subrule, size)
+        +size
+        +combine(other, op)
+        +head(size)
+        +map(op)
         +shift_by(offset)
         +shift_to(where)
-        +head(size)
+        +subsequence(subrule, size)
         +tail(size)
-        +map(op)
-        +combine(other, op)
         +constant(value, size, first_index)$
         +from_iterable(iterable, first_index)$
         #_rule
     }
 
     class NumericSequence {
-        +Arithmetic operators
+        +__add__(other)
+        +__radd__(other)
+        +__sub__(other)
+        +__rsub__(other)
+        +__mul__(other)
+        +__rmul__(other)
+        +__truediv__(other)
+        +__rtruediv__(other)
+        +__floordiv__(other)
+        +__rfloordiv__(other)
+        +__mod__(other)
+        +__rmod__(other)
+        +__pow__(other)
+        +__rpow__(other)
+        +__neg__()
+        +__abs__()
         +map(op)
+        +geometric(first_term, common_ratio, size, first_index)$
         +naturals(size, first_index)$
         +progression(first_term, common_difference, size, first_index)$
-        +geometric(first_term, common_ratio, size, first_index)$
     }
 
     Sequence <|-- NumericSequence
@@ -49,12 +64,13 @@ classDiagram
 
 ## Notes
 
-- `$` denotes a static method (a factory that does not operate on
-  an existing instance).
-- `NumericSequence`'s arithmetic operators are grouped rather than
-  listed individually, since enumerating all fourteen dunder
-  methods would add noise without adding information; see
-  `numeric_sequence.py` for the complete list.
+- `$` is used in this diagram to denote a static method. The static
+  methods shown here are factory methods.
+- `Sequence` is the base abstraction for sequences in the package.
+- `NumericSequence` inherits from `Sequence` and implements arithmetic
+  operators through Python's special methods.
+- `Recurrence` inherits from `Sequence`, representing sequences defined
+  by recursive relations.
 - `NumericRecurrence` inherits from both `Recurrence` and
   `NumericSequence`, combining numeric arithmetic with recursively
   defined elements.
