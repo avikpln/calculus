@@ -3,7 +3,7 @@
 This document records the class hierarchy of the `calculus` package
 and the relationships between its classes.
 
-## Class diagram
+## Class Diagram
 
 ```mermaid
 classDiagram

@@ -58,7 +58,7 @@ When subclassing:
     to new behavior;
 -   summarize only the behavioral differences from the parent class.
 
-## Docstring conventions
+## Docstring Conventions
 
 -   Summary line: exactly one line, appearing on the same line as the
 	opening """
@@ -89,7 +89,7 @@ When subclassing:
     propagate through its own parameters. Delegating methods should not
     reproduce a constructor's complete exception contract.
 
-## Type hints
+## Type Hints
 
 -   The project targets `mypy --strict`.
 -   Type ignores should be localized and documented.
@@ -130,7 +130,7 @@ When subclassing:
 -   Private helpers should begin with an underscore.
 -   Module-level constants use UPPER_CASE.
 
-## Line-wrapping
+## Line-Wrapping
 
 The guiding rule is *all-or-none*: if a construct fits entirely on
 one line within the line-length limit, it stays on one line. If it
@@ -235,7 +235,7 @@ grouping aligned to the opening delimiter.
     standalone, tightened only when mixed with a lower-priority
     operator in the same expression.
 
-## Testing and quality
+## Testing and Quality
 
 Before every commit, run:
 
