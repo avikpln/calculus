@@ -48,7 +48,7 @@ class Recurrence(Sequence[T]):
 
         def __init__(
             self,
-            func: Callable[[int, tuple[T,...]], T],
+            func: Callable[[int, tuple[T, ...]], T],
             basis: Iterable[T],
         ) -> None:
             # Initialize a new recurrence rule instance.
@@ -56,7 +56,7 @@ class Recurrence(Sequence[T]):
             self.func = func
             self.basis = tuple(basis)
             self.order = len(self.basis)
-            self.cache: tuple[int, tuple[T,...]] | None = None
+            self.cache: tuple[int, tuple[T, ...]] | None = None
 
         def __call__(self, n: int) -> Any:
             # Return the term at n, advancing and caching as needed.
@@ -97,14 +97,14 @@ class Recurrence(Sequence[T]):
 
     def __init__(
         self,
-        func: Callable[[int, tuple[T,...]], T],
+        func: Callable[[int, tuple[T, ...]], T],
         basis: Iterable[T],
         size: Intfinity = INFINITY,
     ) -> None:
         """Initialize a new recurrence object.
 
         Args:
-            func (Callable[[int, tuple[T,...]], T]): The transition
+            func (Callable[[int, tuple[T, ...]], T]): The transition
                 function computing the next term from its index and
                 a fixed number of preceding terms.
             basis (Iterable[T]): The initial base case values.
@@ -133,7 +133,7 @@ class Recurrence(Sequence[T]):
 
     def _rule_factory_produce(
         self,
-        func: Callable[[int, tuple[T,...]], T],
+        func: Callable[[int, tuple[T, ...]], T],
         basis: Iterable[T],
     ) -> Rule[T]:
         # Core producer. For details, see _rule_factory().
@@ -153,7 +153,7 @@ class Recurrence(Sequence[T]):
 # -- PROPERTIES
 
     @property
-    def basis(self) -> tuple[T,...]:
+    def basis(self) -> tuple[T, ...]:
         """The basis of the recurrence."""
         return self._basis
 
