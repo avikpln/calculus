@@ -46,7 +46,7 @@ _INFINITY_SYMBOL = "\N{infinity}"
 #=======================================================================
 
 class Sequence(Generic[T], Iterable[T]):
-    """A class representing infinite (and finite) sequences of objects.
+    """A class representing infinite (and finite) sequences.
 
     Attributes:
         size (Intfinity): The size of the sequence (None if infinite).

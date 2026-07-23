@@ -21,7 +21,7 @@ from .recurrence import Recurrence
 #=======================================================================
 
 class NumericRecurrence(Recurrence[Number], NumericSequence):
-    """A numeric sequence whose elements are computed from prior terms.
+    """A class representing infinite numeric recurrences.
 
     This subclass inherits all functionality from NumericSequence and
     Recurrence, combining element-wise arithmetic operations with

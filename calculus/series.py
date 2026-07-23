@@ -1,6 +1,6 @@
 """Infinite numeric series.
 
-This module extends NumericSequence with support for series, whose
+This module extends NumericSequence to represent sequences whose
 elements are the partial sums of an underlying term sequence.
 
 Classes:
@@ -21,7 +21,7 @@ from .utils import validate_callable
 #=======================================================================
 
 class Series(NumericSequence):
-    """A numeric sequence whose elements are partial sums of terms.
+    """A class representing infinite numeric series.
 
     This subclass inherits all functionality from NumericSequence.
     Each element is the accumulated sum of an underlying term rule,
@@ -39,7 +39,7 @@ class Series(NumericSequence):
     """
 
     class _Rule:
-        # Callable series rule, caching the last computed partial sum.
+        # Callable series rule.
 
         __slots__ = ("cache", "first_index", "term_rule")
 
