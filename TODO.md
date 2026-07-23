@@ -71,9 +71,6 @@
   working conventions for future LLM sessions (see
   `attic/context/.llm.md`).
 
-- Add a gitignored `attic/` directory for retired ideas and discarded
-  designs.
-
 - Set up GitHub Issues for tracking bugs and planned work.
 
 - Set up a virtual environment (`venv`) for development, to mirror
