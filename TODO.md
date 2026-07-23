@@ -18,6 +18,12 @@
 - Allow `Recurrence` to optionally start from `first_index=1`, not just
   the currently hard-enforced `0`.
 
+- Add a `NumericSequence` special sequence defining \(e\).
+
+## Improvements
+
+- Identify opportunities to use decorators.
+
 ## Testing
 
 - Add a unit test suite for `utils.py`.
@@ -48,9 +54,16 @@
 
 - Review and revise DESIGN.md if needed.
 
+- Review all docstrings and documentation comments.
+
 ## Style
 
+- Convert type and constant comments to PEP 257 inline docstrings.
+
 - Revise `STYLE.md` (see `attic/style/missing.txt`).
+
+- Ensure that all Markdown files are not prematurely wrapped before 72
+  characters.
 
 ## Environment
 
@@ -69,7 +82,7 @@
 
 - Add a script to clean generated artifacts (e.g. `__pycache__`).
 
-## Open Questions
+## Unresolved Questions
 
 - Should a `PowerSeries` abstraction be added?
 
@@ -77,3 +90,6 @@
 
 - Decide which protected members and nested classes should be
   represented in `ARCHITECTURE.md`.
+
+- Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
+  instead of `{aₙ}`?
