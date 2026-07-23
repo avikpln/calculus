@@ -40,6 +40,18 @@ def test_noncallable_rule_raises_type_error() -> None:
         Sequence(rule="not callable")  # type: ignore[arg-type]
 
 
+def test_noncallable_map_operator_raises_type_error() -> None:
+    seq = Sequence(lambda n: n)
+    with pytest.raises(TypeError):
+        seq.map("not callable")  # type: ignore[arg-type]
+
+
+def test_noncallable_combine_operator_raises_type_error() -> None:
+    seq = Sequence(lambda n: n)
+    with pytest.raises(TypeError):
+        seq.combine(1, "not callable")  # type: ignore[arg-type]
+
+
 def test_noninteger_size_raises_type_error() -> None:
     with pytest.raises(TypeError):
         Sequence(lambda n: n, size="three")  # type: ignore[arg-type]
