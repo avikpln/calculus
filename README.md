@@ -10,10 +10,9 @@ through lazy evaluation.
 The Calculus package aims to provide a collection of reusable
 abstractions for discrete and continuous mathematics.
 
-The current implementation provides a generic `Sequence[T]`
-abstraction together with the specialized `NumericSequence` and
-`Recurrence` subclasses, serving as the foundation for future
-components such as series and function abstractions.
+The current implementation provides a generic `Sequence[T]` abstraction
+together with the specialized `NumericSequence`, `Recurrence`,
+`NumericRecurrence`, and `Series` subclasses.
 
 ## Features
 
@@ -26,7 +25,7 @@ components such as series and function abstractions.
     term sequence.
 -   Infinite (and finite) sequences.
 -   Lazy evaluation via user-defined rules.
--   Arbitrary starting indices.
+-   Support for zero- and one-indexed sequences.
 -   Element access and slicing.
 -   Forward iteration over subsequences.
 -   `Sequence` transformations (`map`, `combine`, `shift_by`,
@@ -35,57 +34,9 @@ components such as series and function abstractions.
     iterables.
 -   Fully type-annotated (`mypy --strict`).
 
-## Dependencies
-
-Calculus has no runtime dependencies beyond the Python standard
-library.
-
-Development requires:
-
-- `mypy` for static type checking
-- `pyflakes` for static analysis
-- `pydocstyle` for docstring style checking
-- `pytest` for unit testing
-
-Install development dependencies with:
-
-```bash
-pip install -r requirements-dev.txt
-```
-
-## Project layout
-
-``` text
-├── .github
-│   └── workflows
-│       └── ci.yml                    # GitHub Actions CI workflow
-├── calculus
-│   ├── __init__.py                   # Package public API
-│   ├── numeric_recurrence.py         # NumericRecurrence implementation
-│   ├── numeric_sequence.py           # NumericSequence implementation
-│   ├── recurrence.py                 # Recurrence implementation
-│   ├── sequence.py                   # Generic Sequence implementation
-│   ├── series.py                     # Series implementation
-│   └── utils.py                      # Shared validation helpers
-├── tests
-│   ├── test_numeric_recurrence.py    # Pytest test suite
-│   ├── test_numeric_sequence.py      # Pytest test suite
-│   ├── test_recurrence.py            # Pytest test suite
-│   ├── test_sequence.py              # Pytest test suite
-│   └── test_series.py                # Pytest test suite
-├── .gitignore
-├── ARCHITECTURE.md                   # Class hierarchy and relationships
-├── DESIGN.md                         # Per-class technical design summary
-├── LICENSE
-├── NOTES.md                          # Design rationale and architectural decisions
-├── pytest.ini                        # Adds project root to sys.path for tests
-├── README.md
-├── requirements-dev.txt              # Development and CI dependencies
-├── STYLE.md                          # Project coding and documentation conventions
-└── TODO.md                           # Planned enhancements
-```
-
 ## Examples
+
+### `Sequence`
 
 ```python
 from calculus import Sequence
@@ -200,6 +151,38 @@ print(4 * leibniz[1000])
 # 3.140592653839794
 ```
 
+## Project layout
+
+``` text
+├── .github
+│   └── workflows
+│       └── ci.yml                    # GitHub Actions CI workflow
+├── calculus
+│   ├── __init__.py                   # Package public API
+│   ├── numeric_recurrence.py         # NumericRecurrence implementation
+│   ├── numeric_sequence.py           # NumericSequence implementation
+│   ├── recurrence.py                 # Recurrence implementation
+│   ├── sequence.py                   # Sequence implementation
+│   ├── series.py                     # Series implementation
+│   └── utils.py                      # Shared validation helpers
+├── tests
+│   ├── test_numeric_recurrence.py    # Pytest test suite
+│   ├── test_numeric_sequence.py      # Pytest test suite
+│   ├── test_recurrence.py            # Pytest test suite
+│   ├── test_sequence.py              # Pytest test suite
+│   └── test_series.py                # Pytest test suite
+├── .gitignore
+├── ARCHITECTURE.md                   # Class hierarchy and relationships
+├── DESIGN.md                         # Per-class technical design summary
+├── LICENSE
+├── NOTES.md                          # Design rationale and architectural decisions
+├── pytest.ini                        # Adds project root to sys.path for tests
+├── README.md
+├── requirements-dev.txt              # Development and CI dependencies
+├── STYLE.md                          # Project coding and documentation conventions
+└── TODO.md                           # Planned enhancements
+```
+
 ## Development
 
 The project emphasizes:
@@ -217,6 +200,24 @@ pyflakes calculus
 pydocstyle calculus
 pytest
 git diff --cached --check
+```
+
+## Dependencies
+
+Calculus has no runtime dependencies beyond the Python standard
+library.
+
+Development requires:
+
+- `mypy` for static type checking
+- `pyflakes` for static analysis
+- `pydocstyle` for docstring style checking
+- `pytest` for unit testing
+
+Install development dependencies with:
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ## Documentation
