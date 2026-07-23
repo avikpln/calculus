@@ -571,7 +571,11 @@ class Sequence(Generic[T], Iterable[T]):
         Returns:
             Sequence[R]: The sequence obtained by applying op to each
                 element.
+
+        Raises:
+            TypeError: If ``op`` is not callable.
         """
+        validate_callable(op)
         rule = self._mapper(self, op)
         return Sequence(rule, self.size, first_index=self.first_index)
 
@@ -633,9 +637,11 @@ class Sequence(Generic[T], Iterable[T]):
                 element-wise.
 
         Raises:
+            TypeError: If ``op`` is not callable.
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
+        validate_callable(op)
         rule, size = self._combiner(self, other, op)
         return Sequence(rule, size, first_index=self.first_index)
 
