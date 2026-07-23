@@ -1,7 +1,7 @@
 """Infinite numeric sequences with element-wise arithmetic.
 
-This module extends the generic Sequence class with support for numeric
-sequences and element-wise arithmetic operations.
+This module extends the generic Sequence class to handle numeric
+elements, enabling element-wise arithmetic operations.
 
 Classes:
     NumericSequence: An infinite sequence of numeric values.
@@ -24,7 +24,7 @@ Number = int | float | complex
 #=======================================================================
 
 class NumericSequence(Sequence[Number]):
-    """A sequence whose elements are numeric values.
+    """A class representing infinite numeric sequences.
 
     This subclass inherits all functionality from Sequence and extends
     it with element-wise arithmetic operations, exposed through the

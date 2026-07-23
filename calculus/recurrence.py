@@ -1,7 +1,7 @@
 """Generic abstraction for infinite recurrences.
 
-This module extends the generic Sequence class with support for
-sequences whose elements are computed recursively from earlier terms.
+This module extends the generic Sequence class to model sequences whose
+elements are computed recursively from preceding terms.
 
 Classes:
     Recurrence: A sequence whose elements are defined recursively.
@@ -28,7 +28,7 @@ _EMPTY_SET_SYMBOL = '\N{empty set}'
 #=======================================================================
 
 class Recurrence(Sequence[T]):
-    """A sequence whose elements are computed from prior terms.
+    """A class representing infinite (and finite) recurrences.
 
     This subclass inherits all functionality from Sequence. Each element
     is computed from a fixed number of preceding elements via a transition
@@ -42,7 +42,7 @@ class Recurrence(Sequence[T]):
     """
 
     class _Rule:
-        # Callable recurrence rule, caching prior terms as it advances.
+        # Callable recurrence rule.
 
         __slots__ = ("basis", "cache", "func", "order")
 
@@ -112,9 +112,10 @@ class Recurrence(Sequence[T]):
                 None, which corresponds to an infinite sequence.
 
         Raises:
-            TypeError: If ``func`` is not callable, or if ``basis`` is
-                not iterable.
-            ValueError: If ``basis`` is empty.
+            TypeError: If ``func`` is not callable, if ``basis`` is not
+                iterable, or if ``size`` is not None or an integer.
+            ValueError: If ``basis`` is empty or if ``size`` is
+                negative.
         """
         validate_callable(func)
         if not isinstance(basis, Iterable):
