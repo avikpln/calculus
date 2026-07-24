@@ -17,7 +17,7 @@ together with the specialized `NumericSequence`, `Recurrence`,
 ## Features
 
 -   Generic `Sequence[T]` implementation.
--   `BooleanSequence` for sequences of Boolean values.
+-   `BooleanSequence` with element-wise logical operations.
 -   `NumericSequence` with element-wise arithmetic.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
@@ -66,6 +66,23 @@ is_even = BooleanSequence(lambda n: n % 2 == 0, first_index=1)
 
 print(is_even.head(5))
 # ⟨False, True, False, True, False⟩
+
+# Unary negation.
+print((~is_even).head(5))
+# ⟨True, False, True, False, True⟩
+
+# Element-wise AND.
+is_multiple_of_three = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
+print((is_even & is_multiple_of_three).head(6))
+# ⟨False, False, False, False, False, True⟩
+
+# Element-wise OR.
+print((is_even | is_multiple_of_three).head(6))
+# ⟨False, True, True, True, False, True⟩
+
+# Element-wise XOR.
+print((is_even ^ is_multiple_of_three).head(6))
+# ⟨False, True, True, True, False, False⟩
 ```
 
 ### `NumericSequence`

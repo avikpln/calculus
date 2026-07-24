@@ -25,6 +25,17 @@ classDiagram
         +tail(size)
     }
 
+    class BooleanSequence {
+        %% Methods
+        +__or__(other)
+        +__ror__(other)
+        +__and__(other)
+        +__rand__(other)
+        +__xor__(other)
+        +__rxor__(other)
+        +__invert__()
+    }
+
     class NumericSequence {
         %% Methods
         +__add__(other)
