@@ -8,23 +8,25 @@ and the relationships between its classes.
 ```mermaid
 classDiagram
     class Sequence~T~ {
+        %% Attributes
         +finite
         +first_index
         +last_index
         +size
+
+        %% Methods
         +combine(other, op)
         +head(size)
         +map(op)
         +shift_by(offset)
         +shift_to(where)
+        +subiter(start, stop, step)
         +subsequence(subrule, size)
         +tail(size)
-        +constant(value, size, first_index)$
-        +from_iterable(iterable, first_index)$
-        #_rule
     }
 
     class NumericSequence {
+        %% Methods
         +__add__(other)
         +__radd__(other)
         +__sub__(other)
@@ -42,18 +44,9 @@ classDiagram
         +__neg__()
         +__abs__()
         +map(op)
-        +euler()$
-        +geometric(first_term, common_ratio, size, first_index)$
-        +naturals(size, first_index)$
-        +progression(first_term, common_difference, size, first_index)$
     }
 
     Sequence <|-- NumericSequence
-
-    class Recurrence {
-        +basis
-        +order
-    }
 
     Sequence <|-- Recurrence
 
@@ -65,8 +58,6 @@ classDiagram
 
 ## Notes
 
-- `$` is used in this diagram to denote a static method. The static
-  methods shown here are factory methods.
 - `Sequence` is the base abstraction for sequences in the package.
 - `NumericSequence` inherits from `Sequence` and implements arithmetic
   operators through Python's special methods.
