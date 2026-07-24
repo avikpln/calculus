@@ -18,8 +18,6 @@
 - Allow `Recurrence` to optionally start from `first_index=1`, not just
   the currently hard-enforced `0`.
 
-- Add a `NumericSequence` special sequence defining \(e\).
-
 ## Improvements
 
 - Identify opportunities to use decorators.

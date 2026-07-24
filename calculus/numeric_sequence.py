@@ -553,3 +553,14 @@ class NumericSequence(Sequence[Number]):
         """
         rule = lambda n: first_term * common_ratio**(n - first_index)
         return NumericSequence(rule, size=size, first_index=first_index)
+
+    @staticmethod
+    def euler() -> NumericSequence:
+        """Return the sequence defining e.
+
+        The result is an infinite sequence whose terms converge to e.
+
+        Returns:
+            NumericSequence: The sequence defining e.
+        """
+        return NumericSequence(lambda n: (1 + 1/n) ** n, first_index=1)

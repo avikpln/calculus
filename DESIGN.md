@@ -32,7 +32,7 @@ alternatives, and historical context, see `NOTES.md`.
 - **_reindex:** overridden; constructs `NumericSequence`.
 - **_rule_factory:** inherited from `Sequence`, unchanged.
 - **Special constructors:** `constant()`, `from_iterable()`,
-  `naturals()`, `progression()`, `geometric()`.
+  `naturals()`, `progression()`, `geometric()`, `euler()`.
 
 ## Recurrence
 

@@ -42,6 +42,7 @@ classDiagram
         +__neg__()
         +__abs__()
         +map(op)
+        +euler()$
         +geometric(first_term, common_ratio, size, first_index)$
         +naturals(size, first_index)$
         +progression(first_term, common_difference, size, first_index)$
