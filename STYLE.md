@@ -250,3 +250,9 @@ All checks should pass before committing.
 This same sequence is automated by the project's CI workflow, which
 uses the empty-tree hash to check every file in the repository rather
 than just staged changes.
+
+## Architecture Diagrams
+
+-   Specify only public instance attributes and methods;
+-   Order members alphabetically unless grouping them has a meaningful
+    structural or conceptual purpose.

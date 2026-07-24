@@ -83,8 +83,5 @@
 
 - Should `BinarySequence`/`RandomSequence` abstractions be added?
 
-- Decide which protected members and nested classes should be
-  represented in `ARCHITECTURE.md`.
-
 - Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
   instead of `{aₙ}`?
