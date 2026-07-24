@@ -66,11 +66,18 @@ When subclassing:
 - Maximum line length: 72 characters (except doctests, URLs, and
   unavoidable output).
 
-- Sections appear, when applicable, in the following order:
+- For function and method docstrings, non-empty sections appear in the
+  following order:
 
         Args:
         Returns:
         Raises:
+        Notes:
+        Examples:
+
+- For class docstrings, non-empty sections appear in the following
+  order:
+
         Attributes:
         Methods:
         Notes:
