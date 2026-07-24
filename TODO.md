@@ -49,12 +49,6 @@
 
 - Add `CHANGELOG.md`.
 
-- Once `Series` exists, extend "Restricted `first_index`" in
-  `NOTES.md`. If `Series` hard-enforces `first_index=1` (verify
-  this first), note that `FIRST_INDEX_OPTIONS = (0, 1)` is now
-  validated by two concrete cases: `Recurrence` enforcing 0 and
-  `Series` enforcing 1.
-
 - Review all docstrings and documentation comments.
 
 ## Style
