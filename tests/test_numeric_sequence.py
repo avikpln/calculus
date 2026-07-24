@@ -363,3 +363,14 @@ def test_geometric_returns_correct_numeric_sequence() -> None:
     seq = NumericSequence.geometric(2, 3, size=4)
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [2, 6, 18, 54]
+
+
+def test_euler_returns_correct_numeric_sequence() -> None:
+    seq = NumericSequence.euler()
+    assert isinstance(seq, NumericSequence)
+    assert list(seq.head(4)) == [
+        (1 + 1/1) ** 1,
+        (1 + 1/2) ** 2,
+        (1 + 1/3) ** 3,
+        (1 + 1/4) ** 4,
+    ]
