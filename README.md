@@ -173,7 +173,6 @@ print(4 * leibniz[1000])
 │   └── test_series.py                # Pytest test suite
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
-├── DESIGN.md                         # Per-class technical design summary
 ├── LICENSE
 ├── NOTES.md                          # Design rationale and architectural decisions
 ├── pytest.ini                        # Adds project root to sys.path for tests

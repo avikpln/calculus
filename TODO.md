@@ -1,5 +1,10 @@
 # TODO
 
+## Design
+
+- Create a DESIGN.md capturing distilled, per-class design decisions.
+  See attic/design/ for discarded attempts.
+
 ## Features
 
 - Implement comparison operators (`__eq__`, `__lt__`, etc.), returning
@@ -43,14 +48,6 @@
   calculus-themed imagery, not an architecture diagram.
 
 - Add `CHANGELOG.md`.
-
-- Once `Series` exists, extend "Restricted `first_index`" in
-  `NOTES.md`. If `Series` hard-enforces `first_index=1` (verify
-  this first), note that `FIRST_INDEX_OPTIONS = (0, 1)` is now
-  validated by two concrete cases: `Recurrence` enforcing 0 and
-  `Series` enforcing 1.
-
-- Review and revise DESIGN.md if needed.
 
 - Review all docstrings and documentation comments.
 
