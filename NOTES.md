@@ -34,9 +34,9 @@ not the visible window of a sequence.
 
 Consequences:
 
--   size is preserved;
--   `first_index` is preserved;
--   finite sequences may evaluate indices outside their original domain.
+- size is preserved;
+- `first_index` is preserved;
+- finite sequences may evaluate indices outside their original domain.
 
 Domain-preserving operations belong to `head()` and `tail()` instead.
 
@@ -326,10 +326,10 @@ semantics remain open.
 
 Future work:
 
--   determine whether `Sequence()` should instead represent an empty
-    sequence;
--   reconsider this together with the semantics of truthiness and
-    default construction.
+- determine whether `Sequence()` should instead represent an empty
+  sequence;
+- reconsider this together with the semantics of truthiness and default
+  construction.
 
 ------------------------------------------------------------------------
 
@@ -366,15 +366,14 @@ This distinction is about ownership, not about where an exception
 happens to be physically raised. The deciding question is: do all
 current callers of the private method agree on what it should reject?
 
--   If every current caller wants identical behavior (e.g.
-    `_combiner()`, used identically by `combine()` and
-    `NumericSequence`'s arithmetic dunders; or `_index_sequence()`,
-    which currently has one caller), the check may live inside the
-    private method itself.
--   If callers genuinely diverge (e.g. `subiter()` forbids both negative
-    and zero step, while `__getitem__()`'s slice handling forbids only
-    zero), no single private method can own the check correctly for
-    both; validation must move out to each public caller instead.
+- If every current caller wants identical behavior (e.g. `_combiner()`,
+  used identically by `combine()` and `NumericSequence`'s arithmetic
+  dunders; or `_index_sequence()`, which currently has one caller), the
+  check may live inside the private method itself.
+- If callers genuinely diverge (e.g. `subiter()` forbids both negative
+  and zero step, while `__getitem__()`'s slice handling forbids only
+  zero), no single private method can own the check correctly for both;
+  validation must move out to each public caller instead.
 
 Internal invariants that are guaranteed by the class's own code (not
 by caller input) remain the domain of `assert`, not exceptions, and
@@ -971,32 +970,31 @@ cache can be introduced without architectural changes elsewhere
 (contained entirely within `Series._Rule`). Three design choices for
 that future cache:
 
--   **Eviction policy:** LRU, evicting the least-recently-used
-    cached entry once a size bound is reached.
--   **Recency tracking structure:** a deque, to track insertion/access
-    order cheaply for the LRU policy.
--   **Floor lookup structure:** a balanced tree, to efficiently find
-    the largest cached `m` with `1 <= m < n` when `S(n)` is not itself
-    cached, falling back to `m = 1` (which is always cached, since
-    `S(1) = a(1)` is trivially precomputed) if no such `m` exists.
+- **Eviction policy:** LRU, evicting the least-recently-used cached
+  entry once a size bound is reached.
+- **Recency tracking structure:** a deque, to track insertion/access
+  order cheaply for the LRU policy.
+- **Floor lookup structure:** a balanced tree, to efficiently find the
+  largest cached `m` with `1 <= m < n` when `S(n)` is not itself cached,
+  falling back to `m = 1` (which is always cached, since `S(1) = a(1)`
+  is trivially precomputed) if no such `m` exists.
 
 **Unresolved questions.**
 
--   What should be the default cache size?
--   Should users be allowed to tune it? If so, should an unbounded
-    cache be permitted?
--   Should the floor-lookup structure be a tree/ordered-map with
-    O(log N) insertion (e.g. `sortedcontainers.SortedDict`, since
-    Python's stdlib has no balanced-tree type — `OrderedDict` merely
-    preserves insertion order), or a sorted array with `bisect`
-    (O(N) insertion)? Choosing `bisect` implicitly signals the cache
-    is meant to stay small and access patterns non-adversarial, since
-    its O(N) insertion is only acceptable at small N and could be
-    deliberately exploited by a caller driving repeated churn (e.g.
-    many out-of-order jumps); a tree/ordered-map avoids that worst
-    case but adds implementation complexity and (for
-    `sortedcontainers`) a runtime dependency the project doesn't
-    currently have.
+- What should be the default cache size?
+- Should users be allowed to tune it? If so, should an unbounded cache
+  be permitted?
+- Should the floor-lookup structure be a tree/ordered-map with O(log N)
+  insertion (e.g. `sortedcontainers.SortedDict`, since Python's stdlib
+  has no balanced-tree type — `OrderedDict` merely preserves insertion
+  order), or a sorted array with `bisect` (O(N) insertion)? Choosing
+  `bisect` implicitly signals the cache is meant to stay small and
+  access patterns non-adversarial, since its O(N) insertion is only
+  acceptable at small N and could be deliberately exploited by a caller
+  driving repeated churn (e.g. many out-of-order jumps); a
+  tree/ordered-map avoids that worst case but adds implementation
+  complexity and (for `sortedcontainers`) a runtime dependency the
+  project doesn't currently have.
 
 ------------------------------------------------------------------------
 
