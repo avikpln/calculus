@@ -292,6 +292,42 @@ as `list[T]`, where short names are the standard convention.
 
 ------------------------------------------------------------------------
 
+### Comparison operators: `BooleanSequence` rather than `0`/`1` values
+
+Comparison operators (`__eq__`, `__lt__`, `__le__`, `__gt__`, `__ge__`,
+`__ne__`) will be implemented on `NumericSequence`, returning a new
+`BooleanSequence` rather than a `NumericSequence` of `0`/`1` values.
+
+**Motivation for `BooleanSequence`.** A dedicated boolean type will
+represent predicates over a sequence's domain and support logical
+operations (`&`, `|`, `~`, and possibly `^`) for combining predicates.
+This will make infinite subsets of the domain a first-class concept
+while keeping `NumericSequence` purely numeric and comparisons logically
+typed.
+
+**Considered alternative: 0/1 `NumericSequence`.** Returning a `0`/`1`
+`NumericSequence` was considered because it requires no new type,
+integrates directly with the existing arithmetic machinery, and supports
+the familiar indicator-sequence use case. It was rejected because it
+conflates logical predicates with numeric values and provides no natural
+representation for logical/set-like operations.
+
+**Decision.** `BooleanSequence` will be introduced as its own type, with
+logical operators for set-like combination, and a `to_numeric()` method
+for explicitly converting to a `0`/`1` `NumericSequence` when the
+indicator-sequence interpretation is desired.
+
+**On overriding `__eq__`.** Returning a `BooleanSequence` from `__eq__`
+rather than a single `bool` will deliberately deviate from Python's
+usual scalar-equality contract. This will have consequences for
+operations that rely on scalar equality, including making instances
+unhashable by default (`__hash__` is set to `None` when `__eq__` is
+overridden), as well as some container operations, but will be
+consistent with the elementwise comparison model used by array-like
+containers such as NumPy arrays.
+
+------------------------------------------------------------------------
+
 ### Default `first_index` for `progression()` and `geometric()`
 
 `progression()` and `geometric()` default to `first_index=0`,

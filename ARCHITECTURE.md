@@ -46,6 +46,8 @@ classDiagram
         +map(op)
     }
 
+    Sequence <|-- BooleanSequence
+
     Sequence <|-- NumericSequence
 
     Sequence <|-- Recurrence
@@ -59,6 +61,8 @@ classDiagram
 ## Notes
 
 - `Sequence` is the base abstraction for sequences in the package.
+- `BooleanSequence` inherits from `Sequence` and implements Boolean
+  operators through Python's special methods.
 - `NumericSequence` inherits from `Sequence` and implements arithmetic
   operators through Python's special methods.
 - `Recurrence` inherits from `Sequence`, representing sequences defined

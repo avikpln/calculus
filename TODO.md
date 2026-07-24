@@ -2,6 +2,9 @@
 
 ## Design
 
+- Refactor `_resize()`/`_reindex()` into a single `_factory()` method
+  on `Sequence`, removing per-subclass duplication.
+
 - Create a DESIGN.md capturing distilled, per-class design decisions.
   See attic/design/ for discarded attempts.
 
@@ -35,6 +38,13 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Fix redundant comments about tests in README.md's project layout
+  section.
+
+- Review test module docstrings for accuracy.
+
+- Wrap markdown files at 79 instead of 72.
 
 - Add a scalar broadcasting example to `README.md`:
 
@@ -78,7 +88,7 @@
 
 - Should a `PowerSeries` abstraction be added?
 
-- Should `BinarySequence`/`RandomSequence` abstractions be added?
+- Should `RandomSequence` abstractions be added?
 
 - Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
   instead of `{aₙ}`?
