@@ -75,10 +75,6 @@ print((~is_even).head(5))
 is_multiple_of_3 = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
 print((is_even ^ is_multiple_of_3).head(5))
 # ⟨False, True, True, True, False⟩
-
-# Element-wise equality.
-print((is_even == is_multiple_of_3).head(5))
-# ⟨True, False, False, False, True⟩
 ```
 
 ### `NumericSequence`
