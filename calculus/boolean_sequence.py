@@ -11,7 +11,7 @@ from __future__ import annotations
 __all__ = ["BooleanSequence"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
 
@@ -25,6 +25,14 @@ class BooleanSequence(Sequence[bool]):
     This subclass inherits all functionality from Sequence and extends
     it with element-wise logical operations, exposed through the
     standard logical operators.
+
+    Methods:
+        false(size, first_index):
+            Return a Boolean sequence whose elements are all False.
+        from_iterable(iterable, first_index):
+            Return a Boolean sequence from an iterable.
+        true(size, first_index):
+            Return a Boolean sequence whose elements are all True.
     """
 
 # -- INITIALIZATION
@@ -185,3 +193,93 @@ class BooleanSequence(Sequence[bool]):
                 first index.
         """
         return self._binary(other, lambda x, y: y ^ x)
+
+# -- SPECIAL BOOLEAN SEQUENCES
+
+    @staticmethod
+    def true(
+        size: Intfinity = INFINITY,
+        *,
+        first_index: int = 1,
+    ) -> BooleanSequence:
+        """Return a Boolean sequence whose elements are all True.
+
+        When interpreted as a subset of the natural numbers, this
+        sequence represents the natural numbers.
+
+        Args:
+            size (Intfinity): The number of elements in the sequence, or
+                None for an infinite sequence. Defaults to None.
+            first_index (int): The index of the first sequence element.
+                Defaults to 1.
+
+        Returns:
+            BooleanSequence: A sequence whose elements are all equal to
+                True.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
+        """
+        return BooleanSequence(
+            Sequence._constant_rule(True), size=size, first_index=first_index,
+        )
+
+    @staticmethod
+    def false(
+        size: Intfinity = INFINITY,
+        *,
+        first_index: int = 1,
+    ) -> BooleanSequence:
+        """Return a Boolean sequence whose elements are all False.
+
+        When interpreted as a subset of the natural numbers, this
+        sequence represents the empty set.
+
+        Args:
+            size (Intfinity): The number of elements in the sequence, or
+                None for an infinite sequence. Defaults to None.
+            first_index (int): The index of the first sequence element.
+                Defaults to 1.
+
+        Returns:
+            BooleanSequence: A sequence whose elements are all equal to
+                False.
+
+        Raises:
+            TypeError: If ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
+        """
+        return BooleanSequence(
+            Sequence._constant_rule(False), size=size, first_index=first_index,
+        )
+
+    @staticmethod
+    def from_iterable(
+        iterable: Iterable[bool],
+        *,
+        first_index: int = 1,
+    ) -> BooleanSequence:
+        """Return a Boolean sequence from a Boolean iterable.
+
+        Args:
+            iterable (Iterable[bool]): The iterable providing the
+                sequence elements.
+            first_index (int): The index of the first sequence element.
+                Defaults to 1.
+
+        Returns:
+            BooleanSequence: A finite Boolean sequence containing the
+                elements of iterable.
+
+        Raises:
+            TypeError: If ``first_index`` is not an integer.
+            ValueError: If ``first_index`` is not in
+                ``sequence.FIRST_INDEX_OPTIONS``.
+        """
+        rule, size = Sequence._iterable_rule(iterable, first_index)
+        return BooleanSequence(rule, size=size, first_index=first_index)

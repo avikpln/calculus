@@ -129,3 +129,23 @@ def test_head_preserves_boolean_subtype() -> None:
     result = seq.head(2)
     assert isinstance(result, BooleanSequence)
     assert list(result) == [True, False]
+
+
+# -- SPECIAL BOOLEAN SEQUENCES
+
+def test_true_returns_boolean_sequence_with_correct_values() -> None:
+    seq = BooleanSequence.true(size=3)
+    assert isinstance(seq, BooleanSequence)
+    assert list(seq) == [True, True, True]
+
+
+def test_false_returns_boolean_sequence_with_correct_values() -> None:
+    seq = BooleanSequence.false(size=3)
+    assert isinstance(seq, BooleanSequence)
+    assert list(seq) == [False, False, False]
+
+
+def test_from_iterable_returns_boolean_sequence_with_correct_values() -> None:
+    seq = BooleanSequence.from_iterable([True, False, True])
+    assert isinstance(seq, BooleanSequence)
+    assert list(seq) == [True, False, True]

@@ -32,6 +32,9 @@
 
 ## Testing
 
+- Change SPECIAL SEQUENCES to SPECIAL NUMERIC SEQUENCES in
+  test_numeric_sequence.py.
+
 - Add a unit test suite for `utils.py`.
 
 - Test extensively beyond the pytest suite, e.g. manual
