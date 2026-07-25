@@ -98,9 +98,11 @@
 
 ## Unresolved Questions
 
-- Should a `PowerSeries` abstraction be added?
+- Should a `ComplexSequence` class be added?
 
-- Should `RandomSequence` abstractions be added?
+- Should a `PowerSeries` class be added?
+
+- Should a `RandomSequence` class be added?
 
 - Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
   instead of `{aₙ}`?

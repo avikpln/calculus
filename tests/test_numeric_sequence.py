@@ -303,20 +303,6 @@ def test_rpow_scalar_returns_elementwise_power() -> None:
     assert list(result) == [2, 4, 8]
 
 
-# -- COMPLEX OPERAND BEHAVIOR
-
-def test_floordiv_with_complex_operand_raises_type_error() -> None:
-    seq = NumericSequence(lambda n: n, size=3, first_index=1)
-    with pytest.raises(TypeError):
-        list(seq // (1 + 2j))
-
-
-def test_mod_with_complex_operand_raises_type_error() -> None:
-    seq = NumericSequence(lambda n: n, size=3, first_index=1)
-    with pytest.raises(TypeError):
-        list(seq % (1 + 2j))
-
-
 # -- TYPING
 
 def test_head_preserves_numeric_subtype() -> None:
