@@ -888,45 +888,31 @@ transformations. If a subclass requires a transformation to behave
 differently for mathematical reasons, it overrides that transformation
 directly.
 
+**Overriding is optional but not free.** `_rule_factory()` is not
+mandatory for subclasses to override. A subclass author who doesn't
+override it on a subclass with a stateful rule silently shares that
+state between the original and derived sequences, with no error raised.
+
 ------------------------------------------------------------------------
 
-### Overriding `_resize`/`_rule_factory` is optional but not free
+### Redesign: unifying `_resize()`/`_reindex()` into `_factory()`
 
-Neither `_resize()` nor `_rule_factory()` is enforced as mandatory for
-subclasses to override. A subclass author who forgets to override
-`_resize()` gets no error: `head()`/`tail()` will simply return a
-plain `Sequence` instead of the subclass's own type, silently losing
-the subclass's methods. Similarly, forgetting to override
-`_rule_factory()` on a subclass with a stateful rule silently shares
-that state between the original and derived sequences instead of
-giving each its own.
+**Motivation.** `_resize()` and `_reindex()` were structurally identical
+across every subclass that overrode them: each obtained a rule and
+forwarded it, along with `size` and `first_index`, to a hardcoded
+constructor call naming the subclass's own type. The only difference was
+where the rule came from. This duplication meant every subclass wanting
+full type preservation had to implement two separate signatures, each
+prone to being forgotten or mistyped.
 
-**Considered: `type(self) is not Sequence` check inside
-`Sequence._resize()`.** Raising `NotImplementedError` whenever
-`_resize()` runs on any subclass that hasn't overridden it would catch
-the mistake the first time `head()`/`tail()` is actually called.
-Rejected as the primary mechanism because it only fires at call time,
-not at class-definition time, and it does not address
-`_rule_factory()`, which has no comparable "identity" instance
-attached to it and cannot be checked the same way.
+**Design.** A single method, `_factory(rule, size, reindex)`, replaces
+both. `reindex` is a required flag with no default, forcing every
+override to decide its behavior explicitly:
 
-**Considered: `__init_subclass__` enforcement.** Requiring every
-`Sequence` subclass to define `_resize()` (or `_rule_factory()`) via
-`__init_subclass__` would catch the omission immediately, at class
-definition, before any instance is even created — a strictly earlier
-and louder failure than the call-time check above. Rejected because it
-would force every future subclass to override these methods even in
-the (currently only hypothetical) case where a subclass is genuinely
-content with plain-`Sequence` behavior, contradicting the project's
-general preference for conventions enforced through documentation and
-tests rather than structural runtime machinery.
-
-**Decision.** No enforcement mechanism is added. Subclass authors are
-expected to read the inline comments on `_resize()` and
-`_rule_factory()` (see `sequence.py`) describing the consequence of
-not overriding them, and existing tests such as
-`test_head_preserves_numeric_subtype` are the intended guardrail for
-each concrete subclass.
+- `reindex=False` (resize): the subclass must return its own type.
+- `reindex=True` (reindex): the subclass may return its own type, or
+  delegate to a named ancestor's implementation if reindexing doesn't
+  preserve its own invariants.
 
 ------------------------------------------------------------------------
 

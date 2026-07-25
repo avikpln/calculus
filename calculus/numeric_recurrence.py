@@ -12,7 +12,7 @@ from __future__ import annotations
 __all__ = ["NumericRecurrence"]
 __author__ = "Avi Kaplan"
 
-from .sequence import INFINITY, Intfinity, Rule
+from .sequence import Intfinity, Rule
 from .numeric_sequence import Number, NumericSequence
 from .recurrence import Recurrence
 
@@ -49,19 +49,17 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
         return Recurrence._rule_factory(self)
 
-    def _resize(self, size: Intfinity) -> NumericRecurrence:
-        # Produce a new sequence of the same type and given size.
-
-        return NumericRecurrence(self._func, self._basis, size=size)
-
-    def _reindex(
+    def _factory(
         self,
-        rule: Rule[Number] | None,
-        size: Intfinity = INFINITY,
-    ) -> NumericSequence:
-        # Produce a new sequence with the given rule and size.
+        rule: Rule[Number],
+        size: Intfinity,
+        reindex: bool,
+    ) -> NumericRecurrence | NumericSequence:
+        # Produce a new sequence from rule and size, considering mode.
 
-        return NumericSequence._reindex(self, rule, size)
+        if reindex:
+            return NumericSequence._factory(self, rule, size, reindex)
+        return NumericRecurrence(self._func, self._basis, size=size)
 
 # -- SPECIAL NUMERIC RECURRENCES
 

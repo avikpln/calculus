@@ -122,19 +122,17 @@ class Series(NumericSequence):
 
         return self._rule_factory_produce(self._term_rule, self.first_index)
 
-    def _resize(self, size: Intfinity) -> Series:
-        # Produce a new sequence of the same type and given size.
-
-        return Series(self._term_rule, size=size, first_index=self.first_index)
-
-    def _reindex(
+    def _factory(
         self,
-        rule: Rule[Number] | None,
-        size: Intfinity = INFINITY,
-    ) -> NumericSequence:
-        # Produce a new sequence with the given rule and size.
+        rule: Rule[Number],
+        size: Intfinity,
+        reindex: bool,
+    ) -> Series | NumericSequence:
+        # Produce a new sequence from rule and size, considering mode.
 
-        return NumericSequence._reindex(self, rule, size)
+        if reindex:
+            return super()._factory(rule, size, reindex)
+        return Series(self._term_rule, size=size, first_index=self.first_index)
 
 # -- SPECIAL SERIES
 

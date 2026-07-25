@@ -41,18 +41,13 @@ class BooleanSequence(Sequence[bool]):
 
 # -- FACTORY
 
-    def _resize(self, size: Intfinity) -> BooleanSequence:
-        # Produce a new sequence of the same type and given size.
-
-        rule = self._rule_factory()
-        return BooleanSequence(rule, size=size, first_index=self.first_index)
-
-    def _reindex(
+    def _factory(
         self,
-        rule: Rule[bool] | None,
-        size: Intfinity = INFINITY,
-    ) -> BooleanSequence:
-        # Produce a new sequence with the given rule and size.
+        rule: Rule[bool],
+        size: Intfinity,
+        reindex: bool,
+    ) -> Sequence[bool]:
+        # Produce a new sequence from rule and size, considering mode.
 
         return BooleanSequence(rule, size=size, first_index=self.first_index)
 

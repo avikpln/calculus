@@ -144,28 +144,38 @@ class Sequence(Generic[T], Iterable[T]):
 
         return self._rule
 
+    def _factory(
+        self,
+        rule: Rule[T],
+        size: Intfinity,
+        reindex: bool,
+    ) -> Sequence[T]:
+        # Produce a new sequence from rule and size, considering mode.
+        #
+        # Subclasses must override this method to support both operation
+        # modes. When resizing (reindex=False), they should always
+        # return their own type, whereas when reindexing (reindex=True),
+        # they should either return their own type or delegate to a
+        # named ancestor if the operation violates their invariants.
+        # Without this override, derived sequences will silently fall
+        # back to a plain Sequence.
+
+        return Sequence(rule, size=size, first_index=self.first_index)
+
     def _resize(self, size: Intfinity) -> Sequence[T]:
         # Produce a new sequence of the same type and given size.
-        #
-        # Subclasses should override this method to return their own
-        # type. If not overridden, the subclass silently gets a plain
-        # Sequence back here instead of its own type.
 
         rule = self._rule_factory()
-        return Sequence(rule, size=size, first_index=self.first_index)
+        return self._factory(rule, size, False)
 
     def _reindex(
         self,
-        rule: Rule[T] | None,
+        rule: Rule[T],
         size: Intfinity = INFINITY,
     ) -> Sequence[T]:
         # Produce a new sequence with the given rule and size.
-        #
-        # Subclasses may override this method to preserve their type
-        # when arbitrary reindexing preserves their invariants.
-        # Otherwise, returning a plain Sequence is correct.
 
-        return Sequence(rule, size=size, first_index=self.first_index)
+        return self._factory(rule, size, True)
 
 # -- PROPERTIES
 

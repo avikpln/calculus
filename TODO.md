@@ -2,9 +2,6 @@
 
 ## Design
 
-- Refactor `_resize()`/`_reindex()` into a single `_factory()` method
-  on `Sequence`, removing per-subclass duplication.
-
 - Create a DESIGN.md capturing distilled, per-class design decisions.
   See attic/design/ for discarded attempts.
 
@@ -43,6 +40,8 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Revise NOTES.md from top to bottom.
 
 - Fix "Documentation" section in README.md.
 
