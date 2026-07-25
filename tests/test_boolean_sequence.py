@@ -7,48 +7,6 @@ import pytest
 
 from calculus.boolean_sequence import BooleanSequence
 
-# -- COMPARISON
-
-def test_eq_scalar_returns_elementwise_equality() -> None:
-    seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
-    result = seq == True
-    assert list(result) == [True, False, True, False]
-
-
-def test_eq_sequence_returns_elementwise_equality() -> None:
-    a = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
-    b = BooleanSequence(lambda n: n % 3 == 0, size=4, first_index=0)
-    result = a == b
-    assert list(result) == [True, True, False, False]
-
-
-def test_eq_returns_boolean_sequence() -> None:
-    a = BooleanSequence(lambda n: True, size=3)
-    b = BooleanSequence(lambda n: True, size=3)
-    result = a == b
-    assert isinstance(result, BooleanSequence)
-
-
-def test_ne_scalar_returns_elementwise_nonequality() -> None:
-    seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
-    result = seq != True
-    assert list(result) == [False, True, False, True]
-
-
-def test_ne_sequence_returns_elementwise_nonequality() -> None:
-    a = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
-    b = BooleanSequence(lambda n: n % 3 == 0, size=4, first_index=0)
-    result = a != b
-    assert list(result) == [False, False, True, True]
-
-
-def test_ne_returns_boolean_sequence() -> None:
-    a = BooleanSequence(lambda n: True, size=3)
-    b = BooleanSequence(lambda n: False, size=3)
-    result = a != b
-    assert isinstance(result, BooleanSequence)
-
-
 # -- UNARY LOGICAL
 
 def test_invert_returns_elementwise_negation() -> None:

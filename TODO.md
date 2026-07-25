@@ -11,6 +11,8 @@
   0/1 `NumericSequence` results rather than `Sequence[bool]`; record
   the decision in `NOTES.md` once implemented.
 
+- Add to_numeric() in BooleanSequence.
+
 - Add an `example/` top-level folder. Ideas: `e_and_pi.py` (π/e
   approximation via `Series`), `integral.py` (Riemann-sum
   approximation sequences, Simpson, etc.).
@@ -40,6 +42,8 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Change "Boolean operators" to "logical operators" in ARCHITECTURE.md.
 
 - Revise NOTES.md from top to bottom.
 
