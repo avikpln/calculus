@@ -56,7 +56,7 @@ class BooleanSequence(Sequence[bool]):
 
         return BooleanSequence(rule, size=size, first_index=self.first_index)
 
-# -- LOGICAL HELPERS
+# -- UNARY/BINARY HELPERS
 
     def _unary(self, op: Callable[[bool], bool]) -> BooleanSequence:
         # Return the sequence obtained by applying a unary operation.
@@ -79,6 +79,51 @@ class BooleanSequence(Sequence[bool]):
 
         rule, size = self._combiner(self, other, op)
         return BooleanSequence(rule, size, first_index=self.first_index)
+
+# -- COMPARISON
+
+    # Deliberately deviates from object's scalar bool contract, matching
+    # NumPy's elementwise array comparison behavior.
+    def __eq__(  # type: ignore[override]
+        self,
+        other: bool | BooleanSequence
+    ) -> BooleanSequence:
+        """Return the element-wise equality.
+
+        Args:
+            other (bool | BooleanSequence): The scalar or sequence to
+                equate with.
+
+        Returns:
+            BooleanSequence: The element-wise equality of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x == y)
+
+    # Deliberately deviates from object's scalar bool contract, matching
+    # NumPy's elementwise array comparison behavior.
+    def __ne__(  # type: ignore[override]
+        self,
+        other: bool | BooleanSequence
+    ) -> BooleanSequence:
+        """Return the element-wise non-equality.
+
+        Args:
+            other (bool | BooleanSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise non-equality of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._binary(other, lambda x, y: x != y)
 
 # -- UNARY LOGICAL
 

@@ -71,18 +71,14 @@ print(is_even.head(5))
 print((~is_even).head(5))
 # ⟨True, False, True, False, True⟩
 
-# Element-wise AND.
-is_multiple_of_three = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
-print((is_even & is_multiple_of_three).head(6))
-# ⟨False, False, False, False, False, True⟩
-
-# Element-wise OR.
-print((is_even | is_multiple_of_three).head(6))
-# ⟨False, True, True, True, False, True⟩
-
 # Element-wise XOR.
-print((is_even ^ is_multiple_of_three).head(6))
-# ⟨False, True, True, True, False, False⟩
+is_multiple_of_3 = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
+print((is_even ^ is_multiple_of_3).head(5))
+# ⟨False, True, True, True, False⟩
+
+# Element-wise equality.
+print((is_even == is_multiple_of_3).head(5))
+# ⟨True, False, False, False, True⟩
 ```
 
 ### `NumericSequence`

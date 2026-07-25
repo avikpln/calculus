@@ -27,6 +27,8 @@ classDiagram
 
     class BooleanSequence {
         %% Methods
+		+__eq__(other)
+		+__ne__(other)
         +__or__(other)
         +__ror__(other)
         +__and__(other)
