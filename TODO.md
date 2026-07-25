@@ -7,10 +7,6 @@
 
 ## Features
 
-- Implement comparison operators (`__eq__`, `__lt__`, etc.), returning
-  0/1 `NumericSequence` results rather than `Sequence[bool]`; record
-  the decision in `NOTES.md` once implemented.
-
 - Add to_numeric() in BooleanSequence.
 
 - Add an `example/` top-level folder. Ideas: `e_and_pi.py` (π/e

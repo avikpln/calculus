@@ -14,6 +14,7 @@ __author__ = "Avi Kaplan"
 from collections.abc import Callable, Iterable
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
+from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
 # A type for representing a number.
@@ -90,6 +91,134 @@ class NumericSequence(Sequence[Number]):
             TypeError: If ``op`` is not callable.
         """
         return self._apply(op)
+
+# -- COMPARISON
+
+    def _compare(
+        self,
+        other: Number | NumericSequence,
+        op: Callable[[Number, Number], bool],
+    ) -> BooleanSequence:
+        # Return the sequence from applying a comparison operation.
+
+        if not isinstance(other, Number | NumericSequence):
+            raise TypeError(
+                f"unsupported type ({type(other).__name__}) for other "
+                "operand in comparison operation"
+            )
+
+        rule, size = self._combiner(self, other, op)
+        return BooleanSequence(rule, size, first_index=self.first_index)
+
+    # Deliberately deviates from object's scalar bool contract, matching
+    # NumPy's elementwise array comparison behavior.
+    def __eq__(  # type: ignore[override]
+        self,
+        other: Number | NumericSequence
+    ) -> BooleanSequence:
+        """Return the element-wise equality.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                equate with.
+
+        Returns:
+            BooleanSequence: The element-wise equality of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x == y)
+
+    # Same rationale as __eq__: deliberate deviation from scalar bool.
+    def __ne__(  # type: ignore[override]
+        self,
+        other: Number | NumericSequence
+    ) -> BooleanSequence:
+        """Return the element-wise non-equality.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise non-equality of the
+                operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x != y)
+
+    def __lt__(self, other: Number | NumericSequence) -> BooleanSequence:
+        """Return the element-wise less-than comparison.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise less-than comparison of
+                the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x < y)
+
+    def __le__(self, other: Number | NumericSequence) -> BooleanSequence:
+        """Return the element-wise less-than-or-equal comparison.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise less-than-or-equal
+                comparison of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x <= y)
+
+    def __gt__(self, other: Number | NumericSequence) -> BooleanSequence:
+        """Return the element-wise greater-than comparison.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise greater-than comparison of
+                the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x > y)
+
+    def __ge__(self, other: Number | NumericSequence) -> BooleanSequence:
+        """Return the element-wise greater-than-or-equal comparison.
+
+        Args:
+            other (Number | NumericSequence): The scalar or sequence to
+                compare against.
+
+        Returns:
+            BooleanSequence: The element-wise greater-than-or-equal
+                comparison of the operands.
+
+        Raises:
+            ValueError: If ``other`` is a sequence with a different
+                first index.
+        """
+        return self._compare(other, lambda x, y: x >= y)
 
 # -- ARITHMETIC HELPERS
 

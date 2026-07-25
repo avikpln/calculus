@@ -6,6 +6,7 @@ Run with:
 import pytest
 
 from calculus.sequence import Sequence
+from calculus.boolean_sequence import BooleanSequence
 from calculus.numeric_sequence import NumericSequence
 
 # -- UTILITY
@@ -26,6 +27,76 @@ def test_map_noncallable_op_raises_type_error() -> None:
     seq = NumericSequence(lambda n: n, size=3)
     with pytest.raises(TypeError):
         seq.map("not callable")  # type: ignore[arg-type]
+
+
+# -- COMPARISON
+
+def test_eq_scalar_returns_elementwise_equality() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    result = seq == 2
+    assert list(result) == [False, True, False]
+
+
+def test_eq_sequence_returns_elementwise_equality() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a == b
+    assert list(result) == [False, True, False]
+
+
+def test_eq_returns_boolean_sequence() -> None:
+    a = NumericSequence(lambda n: n, size=3)
+    b = NumericSequence(lambda n: n, size=3)
+    result = a == b
+    assert isinstance(result, BooleanSequence)
+
+
+def test_eq_mismatched_first_index_raises_value_error() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=0)
+    b = NumericSequence(lambda n: n, size=3, first_index=1)
+    with pytest.raises(ValueError):
+        a == b
+
+
+def test_eq_with_unsupported_operand_raises_type_error() -> None:
+    seq = NumericSequence(lambda n: n, size=3, first_index=1)
+    with pytest.raises(TypeError):
+        list(seq == "not a number")
+
+
+def test_ne_returns_elementwise_nonequality() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a != b
+    assert list(result) == [True, False, True]
+
+
+def test_lt_returns_elementwise_less_than() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a < b
+    assert list(result) == [True, False, False]
+
+
+def test_le_returns_elementwise_less_than_or_equal() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a <= b
+    assert list(result) == [True, True, False]
+
+
+def test_gt_returns_elementwise_greater_than() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a > b
+    assert list(result) == [False, False, True]
+
+
+def test_ge_returns_elementwise_greater_than_or_equal() -> None:
+    a = NumericSequence(lambda n: n, size=3, first_index=1)
+    b = NumericSequence(lambda n: 4 - n, size=3, first_index=1)
+    result = a >= b
+    assert list(result) == [False, True, True]
 
 
 # -- UNARY ARITHMETIC
