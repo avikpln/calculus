@@ -2,6 +2,9 @@
 
 ## Design
 
+- Refactor `_resize()`/`_reindex()` into a single `_factory()` method
+  on `Sequence`, removing per-subclass duplication.
+
 - Create a DESIGN.md capturing distilled, per-class design decisions.
   See attic/design/ for discarded attempts.
 
@@ -29,12 +32,28 @@
 
 ## Testing
 
+- Change SPECIAL SEQUENCES to SPECIAL NUMERIC SEQUENCES in
+  test_numeric_sequence.py.
+
+- Review all test files for redundant, bloated, or missing tests.
+
 - Add a unit test suite for `utils.py`.
 
 - Test extensively beyond the pytest suite, e.g. manual
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Fix "Documentation" section in README.md.
+
+- Fix "Feature implementation protocol" subsection in NOTES.md.
+
+- Fix redundant comments about tests in README.md's project layout
+  section.
+
+- Review test module docstrings for accuracy.
+
+- Wrap markdown files at 79 instead of 72.
 
 - Add a scalar broadcasting example to `README.md`:
 
@@ -78,7 +97,7 @@
 
 - Should a `PowerSeries` abstraction be added?
 
-- Should `BinarySequence`/`RandomSequence` abstractions be added?
+- Should `RandomSequence` abstractions be added?
 
 - Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
   instead of `{aₙ}`?

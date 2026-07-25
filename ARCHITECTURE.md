@@ -25,6 +25,19 @@ classDiagram
         +tail(size)
     }
 
+    class BooleanSequence {
+        %% Methods
+		+__eq__(other)
+		+__ne__(other)
+        +__or__(other)
+        +__ror__(other)
+        +__and__(other)
+        +__rand__(other)
+        +__xor__(other)
+        +__rxor__(other)
+        +__invert__()
+    }
+
     class NumericSequence {
         %% Methods
         +__add__(other)
@@ -46,6 +59,8 @@ classDiagram
         +map(op)
     }
 
+    Sequence <|-- BooleanSequence
+
     Sequence <|-- NumericSequence
 
     Sequence <|-- Recurrence
@@ -59,6 +74,8 @@ classDiagram
 ## Notes
 
 - `Sequence` is the base abstraction for sequences in the package.
+- `BooleanSequence` inherits from `Sequence` and implements Boolean
+  operators through Python's special methods.
 - `NumericSequence` inherits from `Sequence` and implements arithmetic
   operators through Python's special methods.
 - `Recurrence` inherits from `Sequence`, representing sequences defined

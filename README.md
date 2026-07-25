@@ -17,6 +17,7 @@ together with the specialized `NumericSequence`, `Recurrence`,
 ## Features
 
 -   Generic `Sequence[T]` implementation.
+-   `BooleanSequence` with element-wise logical operations.
 -   `NumericSequence` with element-wise arithmetic.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
@@ -53,6 +54,31 @@ print(alphabet[30])
 # map() works for any element type, not just numbers.
 print(alphabet.map(str.lower).head(5))
 # ⟨a, b, c, d, e⟩
+```
+
+### `BooleanSequence`
+
+```python
+from calculus import BooleanSequence
+
+# Infinite sequence indicating whether each index is even.
+is_even = BooleanSequence(lambda n: n % 2 == 0, first_index=1)
+
+print(is_even.head(5))
+# ⟨False, True, False, True, False⟩
+
+# Unary negation.
+print((~is_even).head(5))
+# ⟨True, False, True, False, True⟩
+
+# Element-wise XOR.
+is_multiple_of_3 = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
+print((is_even ^ is_multiple_of_3).head(5))
+# ⟨False, True, True, True, False⟩
+
+# Element-wise equality.
+print((is_even == is_multiple_of_3).head(5))
+# ⟨True, False, False, False, True⟩
 ```
 
 ### `NumericSequence`
@@ -159,6 +185,7 @@ print(4 * leibniz[1000])
 │       └── ci.yml                    # GitHub Actions CI workflow
 ├── calculus
 │   ├── __init__.py                   # Package public API
+│   ├── boolean_sequence.py           # BooleanSequence implementation
 │   ├── numeric_recurrence.py         # NumericRecurrence implementation
 │   ├── numeric_sequence.py           # NumericSequence implementation
 │   ├── recurrence.py                 # Recurrence implementation
@@ -166,6 +193,7 @@ print(4 * leibniz[1000])
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
 ├── tests
+│   ├── test_boolean_sequence.py      # Pytest test suite
 │   ├── test_numeric_recurrence.py    # Pytest test suite
 │   ├── test_numeric_sequence.py      # Pytest test suite
 │   ├── test_recurrence.py            # Pytest test suite
