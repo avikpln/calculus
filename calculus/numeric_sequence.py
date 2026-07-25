@@ -17,7 +17,7 @@ from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .utils import validate_callable
 
 # A type for representing a number.
-Number = int | float | complex
+Number = int | float
 
 #=======================================================================
 # Numeric Sequence {aₙ}
@@ -296,11 +296,7 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        # // is undefined for complex; Python raises TypeError at
-        # runtime, consistent with the project's EAFP philosophy.
-        return self._binary(
-            other, lambda x, y: x // y,  # type: ignore[operator]
-        )
+        return self._binary(other, lambda x, y: x // y)
 
     def __rfloordiv__(
         self,
@@ -320,10 +316,7 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        # Same rationale as __floordiv__: // is undefined for complex.
-        return self._binary(
-            other, lambda x, y: y // x,  # type: ignore[operator]
-        )
+        return self._binary(other, lambda x, y: y // x)
 
     def __mod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -340,10 +333,7 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        # Same rationale as __floordiv__: % is undefined for complex.
-        return self._binary(
-            other, lambda x, y: x % y,  # type: ignore[operator]
-        )
+        return self._binary(other, lambda x, y: x % y)
 
     def __rmod__(self, other: Number | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
@@ -360,10 +350,7 @@ class NumericSequence(Sequence[Number]):
             ValueError: If ``other`` is a sequence with a different
                 first index.
         """
-        # Same rationale as __floordiv__: % is undefined for complex.
-        return self._binary(
-            other, lambda x, y: y % x,  # type: ignore[operator]
-        )
+        return self._binary(other, lambda x, y: y % x)
 
 # -- EXPONENTIATION ARITHMETIC
 

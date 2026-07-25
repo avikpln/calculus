@@ -639,18 +639,6 @@ private helper properties that establish the invariant in one place.
 
 ------------------------------------------------------------------------
 
-### Floor division and modulo on complex operands
-
-`__floordiv__`/`__rfloordiv__`/`__mod__`/`__rmod__` accept `Number`,
-which includes `complex`, even though `//` and `%` are undefined for
-complex numbers. This mirrors the project's EAFP philosophy already
-used for zero-division: Python's own `TypeError` at runtime is the
-enforcement mechanism, not eager static or runtime type-narrowing.
-The resulting mypy errors are silenced with localized, documented
-`# type: ignore[operator]` comments on each affected line.
-
-------------------------------------------------------------------------
-
 ### Reversing the mixin decision
 
 The mixin-based arithmetic design, previously used for
