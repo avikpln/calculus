@@ -51,18 +51,13 @@ class NumericSequence(Sequence[Number]):
 
 # -- FACTORY
 
-    def _resize(self, size: Intfinity) -> NumericSequence:
-        # Produce a new sequence of the same type and given size.
-
-        rule = self._rule_factory()
-        return NumericSequence(rule, size=size, first_index=self.first_index)
-
-    def _reindex(
+    def _factory(
         self,
-        rule: Rule[Number] | None,
-        size: Intfinity = INFINITY,
+        rule: Rule[Number],
+        size: Intfinity,
+        reindex: bool,
     ) -> NumericSequence:
-        # Produce a new sequence with the given rule and size.
+        # Produce a new sequence from rule and size, considering mode.
 
         return NumericSequence(rule, size=size, first_index=self.first_index)
 

@@ -145,9 +145,16 @@ class Recurrence(Sequence[T]):
 
         return self._rule_factory_produce(self._func, self._basis)
 
-    def _resize(self, size: Intfinity) -> Recurrence[T]:
-        # Produce a new sequence of the same type and given size.
+    def _factory(
+        self,
+        rule: Rule[T],
+        size: Intfinity,
+        reindex: bool,
+    ) -> Recurrence[T] | Sequence[T]:
+        # Produce a new sequence from rule and size, considering mode.
 
+        if reindex:
+            return super()._factory(rule, size, reindex)
         return Recurrence(self._func, self._basis, size=size)
 
 # -- PROPERTIES
