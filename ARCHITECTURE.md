@@ -38,6 +38,12 @@ classDiagram
 
     class NumericSequence {
         %% Methods
+		+__eq__(other)
+		+__ne__(other)
+		+__lt__(other)
+		+__le__(other)
+		+__gt__(other)
+		+__ge__(other)
         +__add__(other)
         +__radd__(other)
         +__sub__(other)
@@ -75,7 +81,7 @@ classDiagram
 - `BooleanSequence` inherits from `Sequence` and implements Boolean
   operators through Python's special methods.
 - `NumericSequence` inherits from `Sequence` and implements arithmetic
-  operators through Python's special methods.
+  and comparison operators through Python's special methods.
 - `Recurrence` inherits from `Sequence`, representing sequences defined
   by recursive relations.
 - `NumericRecurrence` inherits from both `Recurrence` and

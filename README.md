@@ -18,7 +18,7 @@ together with the specialized `NumericSequence`, `Recurrence`,
 
 -   Generic `Sequence[T]` implementation.
 -   `BooleanSequence` with element-wise logical operations.
--   `NumericSequence` with element-wise arithmetic.
+-   `NumericSequence` with element-wise arithmetic and comparisons.
 -   `Recurrence` for sequences defined by recursive relations.
 -   `NumericRecurrence` combining numeric arithmetic with recursively
     defined elements.
@@ -112,6 +112,14 @@ print((squares * evens).head(5))
 nonnegints = NumericSequence(lambda n: n, first_index=0)
 print(2 ** nonnegints)
 # ⟨1, 2, 4, 8, 16, ...⟩
+
+# Element-wise equality.
+print((squares == 9).head(5))
+# ⟨False, False, True, False, False⟩
+
+# Element-wise less-than.
+print((squares < 10).head(5))
+# ⟨True, True, True, False, False⟩
 ```
 
 ### `Recurrence`

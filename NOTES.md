@@ -328,6 +328,22 @@ containers such as NumPy arrays.
 
 ------------------------------------------------------------------------
 
+### `_compare()` as a separate helper from `_binary()`
+
+`NumericSequence`'s comparison operators use a dedicated `_compare()`
+helper rather than reusing `_binary()`, since `_binary()` constructs a
+`NumericSequence`, while comparisons must return a `BooleanSequence`.
+This differs from `BooleanSequence` itself, where `_binary()` already
+returns `BooleanSequence`, making a separate helper unnecessary there.
+
+Implementing comparisons also surfaced that ordering operators
+(`<`, `<=`, `>`, `>=`) are undefined for `complex`. Rather than adding
+further `type: ignore[operator]` exceptions, `Number` was narrowed to
+`int | float`, dropping `complex` support entirely, with a possible
+future `ComplexSequence` left as an open question.
+
+------------------------------------------------------------------------
+
 ### Default `first_index` for `progression()` and `geometric()`
 
 `progression()` and `geometric()` default to `first_index=0`,
