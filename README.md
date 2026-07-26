@@ -237,6 +237,7 @@ pyflakes calculus
 pydocstyle calculus
 pytest
 git diff --cached --check
+python -m examples.constants_approximation
 ```
 
 ## Dependencies
