@@ -12,8 +12,12 @@ __all__ = ["BooleanSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
+
+if TYPE_CHECKING:
+    from .numeric_sequence import NumericSequence
 
 #=======================================================================
 # Boolean Sequence {bₙ}
@@ -31,6 +35,8 @@ class BooleanSequence(Sequence[bool]):
             Return a Boolean sequence whose elements are all False.
         from_iterable(iterable, first_index):
             Return a Boolean sequence from an iterable.
+        to_numeric:
+            Return the corresponding NumericSequence of 0/1 values.
         true(size, first_index):
             Return a Boolean sequence whose elements are all True.
     """
@@ -50,6 +56,22 @@ class BooleanSequence(Sequence[bool]):
         # Produce a new sequence from rule and size, considering mode.
 
         return BooleanSequence(rule, size=size, first_index=self.first_index)
+
+# -- UTILITY
+
+    def to_numeric(self) -> NumericSequence:
+        """Return the corresponding NumericSequence of 0/1 values.
+
+        Returns:
+            NumericSequence: The element-wise conversion of the
+                sequence's True/False values to 1/0.
+        """
+        from .numeric_sequence import NumericSequence
+        boolean_rule = self._rule_factory()
+        rule = lambda n: int(boolean_rule(n))
+        return NumericSequence(
+            rule, size=self.size, first_index=self.first_index
+        )
 
 # -- LOGICAL HELPERS
 
