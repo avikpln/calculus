@@ -98,8 +98,6 @@
 
 - Should a `ComplexSequence` class be added?
 
-- Should a `PowerSeries` class be added?
-
 - Should a `RandomSequence` class be added?
 
 - Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`

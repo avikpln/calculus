@@ -201,7 +201,8 @@ print(4 * leibniz[1000])
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
 ├── examples
-│   └── constants_approximation.py    # e and pi approximation demo
+│   ├── constants_approximation.py    # e and pi approximation demo
+│   └── power_series.py               # PowerSeries class and evaluation demo
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite
 │   ├── test_numeric_recurrence.py    # Pytest test suite
@@ -238,6 +239,7 @@ pydocstyle calculus
 pytest
 git diff --cached --check
 python -m examples.constants_approximation
+python -m examples.power_series
 ```
 
 ## Dependencies
