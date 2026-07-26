@@ -6,6 +6,16 @@ Run with:
 import pytest
 
 from calculus.boolean_sequence import BooleanSequence
+from calculus.numeric_sequence import NumericSequence
+
+# -- UTILITY
+
+def test_to_numeric_returns_numeric_sequence() -> None:
+    seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
+    result = seq.to_numeric()
+    assert isinstance(result, NumericSequence)
+    assert list(result) == [1, 0, 1, 0]
+
 
 # -- UNARY LOGICAL
 

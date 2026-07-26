@@ -34,6 +34,7 @@ classDiagram
         +__xor__(other)
         +__rxor__(other)
         +__invert__()
+        +to_numeric()
     }
 
     class NumericSequence {

@@ -7,8 +7,6 @@
 
 ## Features
 
-- Add to_numeric() in BooleanSequence.
-
 - Add an `example/` top-level folder. Ideas: `e_and_pi.py` (π/e
   approximation via `Series`), `integral.py` (Riemann-sum
   approximation sequences, Simpson, etc.).

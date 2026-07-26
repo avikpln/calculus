@@ -75,6 +75,10 @@ print((~is_even).head(5))
 is_multiple_of_3 = BooleanSequence(lambda n: n % 3 == 0, first_index=1)
 print((is_even ^ is_multiple_of_3).head(5))
 # ⟨False, True, True, True, False⟩
+
+# Convert to a 0/1 NumericSequence.
+print(is_even.to_numeric().head(5))
+# ⟨1, 0, 1, 0, 1⟩
 ```
 
 ### `NumericSequence`
