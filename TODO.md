@@ -7,10 +7,10 @@
 
 ## Features
 
+- Add `RademacherSequence` to examples.
+
 - Add `integral.py` to examples (Riemann-sum approximation sequences,
   Simpson, etc.).
-
-- Add a `RandomSequence` class (see NOTES.md for details).
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot
   cache, to efficiently support out-of-order queries. See NOTES.md
@@ -95,7 +95,3 @@
   narrative-driven docs. Would require new tooling (nbformat/Jupyter)
   and CI changes (notebooks aren't covered by mypy/pyflakes/pytest the
   way .py files are).
-
-## Unresolved Questions
-
-- Should a `ComplexSequence` class be added?

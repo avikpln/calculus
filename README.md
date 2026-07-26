@@ -218,7 +218,8 @@ print(4 * leibniz[1000])
 ├── README.md
 ├── requirements-dev.txt              # Development and CI dependencies
 ├── STYLE.md                          # Project coding and documentation conventions
-└── TODO.md                           # Planned enhancements
+├── TODO.md                           # Planned work
+└── ZOO.md                            # List of ideas for sequence types
 ```
 
 ## Development

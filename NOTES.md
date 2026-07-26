@@ -447,6 +447,21 @@ Their docstrings should not simply refer readers to
 `Sequence.__init__()`, because each delegating method reaches only part
 of the constructor's validation logic.
 
+------------------------------------------------------------------------
+
+### `ZOO.md`: a separate file for sequence type ideas
+
+Speculative ideas for new sequence types (e.g. `ComplexSequence` and
+`RationalSequence`) previously appeared as scattered entries in places
+such as the "Unresolved Questions" section of `TODO.md`. This conflated
+two different kinds of content: concrete, actionable work items and
+open-ended ideas for future sequence types.
+
+**Decision.** These ideas now live in their own file, `ZOO.md`. This
+gives sequence type ideas greater visibility and a clearer framing: not
+backlog items, but an explicit, standing invitation for future
+contributions.
+
 ## Development
 
 ### Local verification
