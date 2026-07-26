@@ -32,6 +32,8 @@ class Series(NumericSequence):
             Return the alternating harmonic series.
         basel():
             Return the Basel problem series.
+        from_sequence(seq):
+            Return a series based on a given sequence.
         harmonic():
             Return the harmonic series.
         leibniz():
@@ -133,6 +135,30 @@ class Series(NumericSequence):
         if reindex:
             return super()._factory(rule, size, reindex)
         return Series(self._term_rule, size=size, first_index=self.first_index)
+
+# -- UTILITY
+
+    @staticmethod
+    def from_sequence(seq: NumericSequence) -> Series:
+        """Return a series from an existing numeric sequence.
+
+        Args:
+            seq (NumericSequence): The sequence whose terms are to be
+                summed.
+
+        Returns:
+            Series: A series based on the given sequence.
+
+        Raises:
+            TypeError: If ``seq`` is not a NumericSequence.
+        """
+        if not isinstance(seq, NumericSequence):
+            raise TypeError(
+                "seq must be a NumericSequence object, "
+                f"not {type(seq).__name__}"
+            )
+        term_rule = seq._rule_factory()
+        return Series(term_rule, size=seq.size, first_index=seq.first_index)
 
 # -- SPECIAL SERIES
 
