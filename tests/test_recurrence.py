@@ -38,9 +38,21 @@ def test_empty_basis_raises_value_error() -> None:
         Recurrence(lambda n, a: 2 * a[-1], basis=())
 
 
-def test_first_index_is_always_zero() -> None:
+def test_first_index_defaults_to_zero() -> None:
     seq = Recurrence(lambda n, a: 2 * a[-1], basis=(1,))
     assert seq.first_index == 0
+
+
+def test_construction_with_first_index_one() -> None:
+    fib = Recurrence(
+        lambda n, a: a[-1] + a[-2], basis=(0, 1), first_index=1,
+    )
+    assert fib.first_index == 1
+    assert fib[1] == 0
+    assert fib[2] == 1
+    assert fib[3] == 1
+    assert fib[4] == 2
+    assert fib[10] == 34
 
 
 # -- PROPERTIES
