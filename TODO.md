@@ -16,9 +16,6 @@
   ("`Series` rule caching: single-slot now, cache deferred") for the
   design choices and open questions.
 
-- Allow `Recurrence` to optionally start from `first_index=1`, not just
-  the currently hard-enforced `0`.
-
 ## Improvements
 
 - Identify opportunities to use decorators.
@@ -36,6 +33,9 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Fix Sequence.__init__'s docstring to add in ValueError:
+  ", or if ``first_index`` is not in ``sequence.FIRST_INDEX_OPTIONS``.".
 
 - Change "Boolean operators" to "logical operators" in ARCHITECTURE.md.
 

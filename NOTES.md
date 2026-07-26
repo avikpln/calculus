@@ -183,18 +183,12 @@ repeated at every call site.
 
 ------------------------------------------------------------------------
 
-### `Recurrence` currently hardcodes `first_index=0`
+### `Recurrence` now accepts `first_index=1` as an option
 
-Unlike `Sequence` and `NumericSequence`, `Recurrence` does not expose
-`first_index` as a constructor parameter at all; it always constructs
-with `first_index=0`.
-
-This is the current implementation, not a settled design ruling: no
-sound rationale has been established for restricting `Recurrence` to
-`first_index=0` specifically, as opposed to allowing `first_index=1`
-as an option like `Sequence` and `NumericSequence` do. See `TODO.md`
-for revisiting this and allowing `Recurrence` to optionally start
-from `first_index=1`.
+`Recurrence` previously hardcoded `first_index=0` unconditionally. This
+is now optional: `first_index` defaults to `0` but also accepts `1`,
+matching `Sequence`/`NumericSequence`'s existing support. There is no
+sound reason to restrict `Recurrence` specifically.
 
 ------------------------------------------------------------------------
 

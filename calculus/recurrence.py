@@ -44,18 +44,20 @@ class Recurrence(Sequence[T]):
     class _Rule:
         # Callable recurrence rule.
 
-        __slots__ = ("basis", "cache", "func", "order")
+        __slots__ = ("basis", "cache", "first_index", "func", "order")
 
         def __init__(
             self,
             func: Callable[[int, tuple[T, ...]], T],
             basis: Iterable[T],
+            first_index: int,
         ) -> None:
             # Initialize a new recurrence rule instance.
 
             self.func = func
             self.basis = tuple(basis)
             self.order = len(self.basis)
+            self.first_index = first_index
             self.cache: tuple[int, tuple[T, ...]] | None = None
 
         def __call__(self, n: int) -> Any:
@@ -67,14 +69,15 @@ class Recurrence(Sequence[T]):
             # revisited if a cleaner approach is found.
 
             # Check if the input corresponds to one of the base cases.
-            if n < self.order:
-                return self.basis[n]
+            relative_index = n - self.first_index
+            if relative_index < self.order:
+                return self.basis[relative_index]
 
             # Check the cache before calculating the requested value.
             if self.cache is not None and self.cache[0] <= n:
                 start, seed = self.cache
             else:
-                start, seed = self.order, self.basis
+                start, seed = self.first_index + self.order, self.basis
 
             # Advance basis the required number of times.
             window = deque(seed, maxlen=self.order)
@@ -100,6 +103,8 @@ class Recurrence(Sequence[T]):
         func: Callable[[int, tuple[T, ...]], T],
         basis: Iterable[T],
         size: Intfinity = INFINITY,
+        *,
+        first_index: int = 0,
     ) -> None:
         """Initialize a new recurrence object.
 
@@ -110,12 +115,16 @@ class Recurrence(Sequence[T]):
             basis (Iterable[T]): The initial base case values.
             size (Intfinity): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
+            first_index (int): The first index of the sequence. Defaults
+                to 0. A read-only keyword parameter.
 
         Raises:
             TypeError: If ``func`` is not callable, if ``basis`` is not
-                iterable, or if ``size`` is not None or an integer.
-            ValueError: If ``basis`` is empty or if ``size`` is
-                negative.
+                iterable, if ``size`` is not None or an integer, or if
+                ``first_index`` is not an integer.
+            ValueError: If ``basis`` is empty, if ``size`` is negative,
+                or if ``first_index`` is not in
+                ``sequence.FIRST_INDEX_OPTIONS``.
         """
         validate_callable(func)
         if not isinstance(basis, Iterable):
@@ -123,11 +132,12 @@ class Recurrence(Sequence[T]):
         basis = tuple(basis)
         if len(basis) == 0:
             raise ValueError("basis cannot have zero length")
-        rule = self._rule_factory_produce(func, basis)
-        super().__init__(rule, size=size, first_index=0)
+        rule = self._rule_factory_produce(func, basis, first_index)
+        super().__init__(rule, size=size, first_index=first_index)
         self._func = func
         self._basis = basis
         self._order = len(basis)
+        self._first_index = first_index
 
 # -- FACTORY
 
@@ -135,15 +145,18 @@ class Recurrence(Sequence[T]):
         self,
         func: Callable[[int, tuple[T, ...]], T],
         basis: Iterable[T],
+        first_index: int,
     ) -> Rule[T]:
         # Core producer. For details, see _rule_factory().
 
-        return self._Rule(func, basis)
+        return self._Rule(func, basis, first_index)
 
     def _rule_factory(self) -> Rule[T]:
         # Produce the rule for a newly derived sequence.
 
-        return self._rule_factory_produce(self._func, self._basis)
+        return self._rule_factory_produce(
+            self._func, self._basis, self._first_index
+        )
 
     def _factory(
         self,
@@ -155,7 +168,9 @@ class Recurrence(Sequence[T]):
 
         if reindex:
             return super()._factory(rule, size, reindex)
-        return Recurrence(self._func, self._basis, size=size)
+        return Recurrence(
+            self._func, self._basis, size=size, first_index=self._first_index
+        )
 
 # -- PROPERTIES
 
