@@ -10,6 +10,8 @@
 - Add `integral.py` to examples (Riemann-sum approximation sequences,
   Simpson, etc.).
 
+- Add a `RandomSequence` class (see NOTES.md for details).
+
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot
   cache, to efficiently support out-of-order queries. See NOTES.md
   ("`Series` rule caching: single-slot now, cache deferred") for the
@@ -97,8 +99,3 @@
 ## Unresolved Questions
 
 - Should a `ComplexSequence` class be added?
-
-- Should a `RandomSequence` class be added?
-
-- Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
-  instead of `{aₙ}`?

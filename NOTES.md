@@ -1134,3 +1134,34 @@ for it now. If such an abstraction is ever introduced, `Series` should
 be re-parented to inherit from it, so the inheritance hierarchy
 reflects that `Series` genuinely is a (now-supported) kind of
 recurrence, rather than leaving it a sibling for historical reasons.
+
+### Future: `RandomSequence` as a package feature, not an example
+
+**Motivation.** `RandomSequence` was originally planned as an example
+demonstrating how to subclass `Sequence` with a minimal stateful `_Rule`
+(an unbounded dict, populated lazily on first query). Designing it
+surfaced a genuinely useful capability — a general-purpose,
+user-supplied random rule wrapped in a mechanism to record each value
+once generated — which promotes it from a one-off demo to a real package
+feature.
+
+**User-supplied random rule.** Rather than `RandomSequence` owning a
+distribution, seed, or generator internally, the caller supplies an
+arbitrary rule (e.g. a lambda calling `random.random()` or any other
+generator of their choosing). This mirrors `Recurrence` accepting an
+arbitrary transition function rather than hardcoding one, and avoids
+`RandomSequence` needing an opinion on which distributions or parameters
+to support.
+
+**Sharing over forking.** `_rule_factory()` will share the underlying
+values dictionary between a sequence and its derived sequences, rather
+than forking an independent copy. Sharing preserves the intended
+semantics: derived sequences (via `head()`, `shift_by()`, etc.) are
+different views onto the same single random realization, not independent
+experiments. Forking was considered, along with a flag to choose between
+the two, but rejected as speculative complexity with no concrete use
+case motivating it.
+
+**Symbol.** `{r_n}` will denote `RandomSequence`, resolving the open
+question of which class this notation should apply to;
+`Recurrence`/`NumericRecurrence` keep `{a_n}`.
