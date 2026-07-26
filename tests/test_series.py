@@ -3,6 +3,8 @@
 Run with:
     pytest tests/test_series.py -v
 """
+import pytest
+
 from calculus.numeric_sequence import NumericSequence
 from calculus.series import Series
 
@@ -103,6 +105,28 @@ def test_rule_factory_produces_independent_caches() -> None:
     second = series.shift_by(0)
     assert first._rule is not second._rule
     assert first[20] == second[20]
+
+
+# -- UTILITY
+
+def test_from_sequence_returns_series_matching_partial_sums() -> None:
+    seq = NumericSequence(lambda n: n, size=5, first_index=1)
+    series = Series.from_sequence(seq)
+    assert isinstance(series, Series)
+    assert list(series) == [1, 3, 6, 10, 15]
+
+
+def test_from_sequence_with_non_numeric_sequence_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Series.from_sequence("not a sequence")  # type: ignore[arg-type]
+
+
+def test_from_sequence_preserves_infinite_partial_sums() -> None:
+    seq = NumericSequence(lambda n: n, first_index=1)
+    series = Series.from_sequence(seq)
+    assert series.finite is False
+    assert list(series.head(5)) == [1, 3, 6, 10, 15]
+
 
 # -- SPECIAL SERIES
 
