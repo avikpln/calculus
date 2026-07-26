@@ -200,6 +200,8 @@ print(4 * leibniz[1000])
 │   ├── sequence.py                   # Sequence implementation
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
+├── examples
+│   └── constants_approximation.py    # e and pi approximation demo
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite
 │   ├── test_numeric_recurrence.py    # Pytest test suite

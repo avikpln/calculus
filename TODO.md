@@ -7,9 +7,8 @@
 
 ## Features
 
-- Add an `example/` top-level folder. Ideas: `e_and_pi.py` (π/e
-  approximation via `Series`), `integral.py` (Riemann-sum
-  approximation sequences, Simpson, etc.).
+- Add `integral.py` to examples (Riemann-sum approximation sequences,
+  Simpson, etc.).
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot
   cache, to efficiently support out-of-order queries. See NOTES.md
@@ -89,6 +88,11 @@
   locally installed packages and `requirements-dev.txt`.
 
 - Add a script to clean generated artifacts (e.g. `__pycache__`).
+
+- Consider converting example Python files into Jupyter notebooks for
+  narrative-driven docs. Would require new tooling (nbformat/Jupyter)
+  and CI changes (notebooks aren't covered by mypy/pyflakes/pytest the
+  way .py files are).
 
 ## Unresolved Questions
 
