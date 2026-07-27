@@ -61,3 +61,4 @@ jobs:
           python-version: '3.13'
       - run: python -m examples.constants_approximation
       - run: python -m examples.power_series
+      - run: python -m examples.rademacher_sequence

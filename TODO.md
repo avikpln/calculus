@@ -7,10 +7,10 @@
 
 ## Features
 
-- Add `RademacherSequence` to examples.
-
 - Add `integral.py` to examples (Riemann-sum approximation sequences,
   Simpson, etc.).
+
+- Add a `sum()` utility method to NumericSequence, after careful design.
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot
   cache, to efficiently support out-of-order queries. See NOTES.md
@@ -34,6 +34,10 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Change None to INFINITY for the size parameter in docstrings accros
+  the project. In addition, look for places in code where None should be
+  replaced with INFINITY.
 
 - Fix Sequence.__init__'s docstring to add in ValueError:
   ", or if ``first_index`` is not in ``sequence.FIRST_INDEX_OPTIONS``.".

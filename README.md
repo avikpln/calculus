@@ -202,7 +202,8 @@ print(4 * leibniz[1000])
 │   └── utils.py                      # Shared validation helpers
 ├── examples
 │   ├── constants_approximation.py    # e and pi approximation demo
-│   └── power_series.py               # PowerSeries class and evaluation demo
+│   ├── power_series.py               # PowerSeries class and evaluation demo
+│   └── rademacher_sequence.py        # RademacherSequence class and estimation demo
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite
 │   ├── test_numeric_recurrence.py    # Pytest test suite
@@ -241,6 +242,7 @@ pytest
 git diff --cached --check
 python -m examples.constants_approximation
 python -m examples.power_series
+python -m examples.rademacher_sequence
 ```
 
 ## Dependencies
