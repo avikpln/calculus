@@ -7,9 +7,6 @@
 
 ## Features
 
-- Add `integral.py` to examples (Riemann-sum approximation sequences,
-  Simpson, etc.).
-
 - Add a `sum()` utility method to NumericSequence, after careful design.
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot

@@ -62,3 +62,4 @@ jobs:
       - run: python -m examples.constants_approximation
       - run: python -m examples.power_series
       - run: python -m examples.rademacher_sequence
+      - run: python -m examples.integral_approximation
