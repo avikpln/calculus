@@ -236,22 +236,6 @@ grouping aligned to the opening delimiter.
   standalone, tightened only when mixed with a lower-priority operator
   in the same expression.
 
-## Testing and Quality
-
-Before every commit, run:
-
-1.  `mypy --strict`
-2.  `pyflakes`
-3.  `pydocstyle`
-4.  `pytest`
-5.  `git diff --cached --check` (trailing whitespace, staged changes)
-
-All checks should pass before committing.
-
-This same sequence is automated by the project's CI workflow, which
-uses the empty-tree hash to check every file in the repository rather
-than just staged changes.
-
 ## Architecture Diagrams
 
 - Specify only public instance attributes and methods;

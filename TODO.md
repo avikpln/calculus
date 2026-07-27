@@ -7,9 +7,7 @@
 
 ## Features
 
-- Add an `example/` top-level folder. Ideas: `e_and_pi.py` (π/e
-  approximation via `Series`), `integral.py` (Riemann-sum
-  approximation sequences, Simpson, etc.).
+- Add a `sum()` utility method to NumericSequence, after careful design.
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot
   cache, to efficiently support out-of-order queries. See NOTES.md
@@ -33,6 +31,10 @@
   exploration, edge cases, unusual input combinations.
 
 ## Documentation
+
+- Change None to INFINITY for the size parameter in docstrings accros
+  the project. In addition, look for places in code where None should be
+  replaced with INFINITY.
 
 - Fix Sequence.__init__'s docstring to add in ValueError:
   ", or if ``first_index`` is not in ``sequence.FIRST_INDEX_OPTIONS``.".
@@ -90,13 +92,7 @@
 
 - Add a script to clean generated artifacts (e.g. `__pycache__`).
 
-## Unresolved Questions
-
-- Should a `ComplexSequence` class be added?
-
-- Should a `PowerSeries` class be added?
-
-- Should a `RandomSequence` class be added?
-
-- Should `{rₙ}` be used to denote `Recurrence` and `NumericRecurrence`
-  instead of `{aₙ}`?
+- Consider converting example Python files into Jupyter notebooks for
+  narrative-driven docs. Would require new tooling (nbformat/Jupyter)
+  and CI changes (notebooks aren't covered by mypy/pyflakes/pytest the
+  way .py files are).

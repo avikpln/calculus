@@ -200,6 +200,11 @@ print(4 * leibniz[1000])
 │   ├── sequence.py                   # Sequence implementation
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
+├── examples
+│   ├── constants_approximation.py    # e and pi approximation demo
+│   ├── integral_approximation.py     # Integral class and approximation demo
+│   ├── power_series.py               # PowerSeries class and evaluation demo
+│   └── rademacher_sequence.py        # RademacherSequence class and estimation demo
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite
 │   ├── test_numeric_recurrence.py    # Pytest test suite
@@ -215,7 +220,8 @@ print(4 * leibniz[1000])
 ├── README.md
 ├── requirements-dev.txt              # Development and CI dependencies
 ├── STYLE.md                          # Project coding and documentation conventions
-└── TODO.md                           # Planned enhancements
+├── TODO.md                           # Planned work
+└── ZOO.md                            # List of ideas for sequence types
 ```
 
 ## Development
@@ -235,6 +241,10 @@ pyflakes calculus
 pydocstyle calculus
 pytest
 git diff --cached --check
+python -m examples.constants_approximation
+python -m examples.power_series
+python -m examples.rademacher_sequence
+python -m examples.integral_approximation
 ```
 
 ## Dependencies

@@ -51,3 +51,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
+
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m examples.constants_approximation
+      - run: python -m examples.power_series
+      - run: python -m examples.rademacher_sequence
+      - run: python -m examples.integral_approximation
