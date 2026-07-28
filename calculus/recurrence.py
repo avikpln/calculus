@@ -114,14 +114,14 @@ class Recurrence(Sequence[T]):
                 a fixed number of preceding terms.
             basis (Iterable[T]): The initial base case values.
             size (Intfinity): The size of the sequence. Defaults to
-                None, which corresponds to an infinite sequence.
+                INFINITY.
             first_index (int): The first index of the sequence. Defaults
                 to 0. A read-only keyword parameter.
 
         Raises:
             TypeError: If ``func`` is not callable, if ``basis`` is not
-                iterable, if ``size`` is not None or an integer, or if
-                ``first_index`` is not an integer.
+                iterable, if ``size`` is not INFINITY or an integer, or
+                if ``first_index`` is not an integer.
             ValueError: If ``basis`` is empty, if ``size`` is negative,
                 or if ``first_index`` is not in
                 ``sequence.FIRST_INDEX_OPTIONS``.
