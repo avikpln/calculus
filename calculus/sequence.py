@@ -109,7 +109,8 @@ class Sequence(Generic[T], Iterable[T]):
             TypeError: If ``rule`` is not callable, if size is not
                 INFINITY or an integer, or if ``first_index`` is not an
                 integer.
-            ValueError: If ``size`` is negative.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         if rule is None:
             # Callable[[int], None] is not assignable to Callable[[int], T].

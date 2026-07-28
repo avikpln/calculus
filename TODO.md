@@ -27,9 +27,6 @@
 
 ## Documentation
 
-- Fix Sequence.__init__'s docstring to add in ValueError:
-  ", or if ``first_index`` is not in ``sequence.FIRST_INDEX_OPTIONS``.".
-
 - Change "Boolean operators" to "logical operators" in ARCHITECTURE.md.
 
 - Revise NOTES.md from top to bottom.
