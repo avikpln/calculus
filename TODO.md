@@ -20,8 +20,6 @@
 
 ## Testing
 
-- Review all test files for redundant, bloated, or missing tests.
-
 - Add a unit test suite for `utils.py`.
 
 - Test extensively beyond the pytest suite, e.g. manual
