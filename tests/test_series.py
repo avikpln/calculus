@@ -1,4 +1,4 @@
-"""Tests for Series construction and evaluation.
+"""Tests for Series.
 
 Run with:
     pytest tests/test_series.py -v
@@ -8,7 +8,7 @@ import pytest
 from calculus.numeric_sequence import NumericSequence
 from calculus.series import Series
 
-# -- CONSTRUCTION
+# -- CONSTRUCTION & VALIDATION
 
 def test_construction_with_term_rule() -> None:
     series = Series(lambda n: n)
@@ -25,6 +25,31 @@ def test_construction_with_size_is_finite() -> None:
 def test_construction_with_first_index_zero() -> None:
     series = Series(lambda n: n, first_index=0)
     assert series.first_index == 0
+
+
+def test_noncallable_term_rule_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Series("not callable")  # type: ignore[arg-type]
+
+
+def test_noninteger_size_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Series(lambda n: n, size="three")  # type: ignore[arg-type]
+
+
+def test_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        Series(lambda n: n, size=-1)
+
+
+def test_noninteger_first_index_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Series(lambda n: n, first_index="zero")  # type: ignore[arg-type]
+
+
+def test_invalid_first_index_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        Series(lambda n: n, first_index=2)
 
 
 # -- EVALUATION
@@ -126,6 +151,13 @@ def test_from_sequence_preserves_infinite_partial_sums() -> None:
     series = Series.from_sequence(seq)
     assert series.finite is False
     assert list(series.head(5)) == [1, 3, 6, 10, 15]
+
+
+def test_from_sequence_with_zero_first_index() -> None:
+    seq = NumericSequence(lambda n: n, size=5, first_index=0)
+    series = Series.from_sequence(seq)
+    assert series.first_index == 0
+    assert list(series) == [0, 1, 3, 6, 10]
 
 
 # -- SPECIAL SERIES

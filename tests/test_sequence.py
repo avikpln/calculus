@@ -1,4 +1,4 @@
-"""Tests for Sequence construction and validation.
+"""Tests for Sequence.
 
 Run with:
     pytest tests/test_sequence.py -v
@@ -179,6 +179,12 @@ def test_negative_index_on_zero_based_finite_sequence() -> None:
     assert seq[-4] == 0
 
 
+def test_negative_index_raises_index_error_for_one_indexed_sequence() -> None:
+    seq = Sequence(lambda n: n, size=3, first_index=1)
+    with pytest.raises(IndexError):
+        seq[-1]
+
+
 def test_negative_index_out_of_range_raises_index_error() -> None:
     seq = Sequence(lambda n: n, size=4, first_index=0)
     with pytest.raises(IndexError):
@@ -197,6 +203,13 @@ def test_slice_with_step_returns_subsequence() -> None:
     sub = seq[0:10:2]
     assert isinstance(sub, Sequence)
     assert list(sub) == [0, 2, 4, 6, 8]
+
+
+def test_slice_with_negative_step_returns_subsequence() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    sub = seq[8:2:-2]
+    assert isinstance(sub, Sequence)
+    assert list(sub) == [8, 6, 4]
 
 
 def test_slice_without_stop_is_infinite_and_preserves_first_index() -> None:
@@ -282,6 +295,12 @@ def test_shift_by_noninteger_offset_raises_type_error() -> None:
         seq.shift_by("1")  # type: ignore[arg-type]
 
 
+def test_shift_to_noninteger_where_raises_type_error() -> None:
+    seq = Sequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        seq.shift_to("100")  # type: ignore[arg-type]
+
+
 def test_head_returns_prefix_of_infinite_sequence() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     prefix = seq.head(3)
@@ -301,22 +320,40 @@ def test_head_negative_size_raises_value_error() -> None:
         seq.head(-1)
 
 
+def test_head_noninteger_size_raises_type_error() -> None:
+    seq = Sequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        seq.head("1")  # type: ignore[arg-type]
+
+
 def test_tail_returns_suffix_of_finite_sequence() -> None:
     seq = Sequence(lambda n: n, size=5, first_index=1)
     suffix = seq.tail(2)
     assert list(suffix) == [4, 5]
 
 
-def test_tail_on_infinite_sequence_raises_type_error() -> None:
-    seq = Sequence(lambda n: n)
-    with pytest.raises(TypeError):
-        seq.tail(2)
+def test_tail_clips_to_available_size_on_finite_sequence() -> None:
+    seq = Sequence(lambda n: n, size=3, first_index=1)
+    suffix = seq.tail(10)
+    assert list(suffix) == [1, 2, 3]
 
 
 def test_tail_negative_size_raises_value_error() -> None:
     seq = Sequence(lambda n: n, size=5)
     with pytest.raises(ValueError):
         seq.tail(-1)
+
+
+def test_tail_noninteger_size_raises_type_error() -> None:
+    seq = Sequence(lambda n: n, size=3)
+    with pytest.raises(TypeError):
+        seq.tail("1")  # type: ignore[arg-type]
+
+
+def test_tail_on_infinite_sequence_raises_type_error() -> None:
+    seq = Sequence(lambda n: n)
+    with pytest.raises(TypeError):
+        seq.tail(2)
 
 
 def test_subsequence_reindexes_with_custom_map() -> None:

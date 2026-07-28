@@ -1,4 +1,4 @@
-"""Tests for Recurrence construction and evaluation.
+"""Tests for Recurrence.
 
 Run with:
     pytest tests/test_recurrence.py -v
@@ -36,6 +36,26 @@ def test_noniterable_basis_raises_type_error() -> None:
 def test_empty_basis_raises_value_error() -> None:
     with pytest.raises(ValueError):
         Recurrence(lambda n, a: 2 * a[-1], basis=())
+
+
+def test_noninteger_size_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Recurrence(lambda n, a: a[-1], basis=(1,), size="three")  # type: ignore[arg-type]
+
+
+def test_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        Recurrence(lambda n, a: a[-1], basis=(1,), size=-1)
+
+
+def test_noninteger_first_index_raises_type_error() -> None:
+    with pytest.raises(TypeError):
+        Recurrence(lambda n, a: a[-1], basis=(1,), first_index="zero")  # type: ignore[arg-type]
+
+
+def test_invalid_first_index_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        Recurrence(lambda n, a: a[-1], basis=(1,), first_index=2)
 
 
 def test_first_index_defaults_to_zero() -> None:
@@ -93,6 +113,13 @@ def test_single_term_basis_recurrence() -> None:
     assert list(doubling) == [1, 2, 4, 8, 16]
 
 
+def test_order_three_recurrence() -> None:
+    tribonacci = Recurrence(
+        lambda n, a: a[-1] + a[-2] + a[-3], basis=(0, 0, 1), size=8,
+    )
+    assert list(tribonacci) == [0, 0, 1, 1, 2, 4, 7, 13]
+
+
 def test_shift_by_computes_correct_values() -> None:
     fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1), size=10)
     shifted = fib.shift_by(2)
@@ -138,18 +165,18 @@ def test_shift_by_returns_plain_sequence() -> None:
     assert not isinstance(shifted, Recurrence)
 
 
-def test_tail_returns_plain_sequence() -> None:
-    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1), size=6)
-    suffix = fib.tail(3)
-    assert isinstance(suffix, Sequence)
-    assert not isinstance(suffix, Recurrence)
-
-
 def test_subsequence_returns_plain_sequence() -> None:
     fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
     sub = fib.subsequence(lambda k: k * 2, size=4)
     assert isinstance(sub, Sequence)
     assert not isinstance(sub, Recurrence)
+
+
+def test_tail_returns_plain_sequence() -> None:
+    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1), size=6)
+    suffix = fib.tail(3)
+    assert isinstance(suffix, Sequence)
+    assert not isinstance(suffix, Recurrence)
 
 
 # -- RULE INDEPENDENCE
@@ -172,6 +199,7 @@ def test_von_neumann() -> None:
         "{\N{EMPTY SET}, {\N{EMPTY SET}}}",
         "{\N{EMPTY SET}, {\N{EMPTY SET}}, {\N{EMPTY SET}, {\N{EMPTY SET}}}}",
     )
+
 
 def test_look_and_say() -> None:
     seq = Recurrence.look_and_say()

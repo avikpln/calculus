@@ -1,4 +1,4 @@
-"""Tests for NumericRecurrence construction and evaluation.
+"""Tests for NumericRecurrence.
 
 Run with:
     pytest tests/test_numeric_recurrence.py -v
@@ -7,7 +7,7 @@ from calculus.numeric_sequence import NumericSequence
 from calculus.recurrence import Recurrence
 from calculus.numeric_recurrence import NumericRecurrence
 
-# -- CONSTRUCTION
+# -- CONSTRUCTION & VALIDATION
 
 def test_construction_with_func_and_basis() -> None:
     fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
@@ -42,6 +42,7 @@ def test_arithmetic_returns_numeric_sequence() -> None:
     result = fib + 1
     assert isinstance(result, NumericSequence)
     assert not isinstance(result, NumericRecurrence)
+    assert not isinstance(result, Recurrence)
 
 
 # -- SUBTYPE PRESERVATION
@@ -61,6 +62,14 @@ def test_shift_by_returns_numeric_sequence_not_recurrence() -> None:
     assert isinstance(shifted, NumericSequence)
     assert not isinstance(shifted, NumericRecurrence)
     assert not isinstance(shifted, Recurrence)
+
+
+def test_subsequence_returns_numeric_sequence_not_recurrence() -> None:
+    fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
+    sub = fib.subsequence(lambda k: k * 2, size=4)
+    assert isinstance(sub, NumericSequence)
+    assert not isinstance(sub, NumericRecurrence)
+    assert not isinstance(sub, Recurrence)
 
 
 def test_tail_returns_numeric_sequence_not_recurrence() -> None:
