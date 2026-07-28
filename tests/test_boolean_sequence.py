@@ -60,6 +60,12 @@ def test_or_mismatched_first_index_raises_value_error() -> None:
         a | b
 
 
+def test_or_with_unsupported_operand_raises_type_error() -> None:
+    seq = BooleanSequence(lambda n: True, size=3)
+    with pytest.raises(TypeError):
+        seq | "not a bool"
+
+
 def test_ror_scalar_returns_elementwise_or() -> None:
     seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
     result = False | seq
@@ -91,6 +97,12 @@ def test_and_mismatched_first_index_raises_value_error() -> None:
     b = BooleanSequence(lambda n: True, size=3, first_index=1)
     with pytest.raises(ValueError):
         a & b
+
+
+def test_and_with_unsupported_operand_raises_type_error() -> None:
+    seq = BooleanSequence(lambda n: True, size=3)
+    with pytest.raises(TypeError):
+        seq & "not a bool"
 
 
 def test_rand_scalar_returns_elementwise_and() -> None:
@@ -126,13 +138,19 @@ def test_xor_mismatched_first_index_raises_value_error() -> None:
         a ^ b
 
 
+def test_xor_with_unsupported_operand_raises_type_error() -> None:
+    seq = BooleanSequence(lambda n: True, size=3)
+    with pytest.raises(TypeError):
+        seq ^ "not a bool"
+
+
 def test_rxor_scalar_returns_elementwise_xor() -> None:
     seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
     result = True ^ seq
     assert list(result) == [False, True, False, True]
 
 
-# -- TYPING
+# -- SUBTYPE PRESERVATION
 
 def test_head_preserves_boolean_subtype() -> None:
     seq = BooleanSequence(lambda n: n % 2 == 0, size=4, first_index=0)
@@ -149,10 +167,20 @@ def test_true_returns_boolean_sequence_with_correct_values() -> None:
     assert list(seq) == [True, True, True]
 
 
+def test_true_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        BooleanSequence.true(size=-1)
+
+
 def test_false_returns_boolean_sequence_with_correct_values() -> None:
     seq = BooleanSequence.false(size=3)
     assert isinstance(seq, BooleanSequence)
     assert list(seq) == [False, False, False]
+
+
+def test_false_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        BooleanSequence.false(size=-1)
 
 
 def test_from_iterable_returns_boolean_sequence_with_correct_values() -> None:
