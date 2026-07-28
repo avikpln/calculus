@@ -2,13 +2,13 @@
 
 ![CI](https://github.com/avikpln/calculus/actions/workflows/ci.yml/badge.svg)
 
-A Python library for representing and manipulating infinite sequences
-through lazy evaluation.
+A Python library for representing and manipulating infinite sequences through
+lazy evaluation.
 
 ## Vision
 
-The Calculus package aims to provide a collection of reusable
-abstractions for discrete and continuous mathematics.
+The Calculus package aims to provide a collection of reusable abstractions for
+discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]` abstraction
 together with the specialized `NumericSequence`, `Recurrence`,
@@ -16,24 +16,22 @@ together with the specialized `NumericSequence`, `Recurrence`,
 
 ## Features
 
--   Generic `Sequence[T]` implementation.
--   `BooleanSequence` with element-wise logical operations.
--   `NumericSequence` with element-wise arithmetic and comparisons.
--   `Recurrence` for sequences defined by recursive relations.
--   `NumericRecurrence` combining numeric arithmetic with recursively
-    defined elements.
--   `Series` for sequences defined by partial sums of an underlying
-    term sequence.
--   Infinite (and finite) sequences.
--   Lazy evaluation via user-defined rules.
--   Support for zero- and one-indexed sequences.
--   Element access and slicing.
--   Forward iteration over subsequences.
--   `Sequence` transformations (`map`, `combine`, `shift_by`,
-    `shift_to`).
--   Factory methods for constant sequences and sequences built from
-    iterables.
--   Fully type-annotated (`mypy --strict`).
+- Generic `Sequence[T]` implementation.
+- `BooleanSequence` with element-wise logical operations.
+- `NumericSequence` with element-wise arithmetic and comparisons.
+- `Recurrence` for sequences defined by recursive relations.
+- `NumericRecurrence` combining numeric arithmetic with recursively defined
+  elements.
+- `Series` for sequences defined by partial sums of an underlying term
+  sequence.
+- Infinite (and finite) sequences.
+- Lazy evaluation via user-defined rules.
+- Support for zero- and one-indexed sequences.
+- Element access and slicing.
+- Forward iteration over subsequences.
+- `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
+- Factory methods for constant sequences and sequences built from iterables.
+- Fully type-annotated (`mypy --strict`).
 
 ## Examples
 
@@ -253,8 +251,7 @@ python -m examples.integral_approximation
 
 ## Dependencies
 
-Calculus has no runtime dependencies beyond the Python standard
-library.
+Calculus has no runtime dependencies beyond the Python standard library.
 
 Development requires:
 
@@ -271,12 +268,11 @@ pip install -r requirements-dev.txt
 
 ## Documentation
 
--   `ARCHITECTURE.md` records the class hierarchy and relationships
-    between its classes.
--   `NOTES.md` records design decisions and implementation rationale.
--   `STYLE.md` describes the project's coding and documentation
-    standards.
--   `ZOO.md` lists ideas for potential future sequence types.
+- `ARCHITECTURE.md` records the class hierarchy and relationships between its
+  classes.
+- `NOTES.md` records design decisions and implementation rationale.
+- `STYLE.md` describes the project's coding and documentation standards.
+- `ZOO.md` lists ideas for potential future sequence types.
 
 ## License
 

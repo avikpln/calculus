@@ -2,10 +2,10 @@
 
 ## Philosophy
 
-This project follows standard Python conventions wherever practical.
-Departures from common practice are intentional, documented, and made
-only when they improve readability, maintainability, or better express
-the mathematical model of the library.
+This project follows standard Python conventions wherever practical. Departures
+from common practice are intentional, documented, and made only when they
+improve readability, maintainability, or better express the mathematical model
+of the library.
 
 ## Documentation
 
@@ -20,7 +20,7 @@ Module docstrings should contain:
 - a list of exported public classes, functions, and other objects;
 - no documentation of private implementation details.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Classes
 
@@ -33,7 +33,7 @@ Class docstrings should:
 
 Constructors are documented in `__init__()`, not in the class docstring.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Functions and methods
 
@@ -46,7 +46,7 @@ Public functions and methods should document:
 - restrictions or preconditions;
 - keyword-only parameters, when applicable.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Inheritance
 
@@ -54,17 +54,29 @@ When subclassing:
 
 - use *override* when replacing inherited behavior without calling the
   superclass implementation;
-- use *extend* when calling the superclass implementation in addition to
-  new behavior;
+- use *extend* when calling the superclass implementation in addition to new
+  behavior;
 - summarize only the behavioral differences from the parent class.
+
+## Line Length
+
+- Python code: wrap at 79 characters (PEP 8).
+- Python docstrings: wrap at 72 characters (PEP 257; see Docstring
+  Conventions).
+- Everywhere else with no more specific rule stated (e.g. Markdown files, PR
+  descriptions): wrap at 79 characters.
+- Fill the space: Avoid wrapping lines prematurely.
+
+### Git Commit Messages
+
+- Subject: 50 characters or fewer.
+- Body: wrap at 72 characters or fewer per line.
 
 ## Docstring Conventions
 
-- Summary line: exactly one line, appearing on the same line as the
-  opening """
+- Summary line: exactly one line, on the same line as the opening """.
 
-- Maximum line length: 72 characters (except doctests, URLs, and
-  unavoidable output).
+- Maximum line length: 72 characters (except doctests, URLs, and output).
 
 - For function and method docstrings, non-empty sections appear in the
   following order:
@@ -75,8 +87,7 @@ When subclassing:
         Notes:
         Examples:
 
-- For class docstrings, non-empty sections appear in the following
-  order:
+- For class docstrings, non-empty sections appear in the following order:
 
         Attributes:
         Methods:
@@ -89,12 +100,12 @@ When subclassing:
 
 - Docstrings explain *what*; implementation comments explain *why*.
 
-- Private methods (leading underscore) use block comments beneath the
-  function signature instead of docstrings.
+- Private methods (leading underscore) use block comments beneath the function
+  signature instead of docstrings.
 
-- `Raises:` documents only exceptions that the function itself can
-  propagate through its own parameters. Delegating methods should not
-  reproduce a constructor's complete exception contract.
+- `Raises:` documents only exceptions that the function itself can propagate
+  through its own parameters. Delegating methods should not reproduce a
+  constructor's complete exception contract.
 
 ## Type Hints
 
@@ -106,22 +117,21 @@ When subclassing:
 
 - Constructors eagerly validate values that establish object invariants.
 
-- Transformation methods generally rely on lazy validation and EAFP
-  semantics unless eager validation protects a core invariant.
+- Transformation methods generally rely on lazy validation and EAFP semantics
+  unless eager validation protects a core invariant.
 
-- `assert False` may be used to mark a branch that is structurally
-  unreachable once callers have validated their inputs (e.g. an `else`
-  clause following exhaustive `if`/`elif` conditions). This is distinct
-  from an `assert` used purely to narrow a type for `mypy`, which should
-  be marked with a trailing `# mypy` comment instead.
+- `assert False` may be used to mark a branch that is structurally unreachable
+  once callers have validated their inputs (e.g. an `else` clause following
+  exhaustive `if`/`elif` conditions). This is distinct from an `assert` used
+  purely to narrow a type for `mypy`, which should be marked with a trailing
+  `# mypy` comment instead.
 
-- Validation ownership belongs to the public API, not to private
-  methods. A private method may still raise an exception where doing so
-  is the natural implementation of a public caller's documented behavior
-  (not independent argument validation) — this is acceptable as long as
-  all current callers of that private method agree on what it should
-  reject. If callers genuinely diverge, the check moves out to each
-  public caller instead.
+- Validation ownership belongs to the public API, not to private methods. A
+  private method may still raise an exception where doing so is the natural
+  implementation of a public caller's documented behavior (not independent
+  argument validation) — this is acceptable as long as all current callers of
+  that private method agree on what it should reject. If callers genuinely
+  diverge, the check moves out to each public caller instead.
 
 ## Comments
 
@@ -137,57 +147,55 @@ When subclassing:
 
 ## Line-Wrapping
 
-The guiding rule is *all-or-none*: if a construct fits entirely on
-one line within the line-length limit, it stays on one line. If it
-does not fit, every element gets its own line — never a partial
-grouping aligned to the opening delimiter.
+The guiding rule is *all-or-none*: if a construct fits entirely on one line
+within the line-length limit, it stays on one line. If it does not fit, every
+element gets its own line — never a partial grouping aligned to the opening
+delimiter.
 
 ### General
 
-- Whenever a construct is wrapped across multiple lines, the last
-  element (or group of elements) gets a trailing comma before the
-  closing delimiter.
+- Whenever a construct is wrapped across multiple lines, the last element (or
+  group of elements) gets a trailing comma before the closing delimiter.
 
-- These conventions apply to library source files. Test files are not
-  held to them; prioritize readability of test setup and assertions over
-  strict formatting.
+- These conventions apply to library source files. Test files are not held to
+  them; prioritize readability of test setup and assertions over strict
+  formatting.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Conditional expressions
 
-- An `if` condition that does not fit on one line follows the same
-  all-or-none rule as other constructs: if it does not fit on one line,
-  each condition/operand gets its own line, with the closing parenthesis
-  and colon on their own line at the statement's base indentation.
+- An `if` condition that does not fit on one line follows the same all-or-none
+  rule as other constructs: if it does not fit on one line, each
+  condition/operand gets its own line, with the closing parenthesis and colon
+  on their own line at the statement's base indentation.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Class declarations
 
-- A class declaration that does not fit on one line places each base
-  class on its own line, with the opening parenthesis on the `class`
-  line and the closing parenthesis and colon on their own line.
+- A class declaration that does not fit on one line places each base class on
+  its own line, with the opening parenthesis on the `class` line and the
+  closing parenthesis and colon on their own line.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Function and method definitions
 
-- A definition that does not fit on one line places every parameter on
-  its own line. Nothing follows the opening parenthesis; the closing
-  parenthesis and return-type annotation share a line at the method's
-  base indentation.
+- A definition that does not fit on one line places every parameter on its own
+  line. Nothing follows the opening parenthesis; the closing parenthesis and
+  return-type annotation share a line at the method's base indentation.
 
-- The bare `*` marking the start of keyword-only parameters gets its own
-  line rather than sharing one with an adjacent parameter.
+- The bare `*` marking the start of keyword-only parameters gets its own line
+  rather than sharing one with an adjacent parameter.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Function calls
 
-- A call that does not fit on one line, but whose full argument list
-  fits on a single indented continuation line, is written with the
-  arguments grouped together on that one line:
+- A call that does not fit on one line, but whose full argument list fits on a
+  single indented continuation line, is written with the arguments grouped
+  together on that one line:
 
         func(
             a, b, c,
@@ -196,28 +204,27 @@ grouping aligned to the opening delimiter.
 - If the argument list does not fit even this way, it falls back to one
   argument per line, matching the convention for definitions.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Imports
 
-- An import that does not fit on one line is wrapped in parentheses,
-  with one imported name per line.
+- An import that does not fit on one line is wrapped in parentheses, with one
+  imported name per line.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### `__all__` and other list literals
 
-- A list literal that does not fit on one line places one element per
-  line.
+- A list literal that does not fit on one line places one element per line.
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ### Exemption: multi-line string concatenation
 
 - Implicit string concatenation spanning multiple lines (for example, a
-  multi-part message inside a `raise` statement) is not a sequence of
-  discrete arguments and is exempt from the rules above. Wrap for
-  readability at your own discretion.
+  multi-part message inside a `raise` statement) is not a sequence of discrete
+  arguments and is exempt from the rules above. Wrap for readability at your
+  own discretion.
 
 ## Imports
 
@@ -230,14 +237,14 @@ grouping aligned to the opening delimiter.
 - Binary operators are spaced on both sides by default (e.g. `a + b`,
   `a ** b`).
 - When operators of different priority are mixed in the same expression,
-  tighten the higher-priority operator and space the lower-priority one
-  (e.g. `a*b + c*d`, `(-1)**n * n`).
-- `**` follows the same rule as any other operator: spaced when
-  standalone, tightened only when mixed with a lower-priority operator
-  in the same expression.
+  tighten the higher-priority operator and space the lower-priority one (e.g.
+  `a*b + c*d`, `(-1)**n * n`).
+- `**` follows the same rule as any other operator: spaced when standalone,
+  tightened only when mixed with a lower-priority operator in the same
+  expression.
 
 ## Architecture Diagrams
 
 - Specify only public instance attributes and methods;
-- Order members alphabetically unless grouping them has a meaningful
-  structural or conceptual purpose.
+- Order members alphabetically unless grouping them has a meaningful structural
+  or conceptual purpose.

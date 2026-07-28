@@ -1,7 +1,7 @@
 # Architecture
 
-This document records the class hierarchy of the `calculus` package
-and the relationships between its classes.
+This document records the class hierarchy of the `calculus` package and the
+relationships between its classes.
 
 ## Class Diagram
 
@@ -79,14 +79,13 @@ classDiagram
 ## Notes
 
 - `Sequence` is the base abstraction for sequences in the package.
-- `BooleanSequence` inherits from `Sequence` and implements logical
-  operators through Python's special methods.
-- `NumericSequence` inherits from `Sequence` and implements arithmetic
-  and comparison operators through Python's special methods.
-- `Recurrence` inherits from `Sequence`, representing sequences defined
-  by recursive relations.
-- `NumericRecurrence` inherits from both `Recurrence` and
-  `NumericSequence`, combining numeric arithmetic with recursively
-  defined elements.
-- `Series` inherits from `NumericSequence`, representing partial sums of
-  an underlying term sequence.
+- `BooleanSequence` inherits from `Sequence` and implements logical operators
+  through Python's special methods.
+- `NumericSequence` inherits from `Sequence` and implements arithmetic and
+  comparison operators through Python's special methods.
+- `Recurrence` inherits from `Sequence`, representing sequences defined by
+  recursive relations.
+- `NumericRecurrence` inherits from both `Recurrence` and `NumericSequence`,
+  combining numeric arithmetic with recursively defined elements.
+- `Series` inherits from `NumericSequence`, representing partial sums of an
+  underlying term sequence.
