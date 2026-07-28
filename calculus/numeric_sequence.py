@@ -17,8 +17,8 @@ from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
-# A type for representing a number.
 Number = int | float
+"""A type for representing a number."""
 
 #=======================================================================
 # Numeric Sequence {aₙ}

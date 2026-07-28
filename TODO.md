@@ -33,8 +33,6 @@
 
 ## Style
 
-- Convert type and constant comments to PEP 257 inline docstrings.
-
 - Revise `STYLE.md` (see `attic/style/missing.txt`).
 
 ## Environment

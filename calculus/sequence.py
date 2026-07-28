@@ -15,10 +15,11 @@ from typing import Final, Generic, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
 
-# Type representing an extended integer.
 Intfinity = int | None
-# Represents positive infinity.
+"""Type representing an extended integer."""
+
 INFINITY: Final = None
+"""Represents positive infinity."""
 
 # Type of sequence elements.
 T = TypeVar("T")
@@ -27,14 +28,14 @@ S = TypeVar("S")
 # Type of returned sequence elements.
 R = TypeVar("R")
 
-# Type representing a mapping from integers to objects.
 Rule = Callable[[int], T]
+"""Type representing a mapping from integers to objects."""
 
-# The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
+"""The allowed first indices of a sequence."""
 
-# Number of elements to display for infinite sequences.
 DISPLAY_HEAD = 5
+"""Number of elements to display for infinite sequences."""
 
 # Special symbols used for display.
 _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
