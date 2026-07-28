@@ -79,7 +79,7 @@ classDiagram
 ## Notes
 
 - `Sequence` is the base abstraction for sequences in the package.
-- `BooleanSequence` inherits from `Sequence` and implements Boolean
+- `BooleanSequence` inherits from `Sequence` and implements logical
   operators through Python's special methods.
 - `NumericSequence` inherits from `Sequence` and implements arithmetic
   and comparison operators through Python's special methods.

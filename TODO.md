@@ -27,8 +27,6 @@
 
 ## Documentation
 
-- Change "Boolean operators" to "logical operators" in ARCHITECTURE.md.
-
 - Revise NOTES.md from top to bottom.
 
 - Fix "Documentation" section in README.md.
