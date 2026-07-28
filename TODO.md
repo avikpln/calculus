@@ -24,20 +24,7 @@
 
 ## Documentation
 
-- Fix "Documentation" section in README.md.
-
-- Fix redundant comments about tests in README.md's project layout
-  section.
-
 - Wrap markdown files at 79 instead of 72.
-
-- Add a scalar broadcasting example to `README.md`:
-
-```python
-  # Scalar broadcasting.
-  print((squares + 1).head(5))
-  # ⟨2, 5, 10, 17, 26⟩
-```
 
 - Add a thematic/visual header image to `README.md` — general
   calculus-themed imagery, not an architecture diagram.
