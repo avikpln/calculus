@@ -22,12 +22,7 @@
 
 - Add a unit test suite for `utils.py`.
 
-- Test extensively beyond the pytest suite, e.g. manual
-  exploration, edge cases, unusual input combinations.
-
 ## Documentation
-
-- Revise NOTES.md from top to bottom.
 
 - Fix "Documentation" section in README.md.
 
@@ -35,8 +30,6 @@
 
 - Fix redundant comments about tests in README.md's project layout
   section.
-
-- Review test module docstrings for accuracy.
 
 - Wrap markdown files at 79 instead of 72.
 
@@ -53,16 +46,11 @@
 
 - Add `CHANGELOG.md`.
 
-- Review all docstrings and documentation comments.
-
 ## Style
 
 - Convert type and constant comments to PEP 257 inline docstrings.
 
 - Revise `STYLE.md` (see `attic/style/missing.txt`).
-
-- Ensure that all Markdown files are not prematurely wrapped before 72
-  characters.
 
 ## Environment
 
