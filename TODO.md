@@ -20,9 +20,6 @@
 
 ## Testing
 
-- Change SPECIAL SEQUENCES to SPECIAL NUMERIC SEQUENCES in
-  test_numeric_sequence.py.
-
 - Review all test files for redundant, bloated, or missing tests.
 
 - Add a unit test suite for `utils.py`.

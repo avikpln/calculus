@@ -1,4 +1,4 @@
-"""Tests for NumericSequence arithmetic operations.
+"""Tests for NumericSequence.
 
 Run with:
     pytest tests/test_numeric_sequence.py -v
@@ -374,7 +374,7 @@ def test_rpow_scalar_returns_elementwise_power() -> None:
     assert list(result) == [2, 4, 8]
 
 
-# -- TYPING
+# -- SUBTYPE PRESERVATION
 
 def test_head_preserves_numeric_subtype() -> None:
     squares = NumericSequence(lambda n: n * n)
@@ -390,12 +390,17 @@ def test_binary_with_non_numeric_sequence_raises_type_error() -> None:
         a + b
 
 
-# -- SPECIAL SEQUENCES
+# -- SPECIAL NUMERIC SEQUENCES
 
 def test_constant_returns_numeric_sequence_with_correct_values() -> None:
     seq = NumericSequence.constant(7, size=3)
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [7, 7, 7]
+
+
+def test_constant_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        NumericSequence.constant(7, size=-1)
 
 
 def test_from_iterable_returns_numeric_sequence_with_correct_values() -> None:
@@ -410,16 +415,31 @@ def test_naturals_returns_correct_numeric_sequence() -> None:
     assert list(seq) == [1, 2, 3]
 
 
+def test_naturals_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        NumericSequence.naturals(size=-1)
+
+
 def test_progression_returns_correct_numeric_sequence() -> None:
     seq = NumericSequence.progression(5, 3, size=4)
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [5, 8, 11, 14]
 
 
+def test_progression_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        NumericSequence.progression(5, 3, size=-1)
+
+
 def test_geometric_returns_correct_numeric_sequence() -> None:
     seq = NumericSequence.geometric(2, 3, size=4)
     assert isinstance(seq, NumericSequence)
     assert list(seq) == [2, 6, 18, 54]
+
+
+def test_geometric_negative_size_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        NumericSequence.geometric(2, 3, size=-1)
 
 
 def test_euler_returns_correct_numeric_sequence() -> None:
