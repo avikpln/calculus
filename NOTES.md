@@ -593,8 +593,6 @@ implemented using the following workflow:
      implementation notes in `NOTES.md`.
    - Update `ARCHITECTURE.md` when the high-level class hierarchy or
      architectural relationships change.
-   - Update `DESIGN.md` when component-level designs or structural
-     choices are modified.
    - Avoid documenting routine implementation details.
 
 **IMPORTANT!** Run the project's verification tools

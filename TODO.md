@@ -26,8 +26,6 @@
 
 - Fix "Documentation" section in README.md.
 
-- Fix "Feature implementation protocol" subsection in NOTES.md.
-
 - Fix redundant comments about tests in README.md's project layout
   section.
 
