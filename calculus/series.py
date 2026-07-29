@@ -92,14 +92,14 @@ class Series(NumericSequence):
             term_rule (Rule[Number]): The rule governing the terms being
                 summed.
             size (Intfinity): The size of the sequence. Defaults to
-                None, which corresponds to an infinite sequence.
+                INFINITY.
             first_index (int): The first index of the sequence. Defaults
                 to 1. A read-only keyword parameter.
 
         Raises:
             TypeError: If ``term_rule`` is not callable, if ``size`` is
-                not None or an integer, or if ``first_index`` is not an
-                integer.
+                not INFINITY or an integer, or if ``first_index`` is not
+                an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """

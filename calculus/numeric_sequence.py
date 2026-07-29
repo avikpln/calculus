@@ -17,8 +17,8 @@ from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
-# A type for representing a number.
 Number = int | float
+"""A type for representing a number."""
 
 #=======================================================================
 # Numeric Sequence {aₙ}
@@ -530,8 +530,8 @@ class NumericSequence(Sequence[Number]):
 
         Args:
             value (Number): The constant value of each sequence element.
-            size (Intfinity): The number of elements in the sequence, or
-                None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -540,7 +540,7 @@ class NumericSequence(Sequence[Number]):
                 value.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
@@ -585,8 +585,7 @@ class NumericSequence(Sequence[Number]):
 
         Args:
             size (Intfinity): The number of elements in the sequence.
-                Defaults to None, which corresponds to an infinite
-                sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -594,7 +593,7 @@ class NumericSequence(Sequence[Number]):
             NumericSequence: A sequence of natural numbers.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
@@ -616,8 +615,7 @@ class NumericSequence(Sequence[Number]):
             common_difference (Number): The constant difference
                 between consecutive terms.
             size (Intfinity): The number of elements in the sequence.
-                Defaults to None, which corresponds to an infinite
-                sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 0.
 
@@ -625,7 +623,7 @@ class NumericSequence(Sequence[Number]):
             NumericSequence: The specified arithmetic progression.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
@@ -648,8 +646,7 @@ class NumericSequence(Sequence[Number]):
             common_ratio (Number): The constant ratio between
                 consecutive terms.
             size (Intfinity): The number of elements in the sequence.
-                Defaults to None, which corresponds to an infinite
-                sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 0.
 
@@ -657,7 +654,7 @@ class NumericSequence(Sequence[Number]):
             NumericSequence: The specified geometric sequence.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.

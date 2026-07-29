@@ -15,10 +15,11 @@ from typing import Final, Generic, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
 
-# Type representing an extended integer.
 Intfinity = int | None
-# Represents positive infinity.
-INFINITY: Final[Intfinity] = None
+"""Type representing an extended integer."""
+
+INFINITY: Final = None
+"""Represents positive infinity."""
 
 # Type of sequence elements.
 T = TypeVar("T")
@@ -27,14 +28,14 @@ S = TypeVar("S")
 # Type of returned sequence elements.
 R = TypeVar("R")
 
-# Type representing a mapping from integers to objects.
 Rule = Callable[[int], T]
+"""Type representing a mapping from integers to objects."""
 
-# The allowed first indices of a sequence.
 FIRST_INDEX_OPTIONS = (0, 1)
+"""The allowed first indices of a sequence."""
 
-# Number of elements to display for infinite sequences.
 DISPLAY_HEAD = 5
+"""Number of elements to display for infinite sequences."""
 
 # Special symbols used for display.
 _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
@@ -49,11 +50,12 @@ class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences.
 
     Attributes:
-        size (Intfinity): The size of the sequence (None if infinite).
+        size (Intfinity): The size of the sequence (INFINITY if
+            infinite).
         finite (bool): True if the sequence is finite, otherwise False.
         first_index (int): The first index of the sequence.
-        last_index (Intfinity): The last index of the sequence (None if
-            infinite).
+        last_index (Intfinity): The last index of the sequence (INFINITY
+            if infinite).
 
     Methods:
         combine(other, op):
@@ -100,14 +102,16 @@ class Sequence(Generic[T], Iterable[T]):
             rule (Rule[T]): The rule governing the sequence. If None,
                 uses a default rule that returns None for every index.
             size (Intfinity): The size of the sequence. Defaults to
-                None, which corresponds to an infinite sequence.
+                INFINITY.
             first_index (int): The first index of the sequence.
                 Defaults to 1. A read-only keyword parameter.
 
         Raises:
-            TypeError: If ``rule`` is not callable, if size is not None
-                or an integer, or if ``first_index`` is not an integer.
-            ValueError: If ``size`` is negative.
+            TypeError: If ``rule`` is not callable, if size is not
+                INFINITY or an integer, or if ``first_index`` is not an
+                integer.
+            ValueError: If ``size`` is negative, or if ``first_index``
+                is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         if rule is None:
             # Callable[[int], None] is not assignable to Callable[[int], T].
@@ -115,7 +119,7 @@ class Sequence(Generic[T], Iterable[T]):
         else:
             validate_callable(rule)
             resolved_rule  = rule
-        if size is not None:
+        if size is not INFINITY:
             validate_int(size, "size")
             if size < 0:
                 raise ValueError(
@@ -130,7 +134,9 @@ class Sequence(Generic[T], Iterable[T]):
 
         self._size = size
         self._first_index = first_index
-        self._last_index = None if size is None else first_index + size - 1
+        self._last_index = (
+            INFINITY if size is INFINITY else first_index + size - 1
+        )
         self._rule = resolved_rule
 
 # -- FACTORY
@@ -181,7 +187,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     @property
     def size(self) -> Intfinity:
-        """The size of the sequence (None if infinite)."""
+        """The size of the sequence."""
         return self._size
 
     @property
@@ -196,7 +202,7 @@ class Sequence(Generic[T], Iterable[T]):
 
     @property
     def last_index(self) -> Intfinity:
-        """The last index of the sequence (None if infinite)."""
+        """The last index of the sequence."""
         return self._last_index
 
 # -- ITERATION
@@ -216,13 +222,13 @@ class Sequence(Generic[T], Iterable[T]):
                 self.first_index if start is None
                 else max(start, self.first_index)
             )
-            if self.last_index is not None:
+            if self.last_index is not INFINITY:
                 if stop is None:
                     stop = self.last_index + 1
                 else:
                     stop = min(stop, self.last_index + 1)
         elif step < 0:
-            if self.last_index is not None:
+            if self.last_index is not INFINITY:
                 if start is None:
                     start = self.last_index
                 else:
@@ -410,13 +416,13 @@ class Sequence(Generic[T], Iterable[T]):
                 indices of the subsequence to indices of this
                 sequence.
             size (Intfinity): The size of the subsequence. Defaults to
-                None, which corresponds to an infinite subsequence.
+                INFINITY.
 
         Returns:
             Sequence[T]: The specified subsequence.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer.
+            TypeError: If ``size`` is not INFINITY or an integer.
             ValueError: If ``size`` is negative.
         """
         rule = self._rule_factory()
@@ -607,9 +613,9 @@ class Sequence(Generic[T], Iterable[T]):
             first_rule = first._rule_factory()
             second_rule = second._rule_factory()
             rule = lambda n: op(first_rule(n), second_rule(n))
-            if second.size is not None:
+            if second.size is not INFINITY:
                 size = (
-                    second.size if first.size is None
+                    second.size if first.size is INFINITY
                     else min(first.size, second.size)
                 )
         else:
@@ -673,8 +679,8 @@ class Sequence(Generic[T], Iterable[T]):
 
         Args:
             value (T): The constant value of each sequence element.
-            size (Intfinity): The number of elements in the sequence, or
-                None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -683,7 +689,7 @@ class Sequence(Generic[T], Iterable[T]):
                 value.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in FIRST_INDEX_OPTIONS.

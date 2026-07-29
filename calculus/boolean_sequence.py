@@ -225,8 +225,8 @@ class BooleanSequence(Sequence[bool]):
         sequence represents the natural numbers.
 
         Args:
-            size (Intfinity): The number of elements in the sequence, or
-                None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -235,7 +235,7 @@ class BooleanSequence(Sequence[bool]):
                 True.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
@@ -256,8 +256,8 @@ class BooleanSequence(Sequence[bool]):
         sequence represents the empty set.
 
         Args:
-            size (Intfinity): The number of elements in the sequence, or
-                None for an infinite sequence. Defaults to None.
+            size (Intfinity): The number of elements in the sequence.
+                Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
 
@@ -266,7 +266,7 @@ class BooleanSequence(Sequence[bool]):
                 False.
 
         Raises:
-            TypeError: If ``size`` is not None or an integer, or if
+            TypeError: If ``size`` is not INFINITY or an integer, or if
                 ``first_index`` is not an integer.
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.

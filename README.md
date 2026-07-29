@@ -2,13 +2,13 @@
 
 ![CI](https://github.com/avikpln/calculus/actions/workflows/ci.yml/badge.svg)
 
-A Python library for representing and manipulating infinite sequences
-through lazy evaluation.
+A Python library for representing and manipulating infinite sequences through
+lazy evaluation.
 
 ## Vision
 
-The Calculus package aims to provide a collection of reusable
-abstractions for discrete and continuous mathematics.
+The Calculus package aims to provide a collection of reusable abstractions for
+discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]` abstraction
 together with the specialized `NumericSequence`, `Recurrence`,
@@ -16,24 +16,22 @@ together with the specialized `NumericSequence`, `Recurrence`,
 
 ## Features
 
--   Generic `Sequence[T]` implementation.
--   `BooleanSequence` with element-wise logical operations.
--   `NumericSequence` with element-wise arithmetic and comparisons.
--   `Recurrence` for sequences defined by recursive relations.
--   `NumericRecurrence` combining numeric arithmetic with recursively
-    defined elements.
--   `Series` for sequences defined by partial sums of an underlying
-    term sequence.
--   Infinite (and finite) sequences.
--   Lazy evaluation via user-defined rules.
--   Support for zero- and one-indexed sequences.
--   Element access and slicing.
--   Forward iteration over subsequences.
--   `Sequence` transformations (`map`, `combine`, `shift_by`,
-    `shift_to`).
--   Factory methods for constant sequences and sequences built from
-    iterables.
--   Fully type-annotated (`mypy --strict`).
+- Generic `Sequence[T]` implementation.
+- `BooleanSequence` with element-wise logical operations.
+- `NumericSequence` with element-wise arithmetic and comparisons.
+- `Recurrence` for sequences defined by recursive relations.
+- `NumericRecurrence` combining numeric arithmetic with recursively defined
+  elements.
+- `Series` for sequences defined by partial sums of an underlying term
+  sequence.
+- Infinite (and finite) sequences.
+- Lazy evaluation via user-defined rules.
+- Support for zero- and one-indexed sequences.
+- Element access and slicing.
+- Forward iteration over subsequences.
+- `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
+- Factory methods for constant sequences and sequences built from iterables.
+- Fully type-annotated (`mypy --strict`).
 
 ## Examples
 
@@ -116,6 +114,10 @@ print((squares * evens).head(5))
 nonnegints = NumericSequence(lambda n: n, first_index=0)
 print(2 ** nonnegints)
 # ⟨1, 2, 4, 8, 16, ...⟩
+
+# Scalar broadcasting.
+print((squares + 1).head(5))
+# ⟨2, 5, 10, 17, 26⟩
 
 # Element-wise equality.
 print((squares == 9).head(5))
@@ -201,25 +203,25 @@ print(4 * leibniz[1000])
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
 ├── examples
-│   ├── constants_approximation.py    # e and pi approximation demo
-│   ├── integral_approximation.py     # Integral class and approximation demo
-│   ├── power_series.py               # PowerSeries class and evaluation demo
-│   └── rademacher_sequence.py        # RademacherSequence class and estimation demo
+│   ├── constants_approximation.py    # e and pi approximation
+│   ├── integral_approximation.py     # Integral approximation demo
+│   ├── power_series.py               # Power series construction demo
+│   └── rademacher_sequence.py        # RademacherSequence class demo
 ├── tests
-│   ├── test_boolean_sequence.py      # Pytest test suite
-│   ├── test_numeric_recurrence.py    # Pytest test suite
-│   ├── test_numeric_sequence.py      # Pytest test suite
-│   ├── test_recurrence.py            # Pytest test suite
-│   ├── test_sequence.py              # Pytest test suite
-│   └── test_series.py                # Pytest test suite
+│   ├── test_boolean_sequence.py      # Pytest test suite for BooleanSequence
+│   ├── test_numeric_recurrence.py    # Pytest test suite for NumericRecurrence
+│   ├── test_numeric_sequence.py      # Pytest test suite for NumericSequence
+│   ├── test_recurrence.py            # Pytest test suite for Recurrence
+│   ├── test_sequence.py              # Pytest test suite for Sequence
+│   └── test_series.py                # Pytest test suite for Series
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
-├── NOTES.md                          # Design rationale and architectural decisions
-├── pytest.ini                        # Adds project root to sys.path for tests
+├── NOTES.md                          # Design decisions and rationale
+├── pytest.ini                        # sys.path config for test imports
 ├── README.md
 ├── requirements-dev.txt              # Development and CI dependencies
-├── STYLE.md                          # Project coding and documentation conventions
+├── STYLE.md                          # Coding and documentation conventions
 ├── TODO.md                           # Planned work
 └── ZOO.md                            # List of ideas for sequence types
 ```
@@ -249,8 +251,7 @@ python -m examples.integral_approximation
 
 ## Dependencies
 
-Calculus has no runtime dependencies beyond the Python standard
-library.
+Calculus has no runtime dependencies beyond the Python standard library.
 
 Development requires:
 
@@ -267,10 +268,11 @@ pip install -r requirements-dev.txt
 
 ## Documentation
 
--   `STYLE.md` describes the project's coding and documentation
-    standards.
--   `NOTES.md` records design decisions and implementation rationale.
--   `DESIGN.md` records the current, per-class technical design.
+- `ARCHITECTURE.md` records the class hierarchy and relationships between its
+  classes.
+- `NOTES.md` records design decisions and implementation rationale.
+- `STYLE.md` describes the project's coding and documentation standards.
+- `ZOO.md` lists ideas for potential future sequence types.
 
 ## License
 
