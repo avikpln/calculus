@@ -37,7 +37,7 @@
 
 - Set up a virtual environment (`venv`) for development, to mirror CI's
   clean-install environment and catch version mismatches between locally
-  installed packages and `verification/requirements-dev.txt`.
+  installed packages and `requirements-dev.txt`.
 
 - Add a script to clean generated artifacts (e.g. `__pycache__`).
 
