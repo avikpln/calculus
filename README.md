@@ -218,6 +218,7 @@ print(4 * leibniz[1000])
 ├── images
 │   └── sequence-zoo.webp             # Project header image
 ├── scripts
+│   ├── clean.bat                     # Cleanup script
 │   └── verify.bat                    # Verification script
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite for BooleanSequence
