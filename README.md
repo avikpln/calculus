@@ -219,13 +219,15 @@ print(4 * leibniz[1000])
 │   ├── test_recurrence.py            # Pytest test suite for Recurrence
 │   ├── test_sequence.py              # Pytest test suite for Sequence
 │   └── test_series.py                # Pytest test suite for Series
+├── verification
+│   ├── requirements-dev.txt          # Development and CI dependencies
+│   └── verify.bat                    # Verification script
 ├── .gitignore
 ├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
 ├── NOTES.md                          # Design decisions and rationale
 ├── pytest.ini                        # sys.path config for test imports
 ├── README.md
-├── requirements-dev.txt              # Development and CI dependencies
 ├── STYLE.md                          # Coding and documentation conventions
 ├── TODO.md                           # Planned work
 └── ZOO.md                            # List of ideas for sequence types
@@ -268,7 +270,7 @@ Development requires:
 Install development dependencies with:
 
 ```bash
-pip install -r requirements-dev.txt
+pip install -r verification/requirements-dev.txt
 ```
 
 ## Documentation
