@@ -460,6 +460,14 @@ changes.
 
 -------------------------------------------------------------------------------
 
+### Cross-platform verification scripts
+
+Only `verify.bat` (Windows) exists in `verification/`. Equivalent
+`.sh`/`.ps1` scripts running the same checks are not currently
+provided, but can be easily added if a need arises.
+
+-------------------------------------------------------------------------------
+
 ### Trailing whitespace checking
 
 No dedicated package is used to detect trailing whitespace. `pycodestyle`
