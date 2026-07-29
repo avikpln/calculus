@@ -19,9 +19,6 @@
 
 ## Documentation
 
-- Add a thematic/visual header image to `README.md` — general calculus-themed
-  imagery, not an architecture diagram.
-
 - Add `CHANGELOG.md`.
 
 - Create a DESIGN.md capturing distilled, per-class design decisions. See

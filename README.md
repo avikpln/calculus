@@ -5,6 +5,9 @@
 A Python library for representing and manipulating infinite sequences through
 lazy evaluation.
 
+<img src="images/sequence-zoo.webp" width="700" alt="Sequence Zoo — a whimsical
+illustration of the calculus package's sequence ecosystem">
+
 ## Vision
 
 The Calculus package aims to provide a collection of reusable abstractions for
@@ -207,6 +210,8 @@ print(4 * leibniz[1000])
 │   ├── integral_approximation.py     # Integral approximation demo
 │   ├── power_series.py               # Power series construction demo
 │   └── rademacher_sequence.py        # RademacherSequence class demo
+├── images
+│   └── sequence-zoo.webp             # Project header image
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite for BooleanSequence
 │   ├── test_numeric_recurrence.py    # Pytest test suite for NumericRecurrence
