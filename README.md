@@ -205,6 +205,11 @@ print(4 * leibniz[1000])
 │   ├── sequence.py                   # Sequence implementation
 │   ├── series.py                     # Series implementation
 │   └── utils.py                      # Shared validation helpers
+├── docs
+│   ├── ARCHITECTURE.md               # Class hierarchy and relationships
+│   ├── NOTES.md                      # Design decisions and rationale
+│   ├── STYLE.md                      # Coding and documentation conventions
+│   └── ZOO.md                        # List of ideas for sequence types
 ├── examples
 │   ├── constants_approximation.py    # e and pi approximation
 │   ├── integral_approximation.py     # Integral approximation demo
@@ -212,6 +217,8 @@ print(4 * leibniz[1000])
 │   └── rademacher_sequence.py        # RademacherSequence class demo
 ├── images
 │   └── sequence-zoo.webp             # Project header image
+├── scripts
+│   └── verify.bat                    # Verification script
 ├── tests
 │   ├── test_boolean_sequence.py      # Pytest test suite for BooleanSequence
 │   ├── test_numeric_recurrence.py    # Pytest test suite for NumericRecurrence
@@ -219,18 +226,12 @@ print(4 * leibniz[1000])
 │   ├── test_recurrence.py            # Pytest test suite for Recurrence
 │   ├── test_sequence.py              # Pytest test suite for Sequence
 │   └── test_series.py                # Pytest test suite for Series
-├── verification
-│   ├── requirements-dev.txt          # Development and CI dependencies
-│   └── verify.bat                    # Verification script
 ├── .gitignore
-├── ARCHITECTURE.md                   # Class hierarchy and relationships
 ├── LICENSE
-├── NOTES.md                          # Design decisions and rationale
-├── pytest.ini                        # sys.path config for test imports
 ├── README.md
-├── STYLE.md                          # Coding and documentation conventions
 ├── TODO.md                           # Planned work
-└── ZOO.md                            # List of ideas for sequence types
+├── pytest.ini                        # sys.path config for test imports
+└── requirements-dev.txt              # Development and CI dependencies
 ```
 
 ## Development
@@ -270,7 +271,7 @@ Development requires:
 Install development dependencies with:
 
 ```bash
-pip install -r verification/requirements-dev.txt
+pip install -r requirements-dev.txt
 ```
 
 ## Documentation
