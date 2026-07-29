@@ -39,8 +39,6 @@
   clean-install environment and catch version mismatches between locally
   installed packages and `requirements-dev.txt`.
 
-- Add a script to clean generated artifacts (e.g. `__pycache__`).
-
 - Consider converting example Python files into Jupyter notebooks for
   narrative-driven docs. Would require new tooling (nbformat/Jupyter) and CI
   changes (notebooks aren't covered by mypy/pyflakes/pytest the way .py files
