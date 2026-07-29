@@ -1,10 +1,5 @@
 # TODO
 
-## Design
-
-- Create a DESIGN.md capturing distilled, per-class design decisions. See
-  attic/design/ for discarded attempts.
-
 ## Features
 
 - Add a `sum()` utility method to NumericSequence, after careful design.
@@ -29,11 +24,14 @@
 
 - Add `CHANGELOG.md`.
 
-## Style
-
-- Revise `STYLE.md` (see `attic/style/missing.txt`).
+- Create a DESIGN.md capturing distilled, per-class design decisions. See
+  attic/design/ for discarded attempts.
 
 ## Environment
+
+- Add automated verification of Markdown formatting (line length, wrapping,
+  heading casing) to local and CI checks. Existing validation tools do not
+  check Markdown content.
 
 - Add a gitignored `.llm.md` project context document capturing stable working
   conventions for future LLM sessions (see `attic/context/.llm.md`).
