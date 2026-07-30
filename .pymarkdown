@@ -1,0 +1,11 @@
+{
+  "plugins": {
+    "md033": {
+      "allowed_elements": "u,img"
+    },
+    "md013": {
+      "line_length": 79,
+      "strict": true
+    }
+  }
+}

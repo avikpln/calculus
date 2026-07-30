@@ -63,3 +63,13 @@ jobs:
       - run: python -m examples.power_series
       - run: python -m examples.rademacher_sequence
       - run: python -m examples.integral_approximation
+
+  markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: pip install -r requirements-dev.txt
+      - run: pymarkdown scan -r . --respect-gitignore

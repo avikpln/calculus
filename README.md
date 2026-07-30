@@ -229,6 +229,7 @@ print(4 * leibniz[1000])
 │   ├── test_series.py                # Pytest test suite for Series
 │   └── test_utils.py                 # Pytest test suite for utility functions
 ├── .gitignore
+├── .pymarkdown
 ├── LICENSE
 ├── README.md
 ├── TODO.md                           # Planned work
@@ -253,6 +254,7 @@ pyflakes calculus
 pydocstyle calculus
 pytest
 git diff --cached --check
+pymarkdown scan -r . --respect-gitignore
 python -m examples.constants_approximation
 python -m examples.power_series
 python -m examples.rademacher_sequence
@@ -269,6 +271,7 @@ Development requires:
 - `pyflakes` for static analysis
 - `pydocstyle` for docstring style checking
 - `pytest` for unit testing
+- `pymarkdownlnt` for markdown linting
 
 Install development dependencies with:
 

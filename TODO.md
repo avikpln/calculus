@@ -22,10 +22,6 @@
 
 ## Environment
 
-- Add automated verification of Markdown formatting (line length, wrapping,
-  heading casing) to local and CI checks. Existing validation tools do not
-  check Markdown content.
-
 - Add a gitignored `.llm.md` project context document capturing stable working
   conventions for future LLM sessions (see `attic/context/.llm.md`).
 

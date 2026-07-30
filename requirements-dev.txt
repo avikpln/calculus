@@ -2,3 +2,4 @@ mypy
 pyflakes
 pydocstyle
 pytest
+pymarkdownlnt

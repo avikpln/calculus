@@ -24,6 +24,11 @@ echo Checking trailing whitespaces...
 git diff --cached --check
 if errorlevel 1 goto :fail
 
+echo.
+echo Running pymarkdown...
+pymarkdown scan -r . --respect-gitignore
+if errorlevel 1 goto :fail
+
 echo Running examples...
 echo --- constants_approximation ---
 python -m examples.constants_approximation
