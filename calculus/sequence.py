@@ -11,7 +11,7 @@ __all__ = ["Sequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Generator, Iterable
-from typing import Final, Generic, TypeVar, overload
+from typing import Final, Generic, TypeVar
 
 from .utils import validate_callable, validate_int, validate_range
 
@@ -23,8 +23,6 @@ INFINITY: Final = None
 
 # Type of sequence elements.
 T = TypeVar("T")
-# Type of other sequence elements.
-S = TypeVar("S")
 # Type of returned sequence elements.
 R = TypeVar("R")
 
@@ -598,8 +596,8 @@ class Sequence(Generic[T], Iterable[T]):
     @staticmethod
     def _combiner(
         first: Sequence[T],
-        second: S | Sequence[S],
-        op: Callable[[T, S], R],
+        second: T | Sequence[T],
+        op: Callable[[T, T], R],
     ) -> tuple[Callable[[int], R], Intfinity]:
         # Return the rule and size defining the combined sequence.
 
@@ -623,20 +621,10 @@ class Sequence(Generic[T], Iterable[T]):
             rule = lambda n: op(first_rule(n), second)
         return rule, size
 
-    @overload
-    def combine(self, other: S, op: Callable[[T, S], R]) -> Sequence[R]: ...
-
-    @overload
     def combine(
         self,
-        other: Sequence[S],
-        op: Callable[[T, S], R],
-    ) -> Sequence[R]: ...
-
-    def combine(
-        self,
-        other: S | Sequence[S],
-        op: Callable[[T, S], R],
+        other: T | Sequence[T],
+        op: Callable[[T, T], R],
     ) -> Sequence[R]:
         """Combine element-wise with another sequence or scalar.
 
@@ -644,9 +632,9 @@ class Sequence(Generic[T], Iterable[T]):
         sequence. Its size is the minimum of the operand sizes.
 
         Args:
-            other (S | Sequence[S]): The sequence or scalar to combine
+            other (T | Sequence[T]): The sequence or scalar to combine
                 with the current sequence.
-            op (Callable[[T, S], R]): The operation to apply.
+            op (Callable[[T, T], R]): The operation to apply.
 
         Returns:
             Sequence[R]: The sequence obtained by applying op
