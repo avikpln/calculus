@@ -314,9 +314,9 @@ differs from `BooleanSequence` itself, where `_binary()` already returns
 
 Implementing comparisons also surfaced that ordering operators (`<`, `<=`, `>`,
 `>=`) are undefined for `complex`. Rather than adding further
-`type: ignore[operator]` exceptions, `Number` was narrowed to `int | float`,
-dropping `complex` support entirely, with a possible future `ComplexSequence`
-left as an open question.
+`type: ignore[operator]` exceptions, `Number` (`Real` today) was narrowed to
+`int | float`, dropping `complex` support entirely, with a possible future
+`ComplexSequence` left as an open question.
 
 -------------------------------------------------------------------------------
 
@@ -647,7 +647,8 @@ helper properties that establish the invariant in one place.
 
 The mixin-based arithmetic design, previously used for `NumericSequence`, was
 reversed: `NumericSequence` now defines its arithmetic dunders directly, with a
-plain `Sequence[Number]` base and no `_ArithmeticMixin`.
+plain `Sequence[Number]` (`Sequence[Real]` today) base and no
+`_ArithmeticMixin`.
 
 The reversal came from recognizing that `NumericRecurrence` is a diamond: it is
 both a `NumericSequence` (numeric) and a `Recurrence` (recursively
@@ -1124,3 +1125,58 @@ with no concrete use case motivating it.
 **Symbol.** `{r_n}` will denote `RandomSequence`, resolving the open question
 of which class this notation should apply to; `Recurrence`/`NumericRecurrence`
 keep `{a_n}`.
+
+## Typing
+
+### `_combiner()`/`combine()`: collapsing `S` into `T`
+
+`_combiner()` and `combine()` originally accepted a second, independent type
+variable `S` for the other operand (`second: S | Sequence[S]`,
+`op: Callable[[T, S], R]`), letting a sequence combine element-wise with an
+operand of a genuinely different type than its own elements. `combine()`
+exposed this through two `@overload` signatures, one for a scalar `S` and one
+for a `Sequence[S]`.
+
+**Trigger.** Adding `Fraction` to `Real` (`int | float | Fraction`) surfaced a
+`mypy --strict` failure in `NumericSequence._compare()` and `_binary()`:
+`_combiner()`'s call site could no longer infer `S`. Inferring a type variable
+by reverse-matching a Union-typed argument (`Real | NumericSequence`) against a
+Union-shaped parameter (`S | Sequence[S]`) is inherently fragile in mypy's
+constraint solver, and a third union member was enough to tip it into falling
+back to `S = object`, breaking the concretely-typed `op` argument at both call
+sites.
+
+**Decision.** No caller in the codebase actually relies on `S` being different
+from `T`. Every real use of `combine()`/`_combiner()` combines a sequence with
+either its own element type or another sequence of that same type; a genuinely
+heterogeneous combination (e.g. combining a `Sequence[int]` with a `str`
+operand via some `op`) is an esoteric case with no concrete motivating use,
+consistent with the project's general aversion to speculative generality. `S`
+is therefore removed, and both `second` and `op`'s second parameter now use `T`
+directly: `second: T | Sequence[T]`, `op: Callable[[T, T], R]`.
+
+**Consequences.** This resolves the mypy inference failure at its source,
+rather than suppressing it, since there is no longer an independent type
+variable for mypy to infer from a Union argument. It also lets `combine()`'s
+two `@overload` signatures be removed entirely: they existed only to preserve
+precise per-branch typing across the scalar-`S` and `Sequence[S]` cases, and
+once `S` and `T` coincide, the single unified signature already types both call
+shapes exactly as the overloads did.
+
+This does narrow `combine()`'s public contract: a `Sequence[T]` can no longer
+be combined with an operand of a different type. Revisit if a concrete use case
+for heterogeneous combination emerges, in which case it may be better served by
+a separate, explicitly-named method (e.g. `combine_with()`) restoring the old
+`S`/`T` overload pattern, rather than reintroducing a second type variable into
+`combine()` itself.
+
+-------------------------------------------------------------------------------
+
+### Adding `Fraction` to `Real`
+
+`Real` (`int | float | Fraction`) now includes `Fraction`, Python's exact
+rational number type. While `float` introduces rounding error, `Fraction`
+stores an exact numerator and denominator, allowing arithmetic composed purely
+of `Fraction` values to remain exact. `Decimal` was considered but rejected, as
+it targets decimal rounding requirements rather than general real-number
+representation.

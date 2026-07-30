@@ -12,19 +12,20 @@ __all__ = ["NumericSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
+from fractions import Fraction
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
-Number = int | float
-"""A type for representing a number."""
+Real = int | float | Fraction
+"""A type for representing a real numeric value."""
 
 #=======================================================================
 # Numeric Sequence {aₙ}
 #=======================================================================
 
-class NumericSequence(Sequence[Number]):
+class NumericSequence(Sequence[Real]):
     """A class representing infinite numeric sequences.
 
     This subclass inherits all functionality from Sequence and extends
@@ -54,7 +55,7 @@ class NumericSequence(Sequence[Number]):
 
     def _factory(
         self,
-        rule: Rule[Number],
+        rule: Rule[Real],
         size: Intfinity,
         reindex: bool,
     ) -> NumericSequence:
@@ -64,7 +65,7 @@ class NumericSequence(Sequence[Number]):
 
 # -- UTILITY
 
-    def _apply(self, op: Callable[[Number], Number]) -> NumericSequence:
+    def _apply(self, op: Callable[[Real], Real]) -> NumericSequence:
         # Return the sequence obtained by applying op to each element.
 
         validate_callable(op)
@@ -72,16 +73,16 @@ class NumericSequence(Sequence[Number]):
         return NumericSequence(rule, self.size, first_index=self.first_index)
 
     # Unlike Sequence.map(), which works with any element type,
-    # override assumes op to both accept and return a Number, and
-    # returns a NumericSequence rather than a generic Sequence.
+    # override assumes op to both accept and return a Real, and returns
+    # a NumericSequence rather than a generic Sequence.
     def map(  # type: ignore[override]
         self,
-        op: Callable[[Number], Number],
+        op: Callable[[Real], Real],
     ) -> NumericSequence:
         """Return an element-wise mapped numeric sequence.
 
         Args:
-            op (Callable[[Number], Number]): The operation to apply.
+            op (Callable[[Real], Real]): The operation to apply.
 
         Returns:
             NumericSequence: The sequence obtained by applying ``op`` to
@@ -96,12 +97,12 @@ class NumericSequence(Sequence[Number]):
 
     def _compare(
         self,
-        other: Number | NumericSequence,
-        op: Callable[[Number, Number], bool],
+        other: Real | NumericSequence,
+        op: Callable[[Real, Real], bool],
     ) -> BooleanSequence:
         # Return the sequence from applying a comparison operation.
 
-        if not isinstance(other, Number | NumericSequence):
+        if not isinstance(other, Real | NumericSequence):
             raise TypeError(
                 f"unsupported type ({type(other).__name__}) for other "
                 "operand in comparison operation"
@@ -114,12 +115,12 @@ class NumericSequence(Sequence[Number]):
     # NumPy's elementwise array comparison behavior.
     def __eq__(  # type: ignore[override]
         self,
-        other: Number | NumericSequence
+        other: Real | NumericSequence
     ) -> BooleanSequence:
         """Return the element-wise equality.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 equate with.
 
         Returns:
@@ -134,12 +135,12 @@ class NumericSequence(Sequence[Number]):
     # Same rationale as __eq__: deliberate deviation from scalar bool.
     def __ne__(  # type: ignore[override]
         self,
-        other: Number | NumericSequence
+        other: Real | NumericSequence
     ) -> BooleanSequence:
         """Return the element-wise non-equality.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 compare against.
 
         Returns:
@@ -152,11 +153,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._compare(other, lambda x, y: x != y)
 
-    def __lt__(self, other: Number | NumericSequence) -> BooleanSequence:
+    def __lt__(self, other: Real | NumericSequence) -> BooleanSequence:
         """Return the element-wise less-than comparison.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 compare against.
 
         Returns:
@@ -169,11 +170,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._compare(other, lambda x, y: x < y)
 
-    def __le__(self, other: Number | NumericSequence) -> BooleanSequence:
+    def __le__(self, other: Real | NumericSequence) -> BooleanSequence:
         """Return the element-wise less-than-or-equal comparison.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 compare against.
 
         Returns:
@@ -186,11 +187,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._compare(other, lambda x, y: x <= y)
 
-    def __gt__(self, other: Number | NumericSequence) -> BooleanSequence:
+    def __gt__(self, other: Real | NumericSequence) -> BooleanSequence:
         """Return the element-wise greater-than comparison.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 compare against.
 
         Returns:
@@ -203,11 +204,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._compare(other, lambda x, y: x > y)
 
-    def __ge__(self, other: Number | NumericSequence) -> BooleanSequence:
+    def __ge__(self, other: Real | NumericSequence) -> BooleanSequence:
         """Return the element-wise greater-than-or-equal comparison.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 compare against.
 
         Returns:
@@ -222,19 +223,19 @@ class NumericSequence(Sequence[Number]):
 
 # -- ARITHMETIC HELPERS
 
-    def _unary(self, op: Callable[[Number], Number]) -> NumericSequence:
+    def _unary(self, op: Callable[[Real], Real]) -> NumericSequence:
         # Return the sequence obtained by applying a unary operation.
 
         return self._apply(op)
 
     def _binary(
         self,
-        other: Number | NumericSequence,
-        op: Callable[[Number, Number], Number],
+        other: Real | NumericSequence,
+        op: Callable[[Real, Real], Real],
     ) -> NumericSequence:
         # Return the sequence obtained by applying a binary operation.
 
-        if not isinstance(other, Number | NumericSequence):
+        if not isinstance(other, Real | NumericSequence):
             raise TypeError(
                 f"unsupported type ({type(other).__name__}) for other "
                 "operand in binary operation"
@@ -268,15 +269,15 @@ class NumericSequence(Sequence[Number]):
             NumericSequence: The element-wise absolute value of the
                 sequence.
         """
-        return self._unary(abs)
+        return self._unary(lambda x: x.__abs__())
 
 # -- ADDITIVE ARITHMETIC
 
-    def __add__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __add__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise sum.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 add.
 
         Returns:
@@ -288,12 +289,12 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: x + y)
 
-    def __radd__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __radd__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise sum.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
-                be added.
+            other (Real | NumericSequence): The scalar or sequence to be
+                added.
 
         Returns:
             NumericSequence: The element-wise sum of the operands.
@@ -304,11 +305,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y + x)
 
-    def __sub__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __sub__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise difference.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 subtract.
 
         Returns:
@@ -321,12 +322,12 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: x - y)
 
-    def __rsub__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __rsub__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise difference.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence
-                from which to subtract.
+            other (Real | NumericSequence): The scalar or sequence from
+                which to subtract.
 
         Returns:
             NumericSequence: The element-wise difference of the
@@ -340,11 +341,11 @@ class NumericSequence(Sequence[Number]):
 
 # -- MULTIPLICATIVE ARITHMETIC
 
-    def __mul__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __mul__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise product.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 multiply.
 
         Returns:
@@ -356,12 +357,12 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: x * y)
 
-    def __rmul__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __rmul__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise product.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
-                be multiplied.
+            other (Real | NumericSequence): The scalar or sequence to be
+                multiplied.
 
         Returns:
             NumericSequence: The element-wise product of the operands.
@@ -372,11 +373,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y * x)
 
-    def __truediv__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __truediv__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise quotient.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 divide by.
 
         Returns:
@@ -390,13 +391,13 @@ class NumericSequence(Sequence[Number]):
 
     def __rtruediv__(
         self,
-        other: Number | NumericSequence,
+        other: Real | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise quotient.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
-                be divided by the current sequence.
+            other (Real | NumericSequence): The scalar or sequence to be
+                divided by the current sequence.
 
         Returns:
             NumericSequence: The element-wise quotient of the operands.
@@ -409,12 +410,12 @@ class NumericSequence(Sequence[Number]):
 
     def __floordiv__(
         self,
-        other: Number | NumericSequence,
+        other: Real | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 divide by.
 
         Returns:
@@ -429,13 +430,13 @@ class NumericSequence(Sequence[Number]):
 
     def __rfloordiv__(
         self,
-        other: Number | NumericSequence,
+        other: Real | NumericSequence,
     ) -> NumericSequence:
         """Return the element-wise floor quotient.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
-                be divided by the current sequence.
+            other (Real | NumericSequence): The scalar or sequence to be
+                divided by the current sequence.
 
         Returns:
             NumericSequence: The element-wise floor quotient of the
@@ -447,11 +448,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: y // x)
 
-    def __mod__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __mod__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 divide by.
 
         Returns:
@@ -464,12 +465,12 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: x % y)
 
-    def __rmod__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __rmod__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise remainder.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
-                be divided by the current sequence.
+            other (Real | NumericSequence): The scalar or sequence to be
+                divided by the current sequence.
 
         Returns:
             NumericSequence: The element-wise remainder of the
@@ -483,11 +484,11 @@ class NumericSequence(Sequence[Number]):
 
 # -- EXPONENTIATION ARITHMETIC
 
-    def __pow__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __pow__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise exponentiation.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 use as the exponent.
 
         Returns:
@@ -500,11 +501,11 @@ class NumericSequence(Sequence[Number]):
         """
         return self._binary(other, lambda x, y: x ** y)
 
-    def __rpow__(self, other: Number | NumericSequence) -> NumericSequence:
+    def __rpow__(self, other: Real | NumericSequence) -> NumericSequence:
         """Return the element-wise exponentiation.
 
         Args:
-            other (Number | NumericSequence): The scalar or sequence to
+            other (Real | NumericSequence): The scalar or sequence to
                 use as the base.
 
         Returns:
@@ -521,7 +522,7 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def constant(
-        value: Number,
+        value: Real,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
@@ -529,7 +530,7 @@ class NumericSequence(Sequence[Number]):
         """Return a constant sequence.
 
         Args:
-            value (Number): The constant value of each sequence element.
+            value (Real): The constant value of each sequence element.
             size (Intfinity): The number of elements in the sequence.
                 Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
@@ -551,14 +552,14 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def from_iterable(
-        iterable: Iterable[Number],
+        iterable: Iterable[Real],
         *,
         first_index: int = 1,
     ) -> NumericSequence:
         """Return a numeric sequence from a numeric iterable.
 
         Args:
-            iterable (Iterable[Number]): The iterable providing the
+            iterable (Iterable[Real]): The iterable providing the
                 sequence elements.
             first_index (int): The index of the first sequence element.
                 Defaults to 1.
@@ -602,8 +603,8 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def progression(
-        first_term: Number,
-        common_difference: Number,
+        first_term: Real,
+        common_difference: Real,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
@@ -611,9 +612,9 @@ class NumericSequence(Sequence[Number]):
         """Return an arithmetic progression.
 
         Args:
-            first_term (Number): The first term of the progression.
-            common_difference (Number): The constant difference
-                between consecutive terms.
+            first_term (Real): The first term of the progression.
+            common_difference (Real): The constant difference between
+                consecutive terms.
             size (Intfinity): The number of elements in the sequence.
                 Defaults to INFINITY.
             first_index (int): The index of the first sequence element.
@@ -633,8 +634,8 @@ class NumericSequence(Sequence[Number]):
 
     @staticmethod
     def geometric(
-        first_term: Number,
-        common_ratio: Number,
+        first_term: Real,
+        common_ratio: Real,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 0,
@@ -642,9 +643,9 @@ class NumericSequence(Sequence[Number]):
         """Return a geometric sequence.
 
         Args:
-            first_term (Number): The first term of the sequence.
-            common_ratio (Number): The constant ratio between
-                consecutive terms.
+            first_term (Real): The first term of the sequence.
+            common_ratio (Real): The constant ratio between consecutive
+                terms.
             size (Intfinity): The number of elements in the sequence.
                 Defaults to INFINITY.
             first_index (int): The index of the first sequence element.

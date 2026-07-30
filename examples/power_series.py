@@ -11,7 +11,7 @@ Classes:
 from __future__ import annotations
 
 from calculus import NumericSequence, Series
-from calculus.numeric_sequence import Number
+from calculus.numeric_sequence import Real
 
 #=======================================================================
 # Power Series
@@ -48,11 +48,11 @@ class PowerSeries:
             )
         self._coefficients = coefficients
 
-    def __call__(self, x: Number) -> Series:
+    def __call__(self, x: Real) -> Series:
         """Evaluate the power series at x.
 
         Args:
-            x (Number): The value at which to evaluate the power series.
+            x (Real): The value at which to evaluate the power series.
 
         Returns:
             Series: The series of partial sums of the power series,
