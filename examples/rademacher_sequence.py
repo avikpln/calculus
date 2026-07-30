@@ -12,7 +12,7 @@ from __future__ import annotations
 import random
 
 from calculus.sequence import INFINITY, Intfinity, Rule
-from calculus.numeric_sequence import Number, NumericSequence
+from calculus.numeric_sequence import NumericSequence, Real
 from calculus.utils import validate_callable, validate_optional_int
 
 #=======================================================================
@@ -39,7 +39,7 @@ class RademacherSequence(NumericSequence):
             self.rng = rng
             self.values = {}
 
-        def __call__(self, n: int) -> Number:
+        def __call__(self, n: int) -> Real:
             # Return the random value at index n.
 
             # Generate and record the value only on its first request.
@@ -53,7 +53,7 @@ class RademacherSequence(NumericSequence):
 
     def __init__(
         self,
-        random_rule: Rule[Number] | None = None,
+        random_rule: Rule[Real] | None = None,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
@@ -62,8 +62,8 @@ class RademacherSequence(NumericSequence):
         """Initialize a new Rademacher sequence object.
 
         Args:
-            random_rule (Rule[Number] | None): The random rule used by
-                the sequence to generate values. Defaults to None.
+            random_rule (Rule[Real] | None): The random rule used by the
+                sequence to generate values. Defaults to None.
             size (Intfinity): The size of the sequence. Defaults to
                 None, which corresponds to an infinite sequence.
             first_index (int): The first index of the sequence. Defaults
@@ -88,14 +88,14 @@ class RademacherSequence(NumericSequence):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Rule[Number]:
+    def _rule_factory(self) -> Rule[Real]:
         # Produce the rule for a newly derived sequence.
 
         return self._random_rule
 
     def _factory(
         self,
-        rule: Rule[Number],
+        rule: Rule[Real],
         size: Intfinity,
         reindex: bool,
     ) -> RademacherSequence | NumericSequence:

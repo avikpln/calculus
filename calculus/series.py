@@ -13,7 +13,7 @@ __all__ = ["Series"]
 __author__ = "Avi Kaplan"
 
 from .sequence import INFINITY, Intfinity, Rule
-from .numeric_sequence import Number, NumericSequence
+from .numeric_sequence import NumericSequence, Real
 from .utils import validate_callable
 
 #=======================================================================
@@ -47,16 +47,16 @@ class Series(NumericSequence):
 
         def __init__(
             self,
-            term_rule: Rule[Number],
+            term_rule: Rule[Real],
             first_index: int,
         ) -> None:
             # Initialize a new series rule instance.
 
             self.term_rule = term_rule
             self.first_index = first_index
-            self.cache: tuple[int, Number] | None = None
+            self.cache: tuple[int, Real] | None = None
 
-        def __call__(self, n: int) -> Number:
+        def __call__(self, n: int) -> Real:
             # Return the partial sum at index n.
 
             # Check the cache before calculating the requested value.
@@ -81,7 +81,7 @@ class Series(NumericSequence):
 
     def __init__(
         self,
-        term_rule: Rule[Number],
+        term_rule: Rule[Real],
         size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
@@ -89,7 +89,7 @@ class Series(NumericSequence):
         """Initialize a new series object.
 
         Args:
-            term_rule (Rule[Number]): The rule governing the terms being
+            term_rule (Rule[Real]): The rule governing the terms being
                 summed.
             size (Intfinity): The size of the sequence. Defaults to
                 INFINITY.
@@ -112,21 +112,21 @@ class Series(NumericSequence):
 
     def _rule_factory_produce(
         self,
-        term_rule: Rule[Number],
+        term_rule: Rule[Real],
         first_index: int,
-    ) -> Rule[Number]:
+    ) -> Rule[Real]:
         # Core producer. For details, see _rule_factory().
 
         return self._Rule(term_rule, first_index)
 
-    def _rule_factory(self) -> Rule[Number]:
+    def _rule_factory(self) -> Rule[Real]:
         # Produce the rule for a newly derived sequence.
 
         return self._rule_factory_produce(self._term_rule, self.first_index)
 
     def _factory(
         self,
-        rule: Rule[Number],
+        rule: Rule[Real],
         size: Intfinity,
         reindex: bool,
     ) -> Series | NumericSequence:

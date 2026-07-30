@@ -314,9 +314,9 @@ differs from `BooleanSequence` itself, where `_binary()` already returns
 
 Implementing comparisons also surfaced that ordering operators (`<`, `<=`, `>`,
 `>=`) are undefined for `complex`. Rather than adding further
-`type: ignore[operator]` exceptions, `Number` was narrowed to `int | float`,
-dropping `complex` support entirely, with a possible future `ComplexSequence`
-left as an open question.
+`type: ignore[operator]` exceptions, `Number` (`Real` today) was narrowed to
+`int | float`, dropping `complex` support entirely, with a possible future
+`ComplexSequence` left as an open question.
 
 -------------------------------------------------------------------------------
 
@@ -647,7 +647,8 @@ helper properties that establish the invariant in one place.
 
 The mixin-based arithmetic design, previously used for `NumericSequence`, was
 reversed: `NumericSequence` now defines its arithmetic dunders directly, with a
-plain `Sequence[Number]` base and no `_ArithmeticMixin`.
+plain `Sequence[Number]` (`Sequence[Real]` today) base and no
+`_ArithmeticMixin`.
 
 The reversal came from recognizing that `NumericRecurrence` is a diamond: it is
 both a `NumericSequence` (numeric) and a `Recurrence` (recursively

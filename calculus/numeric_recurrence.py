@@ -13,14 +13,14 @@ __all__ = ["NumericRecurrence"]
 __author__ = "Avi Kaplan"
 
 from .sequence import Intfinity, Rule
-from .numeric_sequence import Number, NumericSequence
+from .numeric_sequence import NumericSequence, Real
 from .recurrence import Recurrence
 
 #=======================================================================
 # Numeric Recurrence {aₙ}
 #=======================================================================
 
-class NumericRecurrence(Recurrence[Number], NumericSequence):
+class NumericRecurrence(Recurrence[Real], NumericSequence):
     """A class representing infinite numeric recurrences.
 
     This subclass inherits all functionality from NumericSequence and
@@ -44,14 +44,14 @@ class NumericRecurrence(Recurrence[Number], NumericSequence):
 
 # -- FACTORY
 
-    def _rule_factory(self) -> Rule[Number]:
+    def _rule_factory(self) -> Rule[Real]:
         # Produce the rule for a newly derived sequence.
 
         return Recurrence._rule_factory(self)
 
     def _factory(
         self,
-        rule: Rule[Number],
+        rule: Rule[Real],
         size: Intfinity,
         reindex: bool,
     ) -> NumericRecurrence | NumericSequence:

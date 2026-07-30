@@ -25,9 +25,9 @@ computer, not merely an approximation of one.
 ## `ComplexSequence`
 
 A sequence of complex numbers, restoring the `complex` support that was dropped
-from `NumericSequence`'s `Number` type (comparison operators are undefined for
-`complex`). Would need its own arithmetic and, likely, no ordering operators at
-all.
+from `NumericSequence`'s `Number` (renamed later to `Real`) type, as comparison
+operators are undefined for `complex`. Would need its own arithmetic and,
+likely, no ordering operators at all.
 
 ## Memoized wrapper sequence
 

@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from calculus import NumericSequence
-from calculus.numeric_sequence import Number
+from calculus.numeric_sequence import Real
 from calculus.utils import validate_callable
 
 #=======================================================================
@@ -26,11 +26,11 @@ class Integral:
 
     __slots__ = ("_integrand",)
 
-    def __init__(self, integrand: Callable[[Number], Number]) -> None:
+    def __init__(self, integrand: Callable[[Real], Real]) -> None:
         """Initialize a new integral object.
 
         Args:
-            integrand (Callable[[Number], Number]): The function to
+            integrand (Callable[[Real], Real]): The function to
                 integrate.
 
         Raises:
@@ -39,29 +39,29 @@ class Integral:
         validate_callable(integrand)
         self._integrand = integrand
 
-    def integrate(self, lower: Number, upper: Number) -> NumericSequence:
+    def integrate(self, lower: Real, upper: Real) -> NumericSequence:
         """Return a sequence of Simpson's rule integral approximations.
 
         Args:
-            lower (Number): The lower endpoint of the integration
+            lower (Real): The lower endpoint of the integration
                 interval.
-            upper (Number): The upper endpoint of the integration
+            upper (Real): The upper endpoint of the integration
                 interval.
 
         Returns:
             NumericSequence: The sequence of integral approximations.
 
         Raises:
-            TypeError: If ``lower`` or ``upper`` is not a Number.
+            TypeError: If ``lower`` or ``upper`` is not a Real.
             ValueError: If ``lower`` is greater than ``upper``.
         """
-        if not isinstance(lower, Number) or isinstance(lower, bool):
+        if not isinstance(lower, Real) or isinstance(lower, bool):
             raise TypeError(
-                f"'lower' must be a Number, but got {type(lower).__name__}."
+                f"'lower' must be a Real, but got {type(lower).__name__}."
             )
-        if not isinstance(upper, Number) or isinstance(upper, bool):
+        if not isinstance(upper, Real) or isinstance(upper, bool):
             raise TypeError(
-                f"'upper' must be a Number, but got {type(upper).__name__}."
+                f"'upper' must be a Real, but got {type(upper).__name__}."
             )
         if lower > upper:
             raise ValueError(
@@ -73,9 +73,9 @@ class Integral:
 
     @staticmethod
     def _simpson(
-        f: Callable[[Number], Number],
-        a: Number,
-        b: Number,
+        f: Callable[[Real], Real],
+        a: Real,
+        b: Real,
     ) -> NumericSequence:
         # Return a sequence of Simpson's rule integral approximations.
 
