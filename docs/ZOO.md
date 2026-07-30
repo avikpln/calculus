@@ -16,11 +16,10 @@ values, and the proposed `{rₙ}` symbol, are recorded in NOTES.md.
 ## `RationalSequence`
 
 A sequence of exact rational numbers, built on Python's `Fraction` (or a pair
-of `NumericSequence`s for numerator and denominator). This would be the first
-type in the library with exact arithmetic - no floating-point error at all.
-More than that: since every real number can be approximated by a sequence of
-rationals, this points toward a genuine representation of real values on a
-computer, not merely an approximation of one.
+of `NumericSequence`s representing the numerator and denominator). Since every
+real number can be approximated by a sequence of rational numbers, this
+provides a path toward representing real values computationally through
+convergent sequences rather than finite-precision approximations.
 
 ## `ComplexSequence`
 

@@ -12,12 +12,13 @@ __all__ = ["NumericSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
+from fractions import Fraction
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
-Real = int | float
+Real = int | float | Fraction
 """A type for representing a real numeric value."""
 
 #=======================================================================
@@ -268,7 +269,7 @@ class NumericSequence(Sequence[Real]):
             NumericSequence: The element-wise absolute value of the
                 sequence.
         """
-        return self._unary(abs)
+        return self._unary(lambda x: x.__abs__())
 
 # -- ADDITIVE ARITHMETIC
 

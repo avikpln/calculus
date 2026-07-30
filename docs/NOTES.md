@@ -1169,3 +1169,14 @@ for heterogeneous combination emerges, in which case it may be better served by
 a separate, explicitly-named method (e.g. `combine_with()`) restoring the old
 `S`/`T` overload pattern, rather than reintroducing a second type variable into
 `combine()` itself.
+
+-------------------------------------------------------------------------------
+
+### Adding `Fraction` to `Real`
+
+`Real` (`int | float | Fraction`) now includes `Fraction`, Python's exact
+rational number type. While `float` introduces rounding error, `Fraction`
+stores an exact numerator and denominator, allowing arithmetic composed purely
+of `Fraction` values to remain exact. `Decimal` was considered but rejected, as
+it targets decimal rounding requirements rather than general real-number
+representation.
