@@ -446,11 +446,12 @@ items, but an explicit, standing invitation for future contributions.
 
 Before every commit, run:
 
-1.  `mypy --strict`
-2.  `pyflakes`
-3.  `pydocstyle`
-4.  `pytest`
-5.  `git diff --cached --check`, to catch trailing whitespace in staged changes
+1. `mypy --strict`
+2. `pyflakes`
+3. `pydocstyle`
+4. `pytest`
+5. `git diff --cached --check`, to catch trailing whitespace in staged changes
+6. `pymarkdown scan -r . --respect-gitignore`
 
 All checks should pass before committing.
 
@@ -486,6 +487,24 @@ git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
 This is run as a CI step alongside `mypy --strict`, `pyflakes`, `pydocstyle`,
 and `pytest`. No `pycodestyle` or `pre-commit` framework is used for this;
 whitespace checking stays native to Git.
+
+-------------------------------------------------------------------------------
+
+### Markdown linting: `markdownlint-cli2` vs. `pymarkdownlnt`
+
+Two options were considered for validating Markdown formatting:
+
+- `markdownlint-cli2`: the standard Markdown ecosystem linter. It can be
+  installed with `npm install --save-dev markdownlint-cli2`.
+- `pymarkdownlnt`: a Python-based Markdown linter that integrates naturally
+  with Python development workflows. It can be installed with
+  `pip install pymarkdownlnt`.
+
+**Decision.** Use `pymarkdownlnt` for Markdown validation. Although
+`markdownlint-cli2` is the more established Markdown-specific tool, introducing
+a Node.js dependency solely for Markdown checks adds unnecessary complexity to
+a Python project. A Python-based tool better matches the existing development
+toolchain.
 
 -------------------------------------------------------------------------------
 
@@ -555,24 +574,24 @@ keeping static analysis clean and reducing maintenance overhead.
 To keep development consistent and incremental, each feature should be
 implemented using the following workflow:
 
-1. **Implement**
+1. **Implement:**
    - Implement the feature.
    - Keep the implementation focused on the current feature only.
 
-2. **Document**
+2. **Document:**
    - Add or update method docstrings.
    - Update the class docstring if the public API has changed.
    - Update the module docstring if appropriate.
 
-3. **Test**
+3. **Test:**
    - Add or update the relevant tests.
    - Ensure the test suite reflects only the public API.
 
-4. **Publish**
+4. **Publish:**
    - Update `README.md` to document the new feature.
    - Add or update usage examples where appropriate.
 
-5. **Record** *(only if warranted)*
+5. **Record:** *(only if warranted)*
    - Record important design decisions, rejected alternatives, or
      implementation notes in `NOTES.md`.
    - Update `ARCHITECTURE.md` when the high-level class hierarchy or
@@ -581,6 +600,29 @@ implemented using the following workflow:
 
 **IMPORTANT!** Run the project's verification tools **before committing**. Only
 commit once all checks pass.
+
+-------------------------------------------------------------------------------
+
+### Checklist for adding a new verification tool
+
+- Add the tool to `requirements-dev.txt`.
+
+- Add the verification step to CI (`.github/workflows/ci.yml`).
+
+- Add a local verification step to `scripts/verify.bat`.
+
+- Update `README.md`:
+  - Development section: update the verification steps.
+  - Dependencies section: update the requirements list.
+  - Project Layout section: add any new configuration files.
+
+- Update `docs/NOTES.md`:
+  - Local verification section: add the new verification command.
+  - Add a design note describing the motivation, tool choice, and relevant
+    decisions behind introducing the new verification tool.
+
+- Remove the corresponding `TODO.md` entry if the verification task was
+  tracked as planned work.
 
 ## Implementation
 
@@ -709,19 +751,17 @@ This is a general design issue affecting all future subclasses (`Recurrence`,
 
 **<u>Considered Solutions</u>**
 
-**1. Override every transformation method**
-
-Override all methods in `NumericSequence` that return a `Sequence` so that they
-instead return a `NumericSequence`.
+**1. Override every transformation method** Override all methods in
+`NumericSequence` that return a `Sequence` so that they instead return a
+`NumericSequence`.
 
 **Rejected.** Although straightforward, this introduces a large amount of
 duplicated code, is difficult to maintain, and would require every future
 subclass to repeat the same pattern.
 
-**2. Preserve construction arguments**
-
-Store the additional constructor arguments required by each subclass and allow
-`Sequence` to reconstruct objects using a pattern similar to:
+**2. Preserve construction arguments** Store the additional constructor
+arguments required by each subclass and allow `Sequence` to reconstruct objects
+using a pattern similar to:
 
 ```python
 return type(self)(
@@ -737,21 +777,17 @@ return type(self)(
 arguments. The abstraction remains unnecessarily tied to one particular
 construction mechanism.
 
-**3. Use decorators**
-
-Move the reconstruction logic into decorators applied to transformation
-methods.
+**3. Use decorators** Move the reconstruction logic into decorators applied to
+transformation methods.
 
 **Rejected.** Although technically feasible, decorators hide an important part
 of the control flow and make the implementation less explicit. The additional
 complexity is not justified.
 
-**4. Introduce protected factory methods**
-
-Provide protected factory methods responsible for constructing the result of
-transformations. Transformation methods simply delegate object creation to
-these hooks, while subclasses override them when additional construction state
-is required.
+**4. Introduce protected factory methods** Provide protected factory methods
+responsible for constructing the result of transformations. Transformation
+methods simply delegate object creation to these hooks, while subclasses
+override them when additional construction state is required.
 
 **Current direction.** This keeps `Sequence` completely agnostic to subclass
 constructor signatures and delegates reconstruction to the subclass itself. The
@@ -820,12 +856,11 @@ be handled with even more care.
 
 ### `_rule_factory()`: producing rules for transformed sequences
 
-**Motivation**
-
-`Sequence` represents a sequence solely by its evaluation rule. Most rules are
-ordinary stateless callables, but future subclasses may represent evaluation
-through callable objects carrying internal state — a recurrence, for example,
-may cache previously computed terms inside its rule object.
+**Motivation** `Sequence` represents a sequence solely by its evaluation rule.
+Most rules are ordinary stateless callables, but future subclasses may
+represent evaluation through callable objects carrying internal state — a
+recurrence, for example, may cache previously computed terms inside its rule
+object.
 
 Whenever a transformation derives a new sequence from an existing one, it must
 decide how the new sequence obtains its evaluation rule. For stateless rules,
@@ -833,12 +868,10 @@ simply reusing the existing callable is correct. For stateful rules, however,
 sharing the same rule object would also share its internal state, allowing
 evaluation of one sequence to silently affect another.
 
-**Mechanism**
-
-`Sequence` provides the protected method `_rule_factory()`. Its contract is
-intentionally semantic rather than implementation specific: return an
-evaluation rule for a newly derived sequence that is behaviorally equivalent to
-the current rule, honoring the same `int -> T` calling contract as
+**Mechanism** `Sequence` provides the protected method `_rule_factory()`. Its
+contract is intentionally semantic rather than implementation specific: return
+an evaluation rule for a newly derived sequence that is behaviorally equivalent
+to the current rule, honoring the same `int -> T` calling contract as
 `self._rule`.
 
 The base implementation simply returns `self._rule`, since stateless rules
@@ -851,14 +884,12 @@ Every site that reconstructs a sequence from an existing rule — `_resize()`,
 — obtains that rule through `self._rule_factory()` rather than referencing
 `self._rule` directly.
 
-**Consequences**
-
-This hook keeps `Sequence` agnostic to how a subclass represents evaluation,
-regardless of whether the reconstructed object is that subclass's own type or a
-plain `Sequence`. Stateless subclasses inherit the base implementation
-unchanged; a subclass with a stateful or non-trivial rule need only override
-`_rule_factory()`, without touching `_resize()`, `_reindex()`, or any
-transformation method built on top of them.
+**Consequences** This hook keeps `Sequence` agnostic to how a subclass
+represents evaluation, regardless of whether the reconstructed object is that
+subclass's own type or a plain `Sequence`. Stateless subclasses inherit the
+base implementation unchanged; a subclass with a stateful or non-trivial rule
+need only override `_rule_factory()`, without touching `_resize()`,
+`_reindex()`, or any transformation method built on top of them.
 
 The mechanism governs only how evaluation rules propagate between derived
 sequences. It does not determine the semantics of individual transformations.
