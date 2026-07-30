@@ -13,7 +13,7 @@ import random
 
 from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.numeric_sequence import NumericSequence, Real
-from calculus.utils import validate_callable, validate_optional_int
+from calculus.utils import validate_callable, validate_int
 
 #=======================================================================
 # Rademacher Sequence
@@ -79,7 +79,7 @@ class RademacherSequence(NumericSequence):
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
         if random_rule is None:
-            validate_optional_int(seed, "seed")
+            validate_int(seed, "seed", allow_none=True)
             self._random_rule = self._Rule(random.Random(seed))
         else:
             validate_callable(random_rule)
