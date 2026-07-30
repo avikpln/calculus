@@ -13,10 +13,6 @@
 
 - Identify opportunities to use decorators.
 
-## Testing
-
-- Add a unit test suite for `utils.py`.
-
 ## Documentation
 
 - Add `CHANGELOG.md`.

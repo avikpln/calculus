@@ -226,7 +226,8 @@ print(4 * leibniz[1000])
 │   ├── test_numeric_sequence.py      # Pytest test suite for NumericSequence
 │   ├── test_recurrence.py            # Pytest test suite for Recurrence
 │   ├── test_sequence.py              # Pytest test suite for Sequence
-│   └── test_series.py                # Pytest test suite for Series
+│   ├── test_series.py                # Pytest test suite for Series
+│   └── test_utils.py                 # Pytest test suite for utility functions
 ├── .gitignore
 ├── LICENSE
 ├── README.md
