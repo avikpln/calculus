@@ -408,13 +408,13 @@ class Sequence(Generic[T], Iterable[T]):
 
     def subsequence(
         self,
-        subfunc: Callable[[int], int],
+        subrule: Callable[[int], int],
         size: Intfinity = INFINITY,
     ) -> Sequence[T]:
         """Return the subsequence defined by the specified index map.
 
         Args:
-            subfunc (Callable[[int], int]): A function that maps
+            subrule (Callable[[int], int]): A function that maps
                 indices of the subsequence to indices of this
                 sequence.
             size (Intfinity): The size of the subsequence. Defaults to
@@ -429,10 +429,10 @@ class Sequence(Generic[T], Iterable[T]):
         """
         rule = self._rule_factory()
 
-        def subrule(k: int) -> T:
-            return rule(subfunc(k))
+        def subsequence_rule(k: int) -> T:
+            return rule(subrule(k))
 
-        return self._reindex(subrule, size)
+        return self._reindex(subsequence_rule, size)
 
 # -- UTILITY
 
