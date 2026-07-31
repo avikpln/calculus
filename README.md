@@ -207,6 +207,7 @@ print(4 * leibniz[1000])
 │   └── utils.py                      # Shared validation helpers
 ├── docs
 │   ├── ARCHITECTURE.md               # Class hierarchy and relationships
+│   ├── DEVELOPMENT.md                # Development guide
 │   ├── NOTES.md                      # Design decisions and rationale
 │   ├── STYLE.md                      # Coding and documentation conventions
 │   └── ZOO.md                        # List of ideas for sequence types
@@ -285,6 +286,7 @@ pip install -r requirements-dev.txt
 
 - `ARCHITECTURE.md` records the class hierarchy and relationships between its
   classes.
+- `DEVELOPMENT.md` describes development workflows and conventions.
 - `NOTES.md` records design decisions and implementation rationale.
 - `STYLE.md` describes the project's coding and documentation standards.
 - `ZOO.md` lists ideas for potential future sequence types.
