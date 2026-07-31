@@ -685,4 +685,7 @@ class NumericSequence(Sequence[Real]):
         Returns:
             NumericSequence: The sequence defining e.
         """
-        return NumericSequence(lambda n: (1 + 1/n) ** n, first_index=1)
+        def euler_rule(n: int) -> Real:
+            return (1 + 1/n) ** n
+
+        return NumericSequence(euler_rule, first_index=1)
