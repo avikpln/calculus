@@ -16,9 +16,10 @@ from .sequence import INFINITY, Intfinity, Rule
 from .numeric_sequence import NumericSequence, Real
 from .utils import validate_callable
 
-#=======================================================================
+# ======================================================================
 # Series {Sₙ}
-#=======================================================================
+# ======================================================================
+
 
 class Series(NumericSequence):
     """A class representing infinite numeric series.
@@ -185,7 +186,9 @@ class Series(NumericSequence):
         Returns:
             Series: The alternating harmonic series.
         """
-        term_rule = lambda n: 1 / n if n % 2 == 1 else -1 / n
+        def term_rule(n: int) -> Real:
+            return 1 / n if n % 2 == 1 else -1 / n
+
         return Series(term_rule, first_index=1)
 
     @staticmethod
@@ -213,5 +216,7 @@ class Series(NumericSequence):
         Returns:
             Series: The Leibniz series.
         """
-        term_rule = lambda n: 1 / (2*n - 1) if n % 2 == 1 else -1 / (2*n - 1)
+        def term_rule(n: int) -> Real:
+            return 1 / (2*n - 1) if n % 2 == 1 else -1 / (2*n - 1)
+
         return Series(term_rule, first_index=1)

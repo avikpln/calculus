@@ -251,6 +251,7 @@ Before committing, run:
 ```text
 mypy --strict calculus
 pyflakes calculus
+pycodestyle calculus
 pydocstyle calculus
 pytest
 git diff --cached --check
@@ -269,7 +270,8 @@ Development requires:
 
 - `mypy` for static type checking
 - `pyflakes` for static analysis
-- `pydocstyle` for docstring style checking
+- `pycodestyle` for PEP 8 code style checking
+- `pydocstyle` for PEP 257 docstring style checking
 - `pytest` for unit testing
 - `pymarkdownlnt` for markdown linting
 

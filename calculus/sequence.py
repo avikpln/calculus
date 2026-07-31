@@ -40,9 +40,10 @@ _LEFT_SEQUENCE_BRACKET = "\N{mathematical left angle bracket}"
 _RIGHT_SEQUENCE_BRACKET = "\N{mathematical right angle bracket}"
 _INFINITY_SYMBOL = "\N{infinity}"
 
-#=======================================================================
+# ======================================================================
 # Sequence {aₙ}
-#=======================================================================
+# ======================================================================
+
 
 class Sequence(Generic[T], Iterable[T]):
     """A class representing infinite (and finite) sequences.
@@ -116,7 +117,7 @@ class Sequence(Generic[T], Iterable[T]):
             resolved_rule: Rule[T] = self._none  # type: ignore[assignment]
         else:
             validate_callable(rule)
-            resolved_rule  = rule
+            resolved_rule = rule
         if size is not INFINITY:
             validate_int(size, "size")
             if size < 0:
@@ -399,7 +400,10 @@ class Sequence(Generic[T], Iterable[T]):
         start, step, size = self._process_range(
             slice_.start, slice_.stop, slice_.step
         )
-        subrule = lambda k: start + (k - self.first_index)*step
+
+        def subrule(k: int) -> int:
+            return start + (k - self.first_index)*step
+
         return self.subsequence(subrule, size)
 
     def subsequence(
@@ -424,7 +428,10 @@ class Sequence(Generic[T], Iterable[T]):
             ValueError: If ``size`` is negative.
         """
         rule = self._rule_factory()
-        subrule = lambda k: rule(subfunc(k))
+
+        def subrule(k: int) -> T:
+            return rule(subfunc(k))
+
         return self._reindex(subrule, size)
 
 # -- UTILITY
@@ -496,8 +503,11 @@ class Sequence(Generic[T], Iterable[T]):
         # original domain.
         validate_int(offset, "offset")
         rule = self._rule_factory()
-        new_rule = lambda n: rule(n + offset)
-        return self._reindex(new_rule, self.size)
+
+        def shift_rule(n: int) -> T:
+            return rule(n + offset)
+
+        return self._reindex(shift_rule, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
         """Shift the evaluation rule to a given index.
@@ -560,8 +570,12 @@ class Sequence(Generic[T], Iterable[T]):
             assert self.size is not None  # mypy
             size = min(size, self.size)
         rule = self._rule_factory()
-        new_rule = lambda n: rule(n + self.size - size)
-        return self._reindex(new_rule, size)
+        tail_offset = self.size - size
+
+        def tail_rule(n: int) -> T:
+            return rule(n + tail_offset)
+
+        return self._reindex(tail_rule, size)
 
     @staticmethod
     def _mapper(
@@ -610,7 +624,10 @@ class Sequence(Generic[T], Iterable[T]):
                 )
             first_rule = first._rule_factory()
             second_rule = second._rule_factory()
-            rule = lambda n: op(first_rule(n), second_rule(n))
+
+            def combine_rule(n: int) -> R:
+                return op(first_rule(n), second_rule(n))
+
             if second.size is not INFINITY:
                 size = (
                     second.size if first.size is INFINITY
@@ -618,8 +635,10 @@ class Sequence(Generic[T], Iterable[T]):
                 )
         else:
             first_rule = first._rule_factory()
-            rule = lambda n: op(first_rule(n), second)
-        return rule, size
+
+            def combine_rule(n: int) -> R:
+                return op(first_rule(n), second)
+        return combine_rule, size
 
     def combine(
         self,

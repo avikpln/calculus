@@ -23,9 +23,10 @@ T = TypeVar("T")
 # Special symbols used for display.
 _EMPTY_SET_SYMBOL = '\N{empty set}'
 
-#=======================================================================
+# ======================================================================
 # Recurrence {aₙ}
-#=======================================================================
+# ======================================================================
+
 
 class Recurrence(Sequence[T]):
     """A class representing infinite (and finite) recurrences.
@@ -196,10 +197,10 @@ class Recurrence(Sequence[T]):
         Returns:
             Recurrence[str]: The Von Neumann ordinals sequence.
         """
-        func = lambda n, a: (
-            '{' + ((a[-1][1:-1] + ', ') if n > 1 else '') + a[-1] + '}'
-        )
-        return Recurrence(func, (_EMPTY_SET_SYMBOL,))
+        def von_neumann_func(n: int, a: tuple[str, ...]) -> str:
+            return '{' + ((a[-1][1:-1] + ', ') if n > 1 else '') + a[-1] + '}'
+
+        return Recurrence(von_neumann_func, (_EMPTY_SET_SYMBOL,))
 
     @staticmethod
     def look_and_say() -> Recurrence[str]:

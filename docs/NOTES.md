@@ -448,10 +448,11 @@ Before every commit, run:
 
 1. `mypy --strict`
 2. `pyflakes`
-3. `pydocstyle`
-4. `pytest`
-5. `git diff --cached --check`, to catch trailing whitespace in staged changes
-6. `pymarkdown scan -r . --respect-gitignore`
+3. `pycodestyle`
+4. `pydocstyle`
+5. `pytest`
+6. `git diff --cached --check`, to catch trailing whitespace in staged changes
+7. `pymarkdown scan -r . --respect-gitignore`
 
 All checks should pass before committing.
 
@@ -616,10 +617,7 @@ commit once all checks pass.
   - Dependencies section: update the requirements list.
   - Project Layout section: add any new configuration files.
 
-- Update `docs/NOTES.md`:
-  - Local verification section: add the new verification command.
-  - Add a design note describing the motivation, tool choice, and relevant
-    decisions behind introducing the new verification tool.
+- Update the Local verification section in `docs/NOTES.md`.
 
 - Remove the corresponding `TODO.md` entry if the verification task was
   tracked as planned work.
