@@ -17,9 +17,6 @@
 
 - Add `CHANGELOG.md`.
 
-- Create a DESIGN.md capturing distilled, per-class design decisions. See
-  attic/design/ for discarded attempts.
-
 ## Environment
 
 - Add a gitignored `.llm.md` project context document capturing stable working
