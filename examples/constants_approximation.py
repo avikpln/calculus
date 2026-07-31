@@ -65,9 +65,10 @@ pi_nilakantha = 3 + nilakantha[10_000]
 # https://math.stackexchange.com/questions/14113/series-that-converge-to-pi-quickly
 double_factorial = NumericRecurrence.double_factorial()
 power_of_half = NumericSequence.geometric(1, 1 / 2, first_index=0)
-stackexchange_terms = (
-    (double_factorial[::2] / double_factorial[1::2]) * power_of_half
+ratio = (
+    double_factorial[::2] / double_factorial[1::2]  # type: ignore[operator]
 )
+stackexchange_terms = ratio * power_of_half
 pi_stackexchange = 2 * Series.from_sequence(stackexchange_terms)[49]
 
 # (5) Chudnovsky's algorithm is where this story ends, though not where
@@ -82,8 +83,8 @@ chudnovsky_coefficients = NumericSequence(
     first_index=0,
 )
 chudnovsky_terms = (
-    (factorial_6n * chudnovsky_coefficients)
-    / (factorial_3n * factorial**3)
+    (factorial_6n * chudnovsky_coefficients)  # type: ignore[operator]
+    / (factorial_3n * factorial**3)  # type: ignore[operator]
 )
 pi_chudnovsky = 1 / (12 * Series.from_sequence(chudnovsky_terms)[2])
 

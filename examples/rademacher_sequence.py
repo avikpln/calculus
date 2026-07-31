@@ -15,9 +15,10 @@ from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.numeric_sequence import NumericSequence, Real
 from calculus.utils import validate_callable, validate_int
 
-#=======================================================================
+
+# ======================================================================
 # Rademacher Sequence
-#=======================================================================
+# ======================================================================
 
 class RademacherSequence(NumericSequence):
     """A class representing infinite Rademacher sequences.
@@ -37,7 +38,7 @@ class RademacherSequence(NumericSequence):
             # Initialize a new Rademacher sequence rule instance.
 
             self.rng = rng
-            self.values = {}
+            self.values: dict[int, Real] = {}
 
         def __call__(self, n: int) -> Real:
             # Return the random value at index n.
@@ -53,7 +54,7 @@ class RademacherSequence(NumericSequence):
 
     def __init__(
         self,
-        random_rule: Rule[Real] | None = None,
+        random_rule: _Rule | None = None,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
@@ -117,7 +118,9 @@ if __name__ == "__main__":
 
     # Estimate the sample mean and standard deviation.
     mu = sum(sample) / N
-    sigma = math.sqrt(sum((sample - mu) ** 2) / (N - 1))
+    sigma = math.sqrt(
+        sum((sample - mu) ** 2) / (N - 1)  # type: ignore[operator, arg-type]
+    )
 
     print(f"Sample mean and standard deviation from {N} samples:")
     print(f"    {mu:.4f} ± {sigma:.4f}")

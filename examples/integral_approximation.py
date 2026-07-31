@@ -15,9 +15,10 @@ from calculus import NumericSequence
 from calculus.numeric_sequence import Real
 from calculus.utils import validate_callable
 
-#=======================================================================
+
+# ======================================================================
 # Integral
-#=======================================================================
+# ======================================================================
 
 class Integral:
     """A class for approximating integrals."""
@@ -80,19 +81,21 @@ class Integral:
         # Return a sequence of Simpson's rule integral approximations.
 
         # Simpson's rule.
-        simpson_rule = lambda n: ((b - a) / (6 * n)) * (
-            f(a) + f(b)
-            + 4 * sum(
-                f(a + (2*i + 1) * (b - a) / (2 * n))
-                for i in range(n)
+        def simpson_rule(n: int) -> Real:
+            return ((b - a) / (6 * n)) * (
+                f(a) + f(b)
+                + 4 * sum(
+                    f(a + (2*i + 1) * (b - a) / (2 * n))
+                    for i in range(n)
+                )
+                + 2 * sum(
+                    f(a + 2*i * (b - a) / (2 * n))
+                    for i in range(1, n)
+                )
             )
-            + 2 * sum(
-                f(a + 2*i * (b - a) / (2 * n))
-                for i in range(1, n)
-            )
-        )
 
         return NumericSequence(simpson_rule, first_index=1)
+
 
 if __name__ == "__main__":
     import math
@@ -104,5 +107,12 @@ if __name__ == "__main__":
     approximations = integral.integrate(0, math.pi)
 
     print("∫₀^π sin(x) dx ≈ ", end="")
-    print(approximations.map(lambda x: round(x, 4)))
+    # NOTE: We ignore mypy's type checks because Python's round() return
+    # type is broader than NumericSequence's Real type. This could be
+    # addressed by adding a round() method to NumericSequence.
+    print(
+        approximations.map(
+            lambda x: round(x, 4)  # type: ignore[arg-type, return-value]
+        )
+    )
     # ∫₀^π sin(x) dx ≈ ⟨2.0944, 2.0046, 2.0009, 2.0003, 2.0001, ...⟩

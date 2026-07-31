@@ -7,6 +7,7 @@ from calculus.numeric_sequence import NumericSequence
 from calculus.recurrence import Recurrence
 from calculus.numeric_recurrence import NumericRecurrence
 
+
 # -- CONSTRUCTION & VALIDATION
 
 def test_construction_with_func_and_basis() -> None:

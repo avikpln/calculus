@@ -7,6 +7,7 @@ import pytest
 
 from calculus.utils import validate_callable, validate_int, validate_range
 
+
 # -- CALLABLE VALIDATION
 
 def test_validate_callable_accepts_callable() -> None:
@@ -36,7 +37,7 @@ def test_validate_int_rejects_bool() -> None:
 
 def test_validate_int_rejects_noninteger() -> None:
     with pytest.raises(TypeError):
-        validate_int("5")
+        validate_int("5")  # type: ignore[arg-type]
 
 
 def test_validate_int_accepts_none_when_allowed() -> None:
@@ -63,17 +64,17 @@ def test_validate_range_accepts_bool() -> None:
 
 def test_validate_range_rejects_noninteger_start() -> None:
     with pytest.raises(TypeError):
-        validate_range("1", 10, 2)
+        validate_range("1", 10, 2)  # type: ignore[arg-type]
 
 
 def test_validate_range_rejects_noninteger_stop() -> None:
     with pytest.raises(TypeError):
-        validate_range(1, "10", 2)
+        validate_range(1, "10", 2)  # type: ignore[arg-type]
 
 
 def test_validate_range_rejects_noninteger_step() -> None:
     with pytest.raises(TypeError):
-        validate_range(1, 10, "2")
+        validate_range(1, 10, "2")  # type: ignore[arg-type]
 
 
 def test_validate_range_rejects_zero_step() -> None:

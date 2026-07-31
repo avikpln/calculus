@@ -7,6 +7,7 @@ import pytest
 
 from calculus.sequence import Sequence
 
+
 # -- CONSTRUCTION & VALIDATION
 
 def test_default_construction_is_infinite_with_none_rule() -> None:
@@ -134,13 +135,17 @@ def test_subiter_noninteger_start_raises_type_error() -> None:
 
 def test_str_of_finite_sequence_shows_all_elements() -> None:
     seq = Sequence(lambda n: n, size=3, first_index=1)
-    assert str(seq) == "\N{mathematical left angle bracket}1, 2, 3\N{mathematical right angle bracket}"
+    assert str(seq) == (
+        "\N{mathematical left angle bracket}1, 2, 3"
+        "\N{mathematical right angle bracket}"
+    )
 
 
 def test_str_of_infinite_sequence_shows_head_and_ellipsis() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     assert str(seq) == (
-        "\N{mathematical left angle bracket}1, 2, 3, 4, 5, ...\N{mathematical right angle bracket}"
+        "\N{mathematical left angle bracket}1, 2, 3, 4, 5, ..."
+        "\N{mathematical right angle bracket}"
     )
 
 
@@ -167,7 +172,7 @@ def test_index_out_of_range_raises_index_error_on_finite_sequence() -> None:
         seq[4]
 
 
-def test_index_below_first_index_raises_index_error_on_infinite_sequence() -> None:
+def test_below_first_index_raises_index_error_on_infinite_sequence() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     with pytest.raises(IndexError):
         seq[0]
@@ -231,7 +236,7 @@ def test_slice_zero_step_raises_value_error() -> None:
 def test_invalid_subscript_type_raises_type_error() -> None:
     seq = Sequence(lambda n: n, size=5)
     with pytest.raises(TypeError):
-        seq["not a subscript"]  # type: ignore[index]
+        seq["not a subscript"]  # type: ignore[call-overload]
 
 
 # -- UTILITY
@@ -428,4 +433,6 @@ def test_from_iterable_respects_first_index() -> None:
 
 def test_from_iterable_noninteger_first_index_raises_type_error() -> None:
     with pytest.raises(TypeError):
-        Sequence.from_iterable([1, 2, 3], first_index="0")  # type: ignore[arg-type]
+        Sequence.from_iterable(
+            [1, 2, 3], first_index="0"  # type: ignore[arg-type]
+        )

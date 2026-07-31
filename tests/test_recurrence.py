@@ -8,6 +8,7 @@ import pytest
 from calculus.sequence import Sequence
 from calculus.recurrence import Recurrence
 
+
 # -- CONSTRUCTION & VALIDATION
 
 def test_construction_with_func_and_basis() -> None:
@@ -40,7 +41,11 @@ def test_empty_basis_raises_value_error() -> None:
 
 def test_noninteger_size_raises_type_error() -> None:
     with pytest.raises(TypeError):
-        Recurrence(lambda n, a: a[-1], basis=(1,), size="three")  # type: ignore[arg-type]
+        Recurrence(
+            lambda n, a: a[-1],
+            basis=(1,),
+            size="three",  # type: ignore[arg-type]
+        )
 
 
 def test_negative_size_raises_value_error() -> None:
@@ -50,7 +55,11 @@ def test_negative_size_raises_value_error() -> None:
 
 def test_noninteger_first_index_raises_type_error() -> None:
     with pytest.raises(TypeError):
-        Recurrence(lambda n, a: a[-1], basis=(1,), first_index="zero")  # type: ignore[arg-type]
+        Recurrence(
+            lambda n, a: a[-1],
+            basis=(1,),
+            first_index="zero",  # type: ignore[arg-type]
+        )
 
 
 def test_invalid_first_index_raises_value_error() -> None:

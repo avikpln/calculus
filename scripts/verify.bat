@@ -1,22 +1,22 @@
 @echo off
 
 echo Running mypy...
-mypy --strict calculus
+mypy --strict calculus tests
 if errorlevel 1 goto :fail
 
 echo.
 echo Running pyflakes...
-pyflakes calculus
+pyflakes calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.
 echo Running pycodestyle...
-pycodestyle calculus
+pycodestyle calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.
 echo Running pydocstyle...
-pydocstyle calculus
+pydocstyle calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.

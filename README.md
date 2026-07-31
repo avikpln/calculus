@@ -251,10 +251,10 @@ The project emphasizes:
 Before committing, run:
 
 ```text
-mypy --strict calculus
-pyflakes calculus
-pycodestyle calculus
-pydocstyle calculus
+mypy --strict calculus tests examples
+pyflakes calculus tests examples
+pycodestyle calculus tests examples
+pydocstyle calculus tests examples
 pytest
 git diff --cached --check
 pymarkdown scan -r . --respect-gitignore

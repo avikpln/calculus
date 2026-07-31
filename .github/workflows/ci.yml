@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements-dev.txt
-      - run: mypy --strict calculus
+      - run: mypy --strict calculus tests examples
 
   pyflakes:
     runs-on: ubuntu-latest
@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements-dev.txt
-      - run: pyflakes calculus
+      - run: pyflakes calculus tests examples
 
   pycodestyle:
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements-dev.txt
-      - run: pycodestyle calculus
+      - run: pycodestyle calculus tests examples
 
   pydocstyle:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements-dev.txt
-      - run: pydocstyle calculus
+      - run: pydocstyle calculus tests examples
 
   pytest:
     runs-on: ubuntu-latest

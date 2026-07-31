@@ -11,7 +11,7 @@ __all__ = ["Sequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Generator, Iterable
-from typing import Final, Generic, TypeVar
+from typing import Final, Generic, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
 
@@ -334,6 +334,16 @@ class Sequence(Generic[T], Iterable[T]):
         return self.__str__()
 
 # -- INDEXING & SLICING (SUBSCRIPTION)
+
+    @overload
+    def __getitem__(self, index: int) -> T:
+        """See implementation docstring."""
+        ...
+
+    @overload
+    def __getitem__(self, index: slice) -> Sequence[T]:
+        """See implementation docstring."""
+        ...
 
     def __getitem__(self, subscript: int | slice) -> T | Sequence[T]:
         """Return the specified element or subsequence.
