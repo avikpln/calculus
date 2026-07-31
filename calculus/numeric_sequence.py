@@ -21,9 +21,10 @@ from .utils import validate_callable
 Real = int | float | Fraction
 """A type for representing a real numeric value."""
 
-#=======================================================================
+# ======================================================================
 # Numeric Sequence {aₙ}
-#=======================================================================
+# ======================================================================
+
 
 class NumericSequence(Sequence[Real]):
     """A class representing infinite numeric sequences.
@@ -629,8 +630,14 @@ class NumericSequence(Sequence[Real]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
-        rule = lambda n: first_term + common_difference*(n - first_index)
-        return NumericSequence(rule, size=size, first_index=first_index)
+        def progression_rule(n: int) -> Real:
+            return first_term + common_difference*(n - first_index)
+
+        return NumericSequence(
+            progression_rule,
+            size=size,
+            first_index=first_index,
+        )
 
     @staticmethod
     def geometric(
@@ -660,8 +667,14 @@ class NumericSequence(Sequence[Real]):
             ValueError: If ``size`` is negative, or if ``first_index``
                 is not in ``sequence.FIRST_INDEX_OPTIONS``.
         """
-        rule = lambda n: first_term * common_ratio**(n - first_index)
-        return NumericSequence(rule, size=size, first_index=first_index)
+        def geometric_rule(n: int) -> Real:
+            return first_term * common_ratio**(n - first_index)
+
+        return NumericSequence(
+            geometric_rule,
+            size=size,
+            first_index=first_index,
+        )
 
     @staticmethod
     def euler() -> NumericSequence:

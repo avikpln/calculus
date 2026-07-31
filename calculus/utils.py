@@ -59,6 +59,7 @@ def validate_int(
             f"'{name}' must be an integer, but got {type(value).__name__}."
         )
 
+
 def validate_range(
     start: int | None,
     stop: int | None,

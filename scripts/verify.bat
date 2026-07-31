@@ -10,6 +10,11 @@ pyflakes calculus
 if errorlevel 1 goto :fail
 
 echo.
+echo Running pycodestyle...
+pycodestyle calculus
+if errorlevel 1 goto :fail
+
+echo.
 echo Running pydocstyle...
 pydocstyle calculus
 if errorlevel 1 goto :fail

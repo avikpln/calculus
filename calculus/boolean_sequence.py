@@ -19,9 +19,10 @@ from .sequence import INFINITY, Intfinity, Rule, Sequence
 if TYPE_CHECKING:
     from .numeric_sequence import NumericSequence
 
-#=======================================================================
+# ======================================================================
 # Boolean Sequence {bₙ}
-#=======================================================================
+# ======================================================================
+
 
 class BooleanSequence(Sequence[bool]):
     """A class representing infinite Boolean sequences.
@@ -66,11 +67,14 @@ class BooleanSequence(Sequence[bool]):
             NumericSequence: The element-wise conversion of the
                 sequence's True/False values to 1/0.
         """
-        from .numeric_sequence import NumericSequence
+        from .numeric_sequence import NumericSequence, Real
         boolean_rule = self._rule_factory()
-        rule = lambda n: int(boolean_rule(n))
+
+        def numeric_rule(n: int) -> Real:
+            return int(boolean_rule(n))
+
         return NumericSequence(
-            rule, size=self.size, first_index=self.first_index
+            numeric_rule, size=self.size, first_index=self.first_index
         )
 
 # -- LOGICAL HELPERS

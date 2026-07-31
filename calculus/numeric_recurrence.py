@@ -16,9 +16,10 @@ from .sequence import Intfinity, Rule
 from .numeric_sequence import NumericSequence, Real
 from .recurrence import Recurrence
 
-#=======================================================================
+# ======================================================================
 # Numeric Recurrence {aₙ}
-#=======================================================================
+# ======================================================================
+
 
 class NumericRecurrence(Recurrence[Real], NumericSequence):
     """A class representing infinite numeric recurrences.
@@ -98,7 +99,7 @@ class NumericRecurrence(Recurrence[Real], NumericSequence):
         Returns:
             NumericRecurrence: The double factorial sequence.
         """
-        return NumericRecurrence(lambda n, a: n * a[-2], (1,1))
+        return NumericRecurrence(lambda n, a: n * a[-2], (1, 1))
 
     @staticmethod
     def catalan() -> NumericRecurrence:
@@ -111,5 +112,8 @@ class NumericRecurrence(Recurrence[Real], NumericSequence):
         Returns:
             NumericRecurrence: The catalan number sequence.
         """
-        func = lambda n, a: a[-1] * 2*(2*n-1) // (n+1)
-        return NumericRecurrence(func, (1,))
+
+        def catalan_func(n: int, a: tuple[Real, ...]) -> Real:
+            return a[-1] * 2*(2*n-1) // (n+1)
+
+        return NumericRecurrence(catalan_func, (1,))
