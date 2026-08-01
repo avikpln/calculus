@@ -10,12 +10,12 @@ illustration of the calculus package's sequence ecosystem">
 
 ## Vision
 
-The Calculus package aims to provide a collection of reusable abstractions for
-discrete and continuous mathematics.
+The Calculus package aims to model infinite sequences through lazy evaluation,
+providing reusable abstractions for discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]` abstraction
-together with the specialized `NumericSequence`, `Recurrence`,
-`NumericRecurrence`, and `Series` subclasses.
+together with the specialized `BooleanSequence`, `NumericSequence`,
+`Recurrence`, `NumericRecurrence`, and `Series` subclasses.
 
 ## Features
 
@@ -236,7 +236,7 @@ print(4 * leibniz[1000])
 ├── README.md
 ├── TODO.md                           # Planned work
 ├── pyproject.toml                    # Project configuration
-├── pytest.ini                        # sys.path config for test imports
+├── pytest.ini                        # Pytest configuration for test imports
 └── requirements-dev.txt              # Development and CI dependencies
 ```
 
@@ -249,19 +249,7 @@ The project emphasizes:
 - comprehensive documentation;
 - thorough unit testing.
 
-Before committing, run:
-
-```text
-mypy --strict calculus tests examples
-ruff check calculus tests examples
-pytest
-pymarkdown scan -r . --respect-gitignore
-git diff --cached --check
-python -m examples.constants_approximation
-python -m examples.power_series
-python -m examples.rademacher_sequence
-python -m examples.integral_approximation
-```
+Before committing, run `scripts\verify.bat`.
 
 ## Dependencies
 
@@ -282,8 +270,7 @@ pip install -r requirements-dev.txt
 
 ## Documentation
 
-- `ARCHITECTURE.md` records the class hierarchy and relationships between its
-  classes.
+- `ARCHITECTURE.md` records the class hierarchy.
 - `DESIGN.md` describes the design principles and conceptual model.
 - `DEVELOPMENT.md` describes development workflows and conventions.
 - `NOTES.md` records design decisions and implementation rationale.
