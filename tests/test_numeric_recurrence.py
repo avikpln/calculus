@@ -3,10 +3,9 @@
 Run with:
     pytest tests/test_numeric_recurrence.py -v
 """
+from calculus.numeric_recurrence import NumericRecurrence
 from calculus.numeric_sequence import NumericSequence
 from calculus.recurrence import Recurrence
-from calculus.numeric_recurrence import NumericRecurrence
-
 
 # -- CONSTRUCTION & VALIDATION
 

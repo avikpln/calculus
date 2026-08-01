@@ -15,7 +15,6 @@ from calculus import NumericSequence
 from calculus.numeric_sequence import Real
 from calculus.utils import validate_callable
 
-
 # ======================================================================
 # Integral
 # ======================================================================

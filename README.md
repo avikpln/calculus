@@ -235,6 +235,7 @@ print(4 * leibniz[1000])
 ├── LICENSE
 ├── README.md
 ├── TODO.md                           # Planned work
+├── pyproject.toml                    # Project configuration
 ├── pytest.ini                        # sys.path config for test imports
 └── requirements-dev.txt              # Development and CI dependencies
 ```
@@ -252,12 +253,10 @@ Before committing, run:
 
 ```text
 mypy --strict calculus tests examples
-pyflakes calculus tests examples
-pycodestyle calculus tests examples
-pydocstyle calculus tests examples
+ruff check calculus tests examples
 pytest
-git diff --cached --check
 pymarkdown scan -r . --respect-gitignore
+git diff --cached --check
 python -m examples.constants_approximation
 python -m examples.power_series
 python -m examples.rademacher_sequence
@@ -271,9 +270,7 @@ Calculus has no runtime dependencies beyond the Python standard library.
 Development requires:
 
 - `mypy` for static type checking
-- `pyflakes` for static analysis
-- `pycodestyle` for PEP 8 code style checking
-- `pydocstyle` for PEP 257 docstring style checking
+- `ruff` for static analysis, code style checking, and docstring style checking
 - `pytest` for unit testing
 - `pymarkdownlnt` for markdown linting
 

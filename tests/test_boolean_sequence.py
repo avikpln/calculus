@@ -8,7 +8,6 @@ import pytest
 from calculus.boolean_sequence import BooleanSequence
 from calculus.numeric_sequence import NumericSequence
 
-
 # -- UTILITY
 
 def test_to_numeric_returns_numeric_sequence() -> None:

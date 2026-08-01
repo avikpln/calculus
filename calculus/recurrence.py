@@ -11,9 +11,9 @@ from __future__ import annotations
 __all__ = ["Recurrence"]
 __author__ = "Avi Kaplan"
 
+from collections import deque
 from collections.abc import Callable, Iterable
 from typing import Any, Self, TypeVar
-from collections import deque
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .utils import validate_callable
@@ -26,7 +26,6 @@ _EMPTY_SET_SYMBOL = '\N{empty set}'
 # ======================================================================
 # Recurrence {aₙ}
 # ======================================================================
-
 
 class Recurrence(Sequence[T]):
     """A class representing infinite (and finite) recurrences.
@@ -83,7 +82,7 @@ class Recurrence(Sequence[T]):
             # Advance basis the required number of times.
             window = deque(seed, maxlen=self.order)
             index = start
-            for _ in range(0, n - start):
+            for _ in range(n - start):
                 # NOTE: deque supports the ordered indexing func needs;
                 # converting tuple(window) would waste an O(order) copy.
                 item = self.func(index, window)  # type: ignore[arg-type]

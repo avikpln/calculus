@@ -10,7 +10,7 @@ from __future__ import annotations
 __all__ = ["Sequence"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Generator, Iterable, Iterator
 from typing import Final, Generic, Self, TypeVar, overload
 
 from .utils import validate_callable, validate_int, validate_range
@@ -44,8 +44,7 @@ _INFINITY_SYMBOL = "\N{infinity}"
 # Sequence {aₙ}
 # ======================================================================
 
-
-class Sequence(Generic[T], Iterable[T]):
+class Sequence(Iterable[T], Generic[T]):
     """A class representing infinite (and finite) sequences.
 
     Attributes:
@@ -278,11 +277,11 @@ class Sequence(Generic[T], Iterable[T]):
             if size is not None:
                 size -= 1
 
-    def __iter__(self) -> Generator[T, None, None]:
+    def __iter__(self) -> Iterator[T]:
         """Return an iterator for the sequence.
 
         Returns:
-            Generator[T, None, None]: An iterator for the sequence.
+            Iterator[T]: An iterator for the sequence.
         """
         return self.subiter()
 
@@ -332,14 +331,10 @@ class Sequence(Generic[T], Iterable[T]):
 # -- INDEXING & SLICING (SUBSCRIPTION)
 
     @overload
-    def __getitem__(self, index: int) -> T:
-        """See implementation docstring."""
-        ...
+    def __getitem__(self, index: int) -> T: ...
 
     @overload
-    def __getitem__(self, index: slice) -> Self:
-        """See implementation docstring."""
-        ...
+    def __getitem__(self, index: slice) -> Self: ...
 
     def __getitem__(self, subscript: int | slice) -> T | Sequence[T]:
         """Return the specified element or subsequence.

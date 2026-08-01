@@ -1,6 +1,4 @@
 mypy
-pyflakes
-pycodestyle
-pydocstyle
+ruff
 pytest
 pymarkdownlnt

@@ -42,5 +42,4 @@
 
 - Consider converting example Python files into Jupyter notebooks for
   narrative-driven docs. Would require new tooling (nbformat/Jupyter) and CI
-  changes (notebooks aren't covered by mypy/pyflakes/pytest the way .py files
-  are).
+  changes.

@@ -13,7 +13,7 @@ one needing only a handful.
 """
 import math
 
-from calculus import NumericSequence, NumericRecurrence, Series
+from calculus import NumericRecurrence, NumericSequence, Series
 
 # -- Euler's number ----------------------------------------------------
 

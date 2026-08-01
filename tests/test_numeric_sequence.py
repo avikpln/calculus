@@ -5,10 +5,9 @@ Run with:
 """
 import pytest
 
-from calculus.sequence import Sequence
 from calculus.boolean_sequence import BooleanSequence
 from calculus.numeric_sequence import NumericSequence
-
+from calculus.sequence import Sequence
 
 # -- UTILITY
 
@@ -56,7 +55,7 @@ def test_eq_mismatched_first_index_raises_value_error() -> None:
     a = NumericSequence(lambda n: n, size=3, first_index=0)
     b = NumericSequence(lambda n: n, size=3, first_index=1)
     with pytest.raises(ValueError):
-        a == b
+        _ = a == b
 
 
 def test_eq_with_unsupported_operand_raises_type_error() -> None:

@@ -5,9 +5,8 @@ Run with:
 """
 import pytest
 
-from calculus.sequence import Sequence
 from calculus.recurrence import Recurrence
-
+from calculus.sequence import Sequence
 
 # -- CONSTRUCTION & VALIDATION
 

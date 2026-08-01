@@ -14,15 +14,13 @@ __author__ = "Avi Kaplan"
 
 from typing import Self
 
-from .sequence import INFINITY, Intfinity, Rule
 from .numeric_sequence import NumericSequence, Real
 from .recurrence import Recurrence
-
+from .sequence import INFINITY, Intfinity, Rule
 
 # ======================================================================
 # Numeric Recurrence {aₙ}
 # ======================================================================
-
 
 class NumericRecurrence(NumericSequence, Recurrence[Real]):
     """A class representing infinite numeric recurrences.

@@ -8,7 +8,6 @@ import pytest
 from calculus.numeric_sequence import NumericSequence
 from calculus.series import Series
 
-
 # -- CONSTRUCTION & VALIDATION
 
 def test_construction_with_term_rule() -> None:

@@ -12,10 +12,9 @@ from __future__ import annotations
 import random
 from typing import Self
 
-from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.numeric_sequence import NumericSequence, Real
+from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.utils import validate_callable, validate_int
-
 
 # ======================================================================
 # Rademacher Sequence

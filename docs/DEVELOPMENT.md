@@ -5,12 +5,10 @@
 Before every commit, run:
 
 1. `mypy --strict`
-2. `pyflakes`
-3. `pycodestyle`
-4. `pydocstyle`
-5. `pytest`
-6. `git diff --cached --check`, to catch trailing whitespace in staged changes
-7. `pymarkdown scan -r . --respect-gitignore`
+2. `ruff`
+3. `pytest`
+4. `pymarkdown scan -r . --respect-gitignore`
+5. `git diff --cached --check`, to catch trailing whitespace in staged changes
 
 All checks should pass before committing.
 

@@ -7,7 +7,6 @@ import pytest
 
 from calculus.utils import validate_callable, validate_int, validate_range
 
-
 # -- CALLABLE VALIDATION
 
 def test_validate_callable_accepts_callable() -> None:

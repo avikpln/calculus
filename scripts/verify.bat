@@ -5,18 +5,8 @@ mypy --strict calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.
-echo Running pyflakes...
-pyflakes calculus tests examples
-if errorlevel 1 goto :fail
-
-echo.
-echo Running pycodestyle...
-pycodestyle calculus tests examples
-if errorlevel 1 goto :fail
-
-echo.
-echo Running pydocstyle...
-pydocstyle calculus tests examples
+echo Running ruff...
+ruff check calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.
@@ -25,13 +15,13 @@ pytest
 if errorlevel 1 goto :fail
 
 echo.
-echo Checking trailing whitespaces...
-git diff --cached --check
+echo Running pymarkdown...
+pymarkdown scan -r . --respect-gitignore
 if errorlevel 1 goto :fail
 
 echo.
-echo Running pymarkdown...
-pymarkdown scan -r . --respect-gitignore
+echo Checking trailing whitespaces...
+git diff --cached --check
 if errorlevel 1 goto :fail
 
 echo Running examples...

@@ -12,11 +12,11 @@ __all__ = ["NumericSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
-from typing import Self
 from fractions import Fraction
+from typing import Self
 
-from .sequence import INFINITY, Intfinity, Sequence
 from .boolean_sequence import BooleanSequence
+from .sequence import INFINITY, Intfinity, Sequence
 from .utils import validate_callable
 
 Real = int | float | Fraction
@@ -25,7 +25,6 @@ Real = int | float | Fraction
 # ======================================================================
 # Numeric Sequence {aₙ}
 # ======================================================================
-
 
 class NumericSequence(Sequence[Real]):
     """A class representing infinite numeric sequences.

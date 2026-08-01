@@ -13,7 +13,6 @@ from __future__ import annotations
 from calculus import NumericSequence, Series
 from calculus.numeric_sequence import Real
 
-
 # ======================================================================
 # Power Series
 # ======================================================================

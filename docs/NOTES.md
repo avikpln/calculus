@@ -469,10 +469,6 @@ empty-tree SHA:
 git diff --check 4b825dc642cb6eb9a060e54bf8d69288fbee4904 HEAD
 ```
 
-This is run as a CI step alongside `mypy --strict`, `pyflakes`, `pydocstyle`,
-and `pytest`. No `pycodestyle` or `pre-commit` framework is used for this;
-whitespace checking stays native to Git.
-
 -------------------------------------------------------------------------------
 
 ### Markdown linting: `markdownlint-cli2` vs. `pymarkdownlnt`

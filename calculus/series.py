@@ -14,15 +14,13 @@ __author__ = "Avi Kaplan"
 
 from typing import Self
 
-from .sequence import INFINITY, Intfinity, Rule
 from .numeric_sequence import NumericSequence, Real
+from .sequence import INFINITY, Intfinity, Rule
 from .utils import validate_callable
-
 
 # ======================================================================
 # Series {Sₙ}
 # ======================================================================
-
 
 class Series(NumericSequence):
     """A class representing infinite numeric series.

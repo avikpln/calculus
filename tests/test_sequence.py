@@ -7,7 +7,6 @@ import pytest
 
 from calculus.sequence import Sequence
 
-
 # -- CONSTRUCTION & VALIDATION
 
 def test_default_construction_is_infinite_with_none_rule() -> None:

@@ -12,7 +12,7 @@ __all__ = ["BooleanSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
-from typing import Self, TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from .sequence import INFINITY, Intfinity, Sequence
 
@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 # ======================================================================
 # Boolean Sequence {bₙ}
 # ======================================================================
-
 
 class BooleanSequence(Sequence[bool]):
     """A class representing infinite Boolean sequences.
