@@ -2,15 +2,7 @@
 
 ## Local Verification
 
-Before every commit, run:
-
-1. `mypy --strict`
-2. `ruff`
-3. `pytest`
-4. `pymarkdown scan -r . --respect-gitignore`
-5. `git diff --cached --check`, to catch trailing whitespace in staged changes
-
-All checks should pass before committing.
+Before every commit, run `scripts\verify.bat`.
 
 This same sequence is automated by the project's CI workflow, which uses the
 empty-tree hash to check every file in the repository rather than just staged
@@ -56,10 +48,9 @@ implemented using the following workflow:
    - Add or update usage examples where appropriate.
 
 5. **Record:** *(only if warranted)*
-   - Record important design decisions, rejected alternatives, or
-     implementation notes in `NOTES.md`.
-   - Update `ARCHITECTURE.md` when the high-level class hierarchy or
-     architectural relationships change.
+   - Update `ARCHITECTURE.md` when the high-level class hierarchy changes.
+   - Update `DESIGN.md` when core abstractions or the conceptual model change.
+   - Record important design decisions or rationale in `NOTES.md`.
    - Avoid documenting routine implementation details.
 
 **IMPORTANT!** Run the project's verification tools **before committing**. Only
