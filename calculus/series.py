@@ -12,9 +12,12 @@ from __future__ import annotations
 __all__ = ["Series"]
 __author__ = "Avi Kaplan"
 
+from typing import Self
+
 from .sequence import INFINITY, Intfinity, Rule
 from .numeric_sequence import NumericSequence, Real
 from .utils import validate_callable
+
 
 # ======================================================================
 # Series {Sₙ}
@@ -125,17 +128,12 @@ class Series(NumericSequence):
 
         return self._rule_factory_produce(self._term_rule, self.first_index)
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> Series | NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return super()._factory(rule, size, reindex)
-        return Series(self._term_rule, size=size, first_index=self.first_index)
+        return type(self)(
+            self._term_rule, size=size, first_index=self.first_index,
+        )
 
 # -- UTILITY
 

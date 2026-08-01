@@ -12,7 +12,7 @@ __all__ = ["Recurrence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
-from typing import TypeVar, Any
+from typing import Any, Self, TypeVar
 from collections import deque
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
@@ -159,17 +159,10 @@ class Recurrence(Sequence[T]):
             self._func, self._basis, self._first_index
         )
 
-    def _factory(
-        self,
-        rule: Rule[T],
-        size: Intfinity,
-        reindex: bool,
-    ) -> Recurrence[T] | Sequence[T]:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return super()._factory(rule, size, reindex)
-        return Recurrence(
+        return type(self)(
             self._func, self._basis, size=size, first_index=self._first_index
         )
 

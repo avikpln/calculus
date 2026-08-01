@@ -1,7 +1,7 @@
 @echo off
 
 echo Running mypy...
-mypy --strict calculus tests
+mypy --strict calculus tests examples
 if errorlevel 1 goto :fail
 
 echo.

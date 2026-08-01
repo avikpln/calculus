@@ -10,6 +10,7 @@ Classes:
 from __future__ import annotations
 
 import random
+from typing import Self
 
 from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.numeric_sequence import NumericSequence, Real
@@ -94,17 +95,10 @@ class RademacherSequence(NumericSequence):
 
         return self._random_rule
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> RademacherSequence | NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return super()._factory(rule, size, reindex)
-        return RademacherSequence(
+        return type(self)(
             self._random_rule, size=size, first_index=self.first_index
         )
 
@@ -118,9 +112,7 @@ if __name__ == "__main__":
 
     # Estimate the sample mean and standard deviation.
     mu = sum(sample) / N
-    sigma = math.sqrt(
-        sum((sample - mu) ** 2) / (N - 1)  # type: ignore[operator, arg-type]
-    )
+    sigma = math.sqrt(sum((sample - mu) ** 2) / (N - 1))
 
     print(f"Sample mean and standard deviation from {N} samples:")
     print(f"    {mu:.4f} ± {sigma:.4f}")

@@ -830,6 +830,85 @@ its behavior explicitly:
 
 -------------------------------------------------------------------------------
 
+### Splitting `_factory()` into `_factory()` and `_reindex_factory()`
+
+**Motivation.** The prior design, unifying `_resize()`/`_reindex()` into a
+single `_factory(rule, size, reindex)`, solved subtype preservation in
+principle, but combined two reconstruction problems with different semantics
+into one hook: resizing preserves a sequence's meaning while only changing its
+representation, whereas reindexing changes the evaluation mapping itself and
+may or may not preserve a subclass's invariants.
+
+This surfaced as more than a runtime concern. When a derived sequence silently
+degraded to a plain `Sequence`, static type checkers such as mypy correctly
+lost the more specific subclass information, and the single `reindex`-flag
+signature made the return type itself harder to express precisely for
+`mypy --strict`. Forcing developers, including end users of the package, to
+fight type-checker errors as a consequence of an internal implementation choice
+is a real cost, not just an inconvenience, and is reason enough on its own to
+revisit the mechanism.
+
+**Decision.** The reconstruction protocol is split into two named factories,
+alongside the existing `_rule_factory()`:
+
+- `_factory()` reconstructs a sequence of the same concrete type when the
+  subclass supports it, under a new size. The default implementation
+  reconstructs via `type(self)(...)`, which already suffices for any subclass
+  whose constructor accepts only `rule`, `size`, and `first_index`. Subclasses
+  are expected to override this method whenever the default reconstruction via
+  `type(self)(...)` is insufficient to preserve their type, such as when their
+  constructor requires additional arguments.
+
+- `_reindex_factory()` reconstructs a sequence after reindexing. Unlike
+  `_factory()`, overriding it is optional: it receives the raw reindexing rule
+  (`subrule`, mapping indices of the new sequence to indices of the original
+  one) and decides how to handle it. A subclass may compose it with its own
+  rule to build its own type, or not override the method at all, in which case
+  `tail()`, `shift_by()`, and `subsequence()` intentionally fall back to a more
+  general type (as `Recurrence` and `Series` currently do).
+
+Composition of the raw reindexing rule with a subclass's own evaluation rule is
+handled by a further method, `_reindex_rule_factory()`, rather than inline in
+each `_reindex_factory()` override. It obtains an independent rule through
+`_rule_factory()` before composing it with `subrule`, so that reindexing does
+not itself introduce cache-sharing, so long as `_rule_factory()` correctly
+returns an independent rule, as it is already required to.
+
+This keeps `Sequence` itself unaware of any subclass's constructor signature or
+invariants, while giving each subclass explicit, independent control over
+whether resizing and reindexing preserve its own type.
+
+This effectively reverses "Redesign: unifying `_resize()`/`_reindex()` into
+`_factory()`" above. That unification was motivated by removing duplicated
+per-subclass overrides; splitting the hook back into two reintroduces some of
+that duplication for subclasses wanting full type preservation through both
+operations. This is accepted as the right tradeoff: avoiding forced
+type-checker friction for every developer of, and contributor to, the package
+outweighs the modest duplication cost, already judged acceptable elsewhere in
+the codebase (e.g. `constant()`/`from_iterable()`).
+
+**Static type preservation with `Self`.** Splitting the hook in two resolved
+the design tension between resizing and reindexing, but exposed a further,
+purely static one. Even where reconstruction was correct at runtime, the type
+checker still widened the result to the base `Sequence` wherever a
+type-preserving method in the call chain, whether `_factory()` itself or a
+public method built on top of it, was annotated with a fixed class name
+rather than `Self`. This surfaced concretely: arithmetic on a derived numeric
+sequence (`sample - mu`) and division after slicing a numeric recurrence
+(`double_factorial[::2] / double_factorial[1::2]`) both failed to type-check,
+despite being correct at runtime, because nothing in the chain of annotations
+told the type checker that the returned object was still the same concrete type
+as `self`.
+
+The fix is consistent use of `Self` across every type-preserving method, not
+`_factory()` in isolation: `_factory()` itself, `head()`, and slicing through
+`__getitem__` are all annotated to return `Self`. In this codebase, satisfying
+that annotation means constructing the result via `type(self)(...)` rather than
+a hardcoded class name, though `Self` is the actual contract mypy checks; how a
+given override honors it is an implementation choice.
+
+-------------------------------------------------------------------------------
+
 ### `Recurrence` rule caching: single-slot vs. windowed
 
 `Recurrence._Rule` caches only a single position: the order consecutive values

@@ -12,9 +12,10 @@ __all__ = ["NumericSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
+from typing import Self
 from fractions import Fraction
 
-from .sequence import INFINITY, Intfinity, Rule, Sequence
+from .sequence import INFINITY, Intfinity, Sequence
 from .boolean_sequence import BooleanSequence
 from .utils import validate_callable
 
@@ -54,14 +55,20 @@ class NumericSequence(Sequence[Real]):
 
 # -- FACTORY
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
+        rule = self._rule_factory()
+        return type(self)(rule, size=size, first_index=self.first_index)
+
+    def _reindex_factory(
+        self,
+        subrule: Callable[[int], int],
+        size: Intfinity = INFINITY,
+    ) -> NumericSequence:
+        # Produce a new reindexed sequence of the same type.
+
+        rule = self._reindex_rule_factory(subrule)
         return NumericSequence(rule, size=size, first_index=self.first_index)
 
 # -- UTILITY
