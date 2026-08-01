@@ -60,7 +60,7 @@ class PowerSeries:
         """
         coefficients = self._coefficients
         powers = NumericSequence.geometric(
-            1.0, x, size=coefficients.size, first_index=0
+            1.0, x, size=coefficients.size, first_index=0,
         )
         return Series.from_sequence(coefficients * powers)
 

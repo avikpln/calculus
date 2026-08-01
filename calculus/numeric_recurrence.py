@@ -55,7 +55,7 @@ class NumericRecurrence(NumericSequence, Recurrence[Real]):
         # Produce a new sequence of the same type and rule.
 
         return type(self)(
-            self._func, self._basis, size=size, first_index=self._first_index
+            self._func, self._basis, size=size, first_index=self._first_index,
         )
 
 # -- SPECIAL NUMERIC RECURRENCES

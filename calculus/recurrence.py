@@ -155,14 +155,14 @@ class Recurrence(Sequence[T]):
         # Produce the rule for a newly derived sequence.
 
         return self._rule_factory_produce(
-            self._func, self._basis, self._first_index
+            self._func, self._basis, self._first_index,
         )
 
     def _factory(self, size: Intfinity = INFINITY) -> Self:
         # Produce a new sequence of the same type and rule.
 
         return type(self)(
-            self._func, self._basis, size=size, first_index=self._first_index
+            self._func, self._basis, size=size, first_index=self._first_index,
         )
 
 # -- PROPERTIES

@@ -399,7 +399,7 @@ class Sequence(Iterable[T], Generic[T]):
         # Return the subsequence specified by the given slice.
 
         start, step, size = self._process_range(
-            slice_.start, slice_.stop, slice_.step
+            slice_.start, slice_.stop, slice_.step,
         )
 
         def subrule(k: int) -> int:

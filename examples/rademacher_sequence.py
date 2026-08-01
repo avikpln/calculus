@@ -98,7 +98,7 @@ class RademacherSequence(NumericSequence):
         # Produce a new sequence of the same type and rule.
 
         return type(self)(
-            self._random_rule, size=size, first_index=self.first_index
+            self._random_rule, size=size, first_index=self.first_index,
         )
 
 

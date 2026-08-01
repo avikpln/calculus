@@ -79,7 +79,7 @@ class BooleanSequence(Sequence[bool]):
             return int(boolean_rule(n))
 
         return NumericSequence(
-            numeric_rule, size=self.size, first_index=self.first_index
+            numeric_rule, size=self.size, first_index=self.first_index,
         )
 
 # -- LOGICAL HELPERS
