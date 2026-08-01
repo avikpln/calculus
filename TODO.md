@@ -13,14 +13,6 @@
   caching: single-slot now, cache deferred") for the design choices and open
   questions.
 
-## Design
-
-- Preserve concrete sequence types in head() and resize() operations, removing
-  the mypy ignore in rademacher_sequence.py where head() loses the
-  RademacherSequence type. Consider splitting _factory() if needed. Also
-  preserve concrete sequence types in slicing operations, and address the
-  related mypy errors in constants_approximation.py.
-
 ## Improvements
 
 - Identify opportunities to use decorators.
@@ -30,9 +22,6 @@
 - Add `CHANGELOG.md`.
 
 ## Environment
-
-- Add a gitignored `.llm.md` project context document capturing stable working
-  conventions for future LLM sessions (see `attic/context/.llm.md`).
 
 - Set up GitHub Issues for tracking bugs and planned work.
 
