@@ -118,12 +118,12 @@ class Sequence(Iterable[T], Generic[T]):
             validate_callable(rule)
             resolved_rule = rule
         if size is not INFINITY:
-            validate_int(size, "size")
+            validate_int(size, "size", allow_bool=False)
             if size < 0:
                 raise ValueError(
                     f"expected nonnegative size, got {size} instead"
                 )
-        validate_int(first_index, "first_index")
+        validate_int(first_index, "first_index", allow_bool=False)
         if first_index not in FIRST_INDEX_OPTIONS:
             raise ValueError(
                 f"first_index must be in {FIRST_INDEX_OPTIONS}, "
@@ -497,7 +497,7 @@ class Sequence(Iterable[T], Generic[T]):
         # preserving the sequence's size and first_index. For finite
         # sequences, the shifted rule may be evaluated outside the
         # original domain.
-        validate_int(offset, "offset")
+        validate_int(offset, "offset", allow_bool=False)
         return self._reindex_factory(lambda n: n + offset, self.size)
 
     def shift_to(self, where: int) -> Sequence[T]:
@@ -514,7 +514,7 @@ class Sequence(Iterable[T], Generic[T]):
         Raises:
             TypeError: If ``where`` is not an integer.
         """
-        validate_int(where, "where")
+        validate_int(where, "where", allow_bool=False)
         return self.shift_by(where - self.first_index)
 
     def head(self, size: int) -> Self:
@@ -530,7 +530,7 @@ class Sequence(Iterable[T], Generic[T]):
             TypeError: If ``size`` is not an integer.
             ValueError: If ``size`` is negative.
         """
-        validate_int(size, "size")
+        validate_int(size, "size", allow_bool=False)
         if size < 0:
             raise ValueError(f"head size ({size}) cannot be negative")
         if self.finite:
@@ -554,7 +554,7 @@ class Sequence(Iterable[T], Generic[T]):
         """
         if not self.finite:
             raise TypeError("infinite sequences have no tail")
-        validate_int(size, "size")
+        validate_int(size, "size", allow_bool=False)
         if size < 0:
             raise ValueError(f"tail size ({size}) cannot be negative")
         if self.finite:

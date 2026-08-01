@@ -405,6 +405,24 @@ input) remain the domain of `assert`, not exceptions, and current type checkers
 not being able to infer such invariants is never in itself a reason to make an
 assertion.
 
+-------------------------------------------------------------------------------
+
+### `bool` treated as a valid int by default
+
+`validate_int()` defaults to `allow_bool=True`, treating `bool` as an
+acceptable integer value unless a call site explicitly opts out with
+`allow_bool=False`.
+
+This follows a pattern observed in NumPy's behavior: `bool` is accepted as
+`0`/`1` in value and arithmetic contexts, but rejected in shape and count
+contexts. The same split applies here. `validate_range()` permits `bool` for
+`start`, `stop`, and `step`, since Python slicing already interprets `True` and
+`False` as `1` and `0`. Parameters representing counts or positions, such as
+`size`, `first_index`, `offset`, and `where`, explicitly reject `bool`.
+
+The presence or absence of `allow_bool=False` reflects this value-versus-count
+distinction and is part of the intended validation policy.
+
 ## Documentation
 
 ### Private methods

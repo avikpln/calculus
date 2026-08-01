@@ -24,27 +24,27 @@ def test_validate_int_accepts_int() -> None:
     validate_int(5)
 
 
-def test_validate_int_rejects_none() -> None:
-    with pytest.raises(TypeError):
-        validate_int(None)
+def test_validate_int_accepts_bool_by_default() -> None:
+    validate_int(True)
 
 
 def test_validate_int_rejects_bool() -> None:
     with pytest.raises(TypeError):
-        validate_int(True)
+        validate_int(True, allow_bool=False)
 
 
-def test_validate_int_rejects_noninteger() -> None:
+def test_validate_int_rejects_none() -> None:
     with pytest.raises(TypeError):
-        validate_int("5")  # type: ignore[arg-type]
+        validate_int(None)
 
 
 def test_validate_int_accepts_none_when_allowed() -> None:
     validate_int(None, allow_none=True)
 
 
-def test_validate_int_accepts_bool_when_allowed() -> None:
-    validate_int(True, allow_bool=True)
+def test_validate_int_rejects_noninteger() -> None:
+    with pytest.raises(TypeError):
+        validate_int("5")  # type: ignore[arg-type]
 
 
 # -- RANGE VALIDATION
