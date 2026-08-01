@@ -46,6 +46,25 @@ similar industry formats; do not apply those instead.
 
 - Lowercase kebab-case (e.g. `fix-login-button-padding`).
 
+## GitHub
+
+### PR descriptions
+
+- One paragraph per commit, no headers or bullets, blank line between
+  paragraphs.
+
+- Order: chronological, oldest commit first.
+
+- Tense: present tense throughout.
+
+- Wrap at 79 characters.
+
+- No backticks or code formatting.
+
+- Maintain a consistent level of abstraction by describing the substance of
+  each commit with accurate action verbs, avoiding trivial details, itemized
+  sub-topics, and filler or meta-commentary.
+
 ## Markdown
 
 - Wrap at 79 characters.
