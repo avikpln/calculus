@@ -162,7 +162,7 @@ print((-fib).head(8))
 # initial guess of 2.0.
 babylonian_sqrt2 = NumericRecurrence(
     lambda n, a: 0.5 * (a[-1] + 2.0 / a[-1]),
-    basis=(2.0,)
+    basis=(2.0,),
 )
 
 print(babylonian_sqrt2.head(5))
