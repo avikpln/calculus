@@ -128,12 +128,6 @@ def test_order_three_recurrence() -> None:
     assert list(tribonacci) == [0, 0, 1, 1, 2, 4, 7, 13]
 
 
-def test_shift_by_computes_correct_values() -> None:
-    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1), size=10)
-    shifted = fib.shift_by(2)
-    assert list(shifted) == [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
-
-
 # -- CACHING BEHAVIOR
 
 def test_revisiting_same_index_returns_same_value() -> None:
@@ -166,13 +160,6 @@ def test_head_preserves_recurrence_subtype() -> None:
 
 # -- FALLBACK TO PLAIN SEQUENCE
 
-def test_shift_by_returns_plain_sequence() -> None:
-    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
-    shifted = fib.shift_by(2)
-    assert isinstance(shifted, Sequence)
-    assert not isinstance(shifted, Recurrence)
-
-
 def test_subsequence_returns_plain_sequence() -> None:
     fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
     sub = fib.subsequence(lambda k: k * 2, size=4)
@@ -191,8 +178,8 @@ def test_tail_returns_plain_sequence() -> None:
 
 def test_rule_factory_produces_independent_caches() -> None:
     fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
-    first = fib.shift_by(0)
-    second = fib.shift_by(0)
+    first = fib[0:]
+    second = fib[0:]
     assert first._rule is not second._rule
     assert first[20] == second[20]
 

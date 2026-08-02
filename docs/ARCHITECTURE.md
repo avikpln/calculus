@@ -18,8 +18,6 @@ classDiagram
         +combine(other, op)
         +head(size)
         +map(op)
-        +shift_by(offset)
-        +shift_to(where)
         +subiter(start, stop, step)
         +subsequence(subrule, size)
         +tail(size)

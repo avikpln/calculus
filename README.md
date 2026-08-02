@@ -32,7 +32,7 @@ together with the specialized `BooleanSequence`, `NumericSequence`,
 - Support for zero- and one-indexed sequences.
 - Element access and slicing.
 - Forward iteration over subsequences.
-- `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
+- `Sequence` transformations (`head`, `tail`, `subsequence`, `map`, `combine`).
 - Factory methods for constant sequences and sequences built from iterables.
 - Fully type-annotated (`mypy --strict`).
 

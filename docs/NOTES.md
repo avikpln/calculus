@@ -26,24 +26,6 @@ This intentionally favors practicality over convention.
 
 -------------------------------------------------------------------------------
 
-### Shifting semantics
-
-`shift_by()` and `shift_to()` transform the underlying evaluation rule, not the
-visible window of a sequence.
-
-Consequences:
-
-- size is preserved;
-- `first_index` is preserved;
-- finite sequences may evaluate indices outside their original domain.
-
-Domain-preserving operations belong to `head()` and `tail()` instead.
-
-Future subclasses such as `Recurrence` or `Series` may override these methods
-to prohibit shifts that are incompatible with their evaluation mechanism.
-
--------------------------------------------------------------------------------
-
 ### Forward-only iteration
 
 `subiter()` supports only forward iteration (`step > 0`).
@@ -920,6 +902,39 @@ The fix is consistent use of `Self` across every type-preserving method, not
 that annotation means constructing the result via `type(self)(...)` rather than
 a hardcoded class name, though `Self` is the actual contract mypy checks; how a
 given override honors it is an implementation choice.
+
+-------------------------------------------------------------------------------
+
+### Removing `shift_by()` and `shift_to()`  [2026-08-02]
+
+Both methods are removed. Neither is used anywhere in the library's own
+implementation or examples; the only call sites were their own tests.
+
+Constructing a `Recurrence` that shifts backward could reach an index outside
+the underlying rule's valid domain. For example, `self.basis` access in
+`Recurrence` could receive a negative relative index and silently wrap through
+Python's negative tuple indexing. No concrete use case required supporting this
+behavior.
+
+Shifting is also not a standard operation on mathematical sequences in the way
+`map()`, `combine()`, `head()`, `tail()`, or slicing are. It existed as a
+speculative transformation rather than an operation motivated by an actual
+need.
+
+`tail()` and `subsequence()` do not share this problem. `tail()` only reindexes
+forward by a nonnegative offset, remaining within the original sequence domain.
+`subsequence()` can theoretically be given an invalid subrule, but it is the
+general-purpose reindexing primitive required by slicing, so that possibility
+is inherent to the abstraction rather than a problem introduced by
+`subsequence()`.
+
+Restricting `shift_by()` to forward-only offsets was considered, but rejected.
+For infinite sequences, it is pointwise identical to slicing with
+`seq[first_index + k:]`. For finite sequences, the behavior is ambiguous:
+preserving the original size would require evaluating the underlying rule
+beyond its domain, while truncating would duplicate the behavior of slicing or
+`tail()`. Slicing already provides the required semantics without introducing
+this ambiguity.
 
 -------------------------------------------------------------------------------
 

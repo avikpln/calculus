@@ -46,8 +46,8 @@ is treated as a requirement every specialized sequence must satisfy, not merely
 a default that happens to hold in the common case.
 
 Reindexing operations are different. Changing the evaluation mapping may or may
-not preserve the meaning represented by a specialized sequence. A subsequence,
-shift, or tail may therefore preserve the specialized type when the subclass
+not preserve the meaning represented by a specialized sequence. Such an
+operation may therefore preserve the specialized type when the subclass
 supports it, or intentionally fall back to a more general sequence when the
 operation would invalidate the subclass's own invariants.
 

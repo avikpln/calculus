@@ -279,32 +279,6 @@ def test_reversed_on_infinite_sequence_raises_type_error() -> None:
         next(reversed(seq))
 
 
-def test_shift_by_preserves_metadata_and_shifts_values() -> None:
-    seq = Sequence(lambda n: n, size=3, first_index=1)
-    shifted = seq.shift_by(10)
-    assert shifted.size == 3
-    assert shifted.first_index == 1
-    assert list(shifted) == [11, 12, 13]
-
-
-def test_shift_to_shifts_rule_to_target_index() -> None:
-    seq = Sequence(lambda n: n, size=3, first_index=1)
-    shifted = seq.shift_to(100)
-    assert list(shifted) == [100, 101, 102]
-
-
-def test_shift_by_noninteger_offset_raises_type_error() -> None:
-    seq = Sequence(lambda n: n, size=3)
-    with pytest.raises(TypeError):
-        seq.shift_by("1")  # type: ignore[arg-type]
-
-
-def test_shift_to_noninteger_where_raises_type_error() -> None:
-    seq = Sequence(lambda n: n, size=3)
-    with pytest.raises(TypeError):
-        seq.shift_to("100")  # type: ignore[arg-type]
-
-
 def test_head_returns_prefix_of_infinite_sequence() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     prefix = seq.head(3)

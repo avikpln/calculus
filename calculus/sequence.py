@@ -66,10 +66,6 @@ class Sequence(Iterable[T], Generic[T]):
             Return the first elements of the sequence.
         map(op):
             Apply an operation element-wise.
-        shift_by(offset):
-            Shift the evaluation rule by a fixed offset.
-        shift_to(where):
-            Shift the evaluation rule to a given starting index.
         subiter(start, stop, step):
             Return an iterator over a subsequence.
         subsequence(subrule, size):
@@ -475,47 +471,6 @@ class Sequence(Iterable[T], Generic[T]):
 
         for index in range(self.last_index, self.first_index - 1, -1):
             yield self._index_sequence(index)
-
-    def shift_by(self, offset: int) -> Sequence[T]:
-        """Return a sequence with a shifted evaluation rule.
-
-        The returned sequence preserves the size and first index of the
-        current sequence.
-
-        Args:
-            offset (int): The offset by which to shift the evaluation
-                rule.
-
-        Returns:
-            Sequence[T]: A sequence whose evaluation rule is shifted by
-                ``offset``.
-
-        Raises:
-            TypeError: If ``offset`` is not an integer.
-        """
-        # This operation shifts the underlying evaluation rule while
-        # preserving the sequence's size and first_index. For finite
-        # sequences, the shifted rule may be evaluated outside the
-        # original domain.
-        validate_int(offset, "offset", allow_bool=False)
-        return self._reindex_factory(lambda n: n + offset, self.size)
-
-    def shift_to(self, where: int) -> Sequence[T]:
-        """Shift the evaluation rule to a given index.
-
-        Args:
-            where (int): The index to which to shift the evaluation
-                rule.
-
-        Returns:
-            Sequence[T]: A sequence whose evaluation rule is shifted to
-                the given index.
-
-        Raises:
-            TypeError: If ``where`` is not an integer.
-        """
-        validate_int(where, "where", allow_bool=False)
-        return self.shift_by(where - self.first_index)
 
     def head(self, size: int) -> Self:
         """Return a sequence containing the first elements.

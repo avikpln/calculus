@@ -101,13 +101,6 @@ def test_head_preserves_series_subtype() -> None:
 
 # -- FALLBACK TO PLAIN NUMERIC SEQUENCE
 
-def test_shift_by_returns_numeric_sequence_not_series() -> None:
-    series = Series(lambda n: n)
-    shifted = series.shift_by(2)
-    assert isinstance(shifted, NumericSequence)
-    assert not isinstance(shifted, Series)
-
-
 def test_tail_returns_numeric_sequence_not_series() -> None:
     series = Series(lambda n: n, size=6)
     suffix = series.tail(3)
@@ -126,8 +119,8 @@ def test_subsequence_returns_numeric_sequence_not_series() -> None:
 
 def test_rule_factory_produces_independent_caches() -> None:
     series = Series(lambda n: n)
-    first = series.shift_by(0)
-    second = series.shift_by(0)
+    first = series[0:]
+    second = series[0:]
     assert first._rule is not second._rule
     assert first[20] == second[20]
 
