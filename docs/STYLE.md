@@ -18,6 +18,20 @@ of the library.
   files, PR descriptions): wrap at 79 characters.
 - Fill the space: avoid wrapping lines prematurely.
 
+## Changelog
+
+Changelog entries describe user-facing changes rather than implementation
+details.
+
+- Group entries by release version.
+- Keep releases in chronological order, newest first.
+- Within each release, group entries under Added, Changed, Removed, Fixed, or
+  Deprecated subheadings, as applicable.
+- Within each group in a release, list entries in the order they were added,
+  oldest first.
+- Add new entries only under the next unreleased version.
+- Do not modify existing entries unless correcting factual errors.
+
 ## Git
 
 **<u>Caution!</u>** These conventions diverge from Conventional Commits and
