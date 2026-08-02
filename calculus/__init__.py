@@ -7,7 +7,7 @@ from .recurrence import Recurrence
 from .sequence import Sequence
 from .series import Series
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 __all__ = [
     "BooleanSequence",
