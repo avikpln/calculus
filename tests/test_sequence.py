@@ -248,6 +248,42 @@ def test_negative_step_slice_on_infinite_sequence_with_stop_is_empty() -> None:
     assert list(seq[:5:-1]) == []
 
 
+def test_slice_negative_start_on_zero_indexed_finite_sequence() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    assert list(seq[-3:]) == [7, 8, 9]
+
+
+def test_slice_negative_stop_on_zero_indexed_finite_sequence() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    assert list(seq[:-1]) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+
+def test_slice_negative_bounds_on_zero_indexed_finite_sequence() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    assert list(seq[-5:-1]) == [5, 6, 7, 8]
+
+
+def test_slice_negative_bounds_out_of_range_clamp() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    assert list(seq[-100:]) == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    assert list(seq[:-100]) == []
+
+
+def test_slice_negative_start_with_negative_step() -> None:
+    seq = Sequence(lambda n: n, size=10, first_index=0)
+    assert list(seq[-1::-1]) == [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+
+def test_slice_negative_bounds_ignored_for_infinite_sequence() -> None:
+    seq = Sequence(lambda n: n, first_index=1)
+    assert list(seq[-1:].head(3)) == [1, 2, 3]
+
+
+def test_slice_negative_bounds_ignored_for_one_indexed_sequence() -> None:
+    seq = Sequence(lambda n: n, size=5, first_index=1)
+    assert list(seq[-1:]) == [1, 2, 3, 4, 5]
+
+
 # -- UTILITY
 
 def test_bool_true_for_nonempty_finite_sequence() -> None:
