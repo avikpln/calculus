@@ -34,25 +34,26 @@ validation and the combination of sequences that start at different indices.
 A sequence's first index is fixed once it is created, and every operation that
 derives a new sequence from an existing one preserves it.
 
-## Type Preservation Through Transformations
+## Type Preservation Through Reconstruction
 
-Operations such as taking the first elements of a sequence, taking the last
-elements, shifting the evaluation rule, or extracting a subsequence all
-construct a new sequence from an existing one. A naive implementation of these
-operations would always return a plain, general-purpose sequence, even when
-applied to a more specialized kind of sequence, silently discarding, for
-example, arithmetic behavior after taking the first few elements of a numeric
-sequence.
+Operations that derive a new sequence from an existing one do not all have the
+same preservation semantics. Operations that only change the representation of
+a sequence, such as taking a finite prefix, must preserve the concrete sequence
+type. For example, taking the first elements of a numeric sequence must not
+silently discard its numeric behavior. A specialized kind of sequence unable to
+preserve itself through such an operation has no place in the hierarchy: this
+is treated as a requirement every specialized sequence must satisfy, not merely
+a default that happens to hold in the common case.
 
-Every specialized kind of sequence is therefore responsible for constructing
-its own kind of result when such an operation is applied to it. This is not
-always possible: some transformations are straightforward to support for every
-kind of sequence, while others may be difficult or outright meaningless for a
-particular kind, depending on what that kind of sequence represents. Where
-preserving a specialized type is not currently supported, the operation instead
-falls back to a more general kind of sequence, rather than failing. This is a
-known, accepted limitation rather than a defect: it simply reflects that no
-general rule yet exists for preserving type through that particular operation.
+Reindexing operations are different. Changing the evaluation mapping may or may
+not preserve the meaning represented by a specialized sequence. Such an
+operation may therefore preserve the specialized type when the subclass
+supports it, or intentionally fall back to a more general sequence when the
+operation would invalidate the subclass's own invariants.
+
+This distinction avoids forcing every sequence type into the same preservation
+strategy: resizing is required to preserve type, while reindexing preserves
+type only when doing so remains semantically valid.
 
 ## Rule Propagation
 

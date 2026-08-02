@@ -13,9 +13,9 @@ from __future__ import annotations
 from calculus import NumericSequence, Series
 from calculus.numeric_sequence import Real
 
-#=======================================================================
+# ======================================================================
 # Power Series
-#=======================================================================
+# ======================================================================
 
 class PowerSeries:
     """A class representing a power series."""
@@ -60,18 +60,16 @@ class PowerSeries:
         """
         coefficients = self._coefficients
         powers = NumericSequence.geometric(
-            1.0, x, size=coefficients.size, first_index=0
+            1.0, x, size=coefficients.size, first_index=0,
         )
         return Series.from_sequence(coefficients * powers)
 
 
 if __name__ == "__main__":
-    # Coefficients for 1/(1+x)'s power series: 1, -1, 1, -1, ...
-    coefficients_rule = lambda n: 1 if n % 2 == 0 else -1
-
-    # Create the power series representing 1/(1+x).
+    # Create the power series representing 1/(1+x). For this series, the
+    # coefficients are: 1, -1, 1, -1, ...
     alternating_series = PowerSeries(
-        NumericSequence(coefficients_rule, first_index=0)
+        NumericSequence(lambda n: 1 if n % 2 == 0 else -1, first_index=0)
     )
 
     # Approximate 2.0 = 1/(1+(-0.5)).

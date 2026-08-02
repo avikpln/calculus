@@ -26,7 +26,7 @@ def validate_int(
     value: int | None,
     name: str = "value",
     allow_none: bool = False,
-    allow_bool: bool = False,
+    allow_bool: bool = True,
 ) -> None:
     """Validate that a value is an integer.
 
@@ -39,7 +39,7 @@ def validate_int(
         name (str): The variable name for error messages.
         allow_none (bool): Whether None is accepted. Defaults to False.
         allow_bool (bool): Whether boolean values are accepted. Defaults
-            to False.
+            to True.
 
     Raises:
         TypeError: If ``value`` is not of an accepted type.
@@ -77,8 +77,8 @@ def validate_range(
             integer or None.
         ValueError: If ``step`` is zero.
     """
-    validate_int(start, "start", allow_none=True, allow_bool=True)
-    validate_int(stop, "stop", allow_none=True, allow_bool=True)
-    validate_int(step, "step", allow_none=True, allow_bool=True)
+    validate_int(start, "start", allow_none=True)
+    validate_int(stop, "stop", allow_none=True)
+    validate_int(step, "step", allow_none=True)
     if step is not None and step == 0:
         raise ValueError(f"step ({step}) cannot be zero")

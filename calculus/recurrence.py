@@ -11,9 +11,9 @@ from __future__ import annotations
 __all__ = ["Recurrence"]
 __author__ = "Avi Kaplan"
 
-from collections.abc import Callable, Iterable
-from typing import TypeVar, Any
 from collections import deque
+from collections.abc import Callable, Iterable
+from typing import Any, Self, TypeVar
 
 from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .utils import validate_callable
@@ -27,13 +27,16 @@ _EMPTY_SET_SYMBOL = '\N{empty set}'
 # Recurrence {aₙ}
 # ======================================================================
 
-
 class Recurrence(Sequence[T]):
     """A class representing infinite (and finite) recurrences.
 
     This subclass inherits all functionality from Sequence. Each element
     is computed from a fixed number of preceding elements via a transition
     function, seeded by a set of initial base cases.
+
+    Attributes:
+        basis (tuple[T, ...]): The basis of the recurrence.
+        order (int): The order of the recurrence.
 
     Methods:
         look_and_say():
@@ -83,7 +86,7 @@ class Recurrence(Sequence[T]):
             # Advance basis the required number of times.
             window = deque(seed, maxlen=self.order)
             index = start
-            for _ in range(0, n - start):
+            for _ in range(n - start):
                 # NOTE: deque supports the ordered indexing func needs;
                 # converting tuple(window) would waste an O(order) copy.
                 item = self.func(index, window)  # type: ignore[arg-type]
@@ -156,21 +159,14 @@ class Recurrence(Sequence[T]):
         # Produce the rule for a newly derived sequence.
 
         return self._rule_factory_produce(
-            self._func, self._basis, self._first_index
+            self._func, self._basis, self._first_index,
         )
 
-    def _factory(
-        self,
-        rule: Rule[T],
-        size: Intfinity,
-        reindex: bool,
-    ) -> Recurrence[T] | Sequence[T]:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return super()._factory(rule, size, reindex)
-        return Recurrence(
-            self._func, self._basis, size=size, first_index=self._first_index
+        return type(self)(
+            self._func, self._basis, size=size, first_index=self._first_index,
         )
 
 # -- PROPERTIES

@@ -3,9 +3,9 @@
 Run with:
     pytest tests/test_numeric_recurrence.py -v
 """
+from calculus.numeric_recurrence import NumericRecurrence
 from calculus.numeric_sequence import NumericSequence
 from calculus.recurrence import Recurrence
-from calculus.numeric_recurrence import NumericRecurrence
 
 # -- CONSTRUCTION & VALIDATION
 
@@ -56,14 +56,6 @@ def test_head_preserves_numeric_recurrence_subtype() -> None:
 
 # -- FALLBACK TO PLAIN NUMERIC SEQUENCE
 
-def test_shift_by_returns_numeric_sequence_not_recurrence() -> None:
-    fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
-    shifted = fib.shift_by(2)
-    assert isinstance(shifted, NumericSequence)
-    assert not isinstance(shifted, NumericRecurrence)
-    assert not isinstance(shifted, Recurrence)
-
-
 def test_subsequence_returns_numeric_sequence_not_recurrence() -> None:
     fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
     sub = fib.subsequence(lambda k: k * 2, size=4)
@@ -86,8 +78,8 @@ def test_tail_returns_numeric_sequence_not_recurrence() -> None:
 
 def test_rule_factory_produces_independent_caches() -> None:
     fib = NumericRecurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
-    first = fib.shift_by(0)
-    second = fib.shift_by(0)
+    first = fib[0:]
+    second = fib[0:]
     assert first._rule is not second._rule
     assert first[20] == second[20]
 

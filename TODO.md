@@ -2,12 +2,24 @@
 
 ## Features
 
-- Add a `sum()` utility method to NumericSequence, after careful design.
+- Add a public `Sequence` method exposing a fresh copy of the evaluation rule
+  (via `_rule_factory()`), e.g. `rule() -> Rule[T]`.
+
+- Support negative slice bounds (`start`/`stop`) for zero-indexed finite
+  sequences, mirroring Python's own list-slicing semantics. Currently only
+  single-element negative indexing (`seq[-1]`) is translated;
+  `_process_range()` treats slice bounds as literal index values.
+
+- Add a `sum()` utility method to `NumericSequence`, after careful design.
+
+- Add a `round()` utility method to `NumericSequence`, and replace direct
+  `round()` usage in sources and README examples, removing related mypy
+  ignores.
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot cache,
-  to efficiently support out-of-order queries. See NOTES.md ("`Series` rule
-  caching: single-slot now, cache deferred") for the design choices and open
-  questions.
+  to efficiently support out-of-order queries. See NOTES-legacy.md ("`Series`
+  rule caching: single-slot now, cache deferred") for the design choices and
+  open questions.
 
 ## Improvements
 
@@ -19,9 +31,6 @@
 
 ## Environment
 
-- Add a gitignored `.llm.md` project context document capturing stable working
-  conventions for future LLM sessions (see `attic/context/.llm.md`).
-
 - Set up GitHub Issues for tracking bugs and planned work.
 
 - Set up a virtual environment (`venv`) for development, to mirror CI's
@@ -30,5 +39,4 @@
 
 - Consider converting example Python files into Jupyter notebooks for
   narrative-driven docs. Would require new tooling (nbformat/Jupyter) and CI
-  changes (notebooks aren't covered by mypy/pyflakes/pytest the way .py files
-  are).
+  changes.

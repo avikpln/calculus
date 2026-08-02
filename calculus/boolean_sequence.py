@@ -12,9 +12,9 @@ __all__ = ["BooleanSequence"]
 __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
-from .sequence import INFINITY, Intfinity, Rule, Sequence
+from .sequence import INFINITY, Intfinity, Sequence
 
 if TYPE_CHECKING:
     from .numeric_sequence import NumericSequence
@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 # ======================================================================
 # Boolean Sequence {bₙ}
 # ======================================================================
-
 
 class BooleanSequence(Sequence[bool]):
     """A class representing infinite Boolean sequences.
@@ -48,14 +47,20 @@ class BooleanSequence(Sequence[bool]):
 
 # -- FACTORY
 
-    def _factory(
-        self,
-        rule: Rule[bool],
-        size: Intfinity,
-        reindex: bool,
-    ) -> Sequence[bool]:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
+        rule = self._rule_factory()
+        return type(self)(rule, size=size, first_index=self.first_index)
+
+    def _reindex_factory(
+        self,
+        subrule: Callable[[int], int],
+        size: Intfinity = INFINITY,
+    ) -> BooleanSequence:
+        # Produce a new reindexed sequence of the same type.
+
+        rule = self._reindex_rule_factory(subrule)
         return BooleanSequence(rule, size=size, first_index=self.first_index)
 
 # -- UTILITY
@@ -74,7 +79,7 @@ class BooleanSequence(Sequence[bool]):
             return int(boolean_rule(n))
 
         return NumericSequence(
-            numeric_rule, size=self.size, first_index=self.first_index
+            numeric_rule, size=self.size, first_index=self.first_index,
         )
 
 # -- LOGICAL HELPERS

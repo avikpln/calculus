@@ -1,19 +1,19 @@
 """The Calculus package."""
 
-from .sequence import Sequence
+from .boolean_sequence import BooleanSequence
+from .numeric_recurrence import NumericRecurrence
 from .numeric_sequence import NumericSequence
 from .recurrence import Recurrence
-from .numeric_recurrence import NumericRecurrence
+from .sequence import Sequence
 from .series import Series
-from .boolean_sequence import BooleanSequence
 
 __version__ = "0.6.0"
 
 __all__ = [
-    "Sequence",
     "BooleanSequence",
+    "NumericRecurrence",
     "NumericSequence",
     "Recurrence",
-    "NumericRecurrence",
+    "Sequence",
     "Series",
 ]

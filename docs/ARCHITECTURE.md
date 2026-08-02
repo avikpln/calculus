@@ -18,8 +18,6 @@ classDiagram
         +combine(other, op)
         +head(size)
         +map(op)
-        +shift_by(offset)
-        +shift_to(where)
         +subiter(start, stop, step)
         +subsequence(subrule, size)
         +tail(size)
@@ -60,8 +58,15 @@ classDiagram
         +__pow__(other)
         +__rpow__(other)
         +__neg__()
+        +__pos__()
         +__abs__()
         +map(op)
+    }
+
+    class Recurrence~T~ {
+        %% Attributes
+        +basis
+        +order
     }
 
     Sequence <|-- BooleanSequence

@@ -10,14 +10,15 @@ Classes:
 from __future__ import annotations
 
 import random
+from typing import Self
 
-from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.numeric_sequence import NumericSequence, Real
+from calculus.sequence import INFINITY, Intfinity, Rule
 from calculus.utils import validate_callable, validate_int
 
-#=======================================================================
+# ======================================================================
 # Rademacher Sequence
-#=======================================================================
+# ======================================================================
 
 class RademacherSequence(NumericSequence):
     """A class representing infinite Rademacher sequences.
@@ -37,7 +38,7 @@ class RademacherSequence(NumericSequence):
             # Initialize a new Rademacher sequence rule instance.
 
             self.rng = rng
-            self.values = {}
+            self.values: dict[int, Real] = {}
 
         def __call__(self, n: int) -> Real:
             # Return the random value at index n.
@@ -53,7 +54,7 @@ class RademacherSequence(NumericSequence):
 
     def __init__(
         self,
-        random_rule: Rule[Real] | None = None,
+        random_rule: _Rule | None = None,
         size: Intfinity = INFINITY,
         *,
         first_index: int = 1,
@@ -93,18 +94,11 @@ class RademacherSequence(NumericSequence):
 
         return self._random_rule
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> RademacherSequence | NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return super()._factory(rule, size, reindex)
-        return RademacherSequence(
-            self._random_rule, size=size, first_index=self.first_index
+        return type(self)(
+            self._random_rule, size=size, first_index=self.first_index,
         )
 
 

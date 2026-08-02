@@ -63,7 +63,7 @@ def test_or_mismatched_first_index_raises_value_error() -> None:
 def test_or_with_unsupported_operand_raises_type_error() -> None:
     seq = BooleanSequence(lambda n: True, size=3)
     with pytest.raises(TypeError):
-        seq | "not a bool"
+        seq | "not a bool"  # type: ignore[operator]
 
 
 def test_ror_scalar_returns_elementwise_or() -> None:
@@ -102,7 +102,7 @@ def test_and_mismatched_first_index_raises_value_error() -> None:
 def test_and_with_unsupported_operand_raises_type_error() -> None:
     seq = BooleanSequence(lambda n: True, size=3)
     with pytest.raises(TypeError):
-        seq & "not a bool"
+        seq & "not a bool"  # type: ignore[operator]
 
 
 def test_rand_scalar_returns_elementwise_and() -> None:
@@ -141,7 +141,7 @@ def test_xor_mismatched_first_index_raises_value_error() -> None:
 def test_xor_with_unsupported_operand_raises_type_error() -> None:
     seq = BooleanSequence(lambda n: True, size=3)
     with pytest.raises(TypeError):
-        seq ^ "not a bool"
+        seq ^ "not a bool"  # type: ignore[operator]
 
 
 def test_rxor_scalar_returns_elementwise_xor() -> None:

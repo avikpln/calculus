@@ -13,7 +13,7 @@ one needing only a handful.
 """
 import math
 
-from calculus import NumericSequence, NumericRecurrence, Series
+from calculus import NumericRecurrence, NumericSequence, Series
 
 # -- Euler's number ----------------------------------------------------
 
@@ -65,9 +65,8 @@ pi_nilakantha = 3 + nilakantha[10_000]
 # https://math.stackexchange.com/questions/14113/series-that-converge-to-pi-quickly
 double_factorial = NumericRecurrence.double_factorial()
 power_of_half = NumericSequence.geometric(1, 1 / 2, first_index=0)
-stackexchange_terms = (
-    (double_factorial[::2] / double_factorial[1::2]) * power_of_half
-)
+ratio = double_factorial[::2] / double_factorial[1::2]
+stackexchange_terms = ratio * power_of_half
 pi_stackexchange = 2 * Series.from_sequence(stackexchange_terms)[49]
 
 # (5) Chudnovsky's algorithm is where this story ends, though not where

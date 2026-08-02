@@ -12,16 +12,17 @@ from __future__ import annotations
 __all__ = ["NumericRecurrence"]
 __author__ = "Avi Kaplan"
 
-from .sequence import Intfinity, Rule
+from typing import Self
+
 from .numeric_sequence import NumericSequence, Real
 from .recurrence import Recurrence
+from .sequence import INFINITY, Intfinity, Rule
 
 # ======================================================================
 # Numeric Recurrence {aₙ}
 # ======================================================================
 
-
-class NumericRecurrence(Recurrence[Real], NumericSequence):
+class NumericRecurrence(NumericSequence, Recurrence[Real]):
     """A class representing infinite numeric recurrences.
 
     This subclass inherits all functionality from NumericSequence and
@@ -50,17 +51,12 @@ class NumericRecurrence(Recurrence[Real], NumericSequence):
 
         return Recurrence._rule_factory(self)
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> NumericRecurrence | NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
-        if reindex:
-            return NumericSequence._factory(self, rule, size, reindex)
-        return NumericRecurrence(self._func, self._basis, size=size)
+        return type(self)(
+            self._func, self._basis, size=size, first_index=self._first_index,
+        )
 
 # -- SPECIAL NUMERIC RECURRENCES
 

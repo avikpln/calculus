@@ -5,9 +5,9 @@ Run with:
 """
 import pytest
 
-from calculus.sequence import Sequence
 from calculus.boolean_sequence import BooleanSequence
 from calculus.numeric_sequence import NumericSequence
+from calculus.sequence import Sequence
 
 # -- UTILITY
 
@@ -55,13 +55,13 @@ def test_eq_mismatched_first_index_raises_value_error() -> None:
     a = NumericSequence(lambda n: n, size=3, first_index=0)
     b = NumericSequence(lambda n: n, size=3, first_index=1)
     with pytest.raises(ValueError):
-        a == b
+        _ = a == b
 
 
 def test_eq_with_unsupported_operand_raises_type_error() -> None:
     seq = NumericSequence(lambda n: n, size=3, first_index=1)
     with pytest.raises(TypeError):
-        list(seq == "not a number")
+        list(seq == "not a number")  # type: ignore[call-overload]
 
 
 def test_ne_returns_elementwise_nonequality() -> None:
@@ -387,7 +387,7 @@ def test_binary_with_non_numeric_sequence_raises_type_error() -> None:
     a = NumericSequence(lambda n: n, size=3)
     b = Sequence(lambda n: n, size=3)
     with pytest.raises(TypeError):
-        a + b
+        a + b  # type: ignore[operator]
 
 
 # -- SPECIAL NUMERIC SEQUENCES

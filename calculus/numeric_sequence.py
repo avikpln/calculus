@@ -13,9 +13,10 @@ __author__ = "Avi Kaplan"
 
 from collections.abc import Callable, Iterable
 from fractions import Fraction
+from typing import Self
 
-from .sequence import INFINITY, Intfinity, Rule, Sequence
 from .boolean_sequence import BooleanSequence
+from .sequence import INFINITY, Intfinity, Sequence
 from .utils import validate_callable
 
 Real = int | float | Fraction
@@ -24,7 +25,6 @@ Real = int | float | Fraction
 # ======================================================================
 # Numeric Sequence {aₙ}
 # ======================================================================
-
 
 class NumericSequence(Sequence[Real]):
     """A class representing infinite numeric sequences.
@@ -36,6 +36,8 @@ class NumericSequence(Sequence[Real]):
     Methods:
         constant(value, size, first_index):
             Return a constant numeric sequence.
+        euler():
+            Return the sequence defining e.
         from_iterable(iterable, first_index):
             Return a numeric sequence from an iterable.
         geometric(first_term, common_ratio, size, first_index):
@@ -54,14 +56,20 @@ class NumericSequence(Sequence[Real]):
 
 # -- FACTORY
 
-    def _factory(
-        self,
-        rule: Rule[Real],
-        size: Intfinity,
-        reindex: bool,
-    ) -> NumericSequence:
-        # Produce a new sequence from rule and size, considering mode.
+    def _factory(self, size: Intfinity = INFINITY) -> Self:
+        # Produce a new sequence of the same type and rule.
 
+        rule = self._rule_factory()
+        return type(self)(rule, size=size, first_index=self.first_index)
+
+    def _reindex_factory(
+        self,
+        subrule: Callable[[int], int],
+        size: Intfinity = INFINITY,
+    ) -> NumericSequence:
+        # Produce a new reindexed sequence of the same type.
+
+        rule = self._reindex_rule_factory(subrule)
         return NumericSequence(rule, size=size, first_index=self.first_index)
 
 # -- UTILITY
@@ -528,7 +536,7 @@ class NumericSequence(Sequence[Real]):
         *,
         first_index: int = 1,
     ) -> NumericSequence:
-        """Return a constant sequence.
+        """Return a constant numeric sequence.
 
         Args:
             value (Real): The constant value of each sequence element.
@@ -685,4 +693,7 @@ class NumericSequence(Sequence[Real]):
         Returns:
             NumericSequence: The sequence defining e.
         """
-        return NumericSequence(lambda n: (1 + 1/n) ** n, first_index=1)
+        def euler_rule(n: int) -> Real:
+            return (1 + 1/n) ** n
+
+        return NumericSequence(euler_rule, first_index=1)

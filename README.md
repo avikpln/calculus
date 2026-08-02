@@ -10,12 +10,12 @@ illustration of the calculus package's sequence ecosystem">
 
 ## Vision
 
-The Calculus package aims to provide a collection of reusable abstractions for
-discrete and continuous mathematics.
+The Calculus package aims to model infinite sequences through lazy evaluation,
+providing reusable abstractions for discrete and continuous mathematics.
 
 The current implementation provides a generic `Sequence[T]` abstraction
-together with the specialized `NumericSequence`, `Recurrence`,
-`NumericRecurrence`, and `Series` subclasses.
+together with the specialized `BooleanSequence`, `NumericSequence`,
+`Recurrence`, `NumericRecurrence`, and `Series` subclasses.
 
 ## Features
 
@@ -32,7 +32,7 @@ together with the specialized `NumericSequence`, `Recurrence`,
 - Support for zero- and one-indexed sequences.
 - Element access and slicing.
 - Forward iteration over subsequences.
-- `Sequence` transformations (`map`, `combine`, `shift_by`, `shift_to`).
+- `Sequence` transformations (`head`, `tail`, `subsequence`, `map`, `combine`).
 - Factory methods for constant sequences and sequences built from iterables.
 - Fully type-annotated (`mypy --strict`).
 
@@ -162,7 +162,7 @@ print((-fib).head(8))
 # initial guess of 2.0.
 babylonian_sqrt2 = NumericRecurrence(
     lambda n, a: 0.5 * (a[-1] + 2.0 / a[-1]),
-    basis=(2.0,)
+    basis=(2.0,),
 )
 
 print(babylonian_sqrt2.head(5))
@@ -210,6 +210,7 @@ print(4 * leibniz[1000])
 │   ├── DESIGN.md                     # Design principles and concepts
 │   ├── DEVELOPMENT.md                # Development guide
 │   ├── NOTES.md                      # Design decisions and rationale
+│   ├── NOTES-legacy.md               # Legacy notes
 │   ├── STYLE.md                      # Coding and documentation conventions
 │   └── ZOO.md                        # List of ideas for sequence types
 ├── examples
@@ -235,7 +236,8 @@ print(4 * leibniz[1000])
 ├── LICENSE
 ├── README.md
 ├── TODO.md                           # Planned work
-├── pytest.ini                        # sys.path config for test imports
+├── pyproject.toml                    # Project configuration
+├── pytest.ini                        # Pytest configuration for test imports
 └── requirements-dev.txt              # Development and CI dependencies
 ```
 
@@ -248,21 +250,7 @@ The project emphasizes:
 - comprehensive documentation;
 - thorough unit testing.
 
-Before committing, run:
-
-```text
-mypy --strict calculus
-pyflakes calculus
-pycodestyle calculus
-pydocstyle calculus
-pytest
-git diff --cached --check
-pymarkdown scan -r . --respect-gitignore
-python -m examples.constants_approximation
-python -m examples.power_series
-python -m examples.rademacher_sequence
-python -m examples.integral_approximation
-```
+Before committing, run `scripts\verify.bat`.
 
 ## Dependencies
 
@@ -271,9 +259,7 @@ Calculus has no runtime dependencies beyond the Python standard library.
 Development requires:
 
 - `mypy` for static type checking
-- `pyflakes` for static analysis
-- `pycodestyle` for PEP 8 code style checking
-- `pydocstyle` for PEP 257 docstring style checking
+- `ruff` for static analysis, code style checking, and docstring style checking
 - `pytest` for unit testing
 - `pymarkdownlnt` for markdown linting
 
@@ -285,8 +271,7 @@ pip install -r requirements-dev.txt
 
 ## Documentation
 
-- `ARCHITECTURE.md` records the class hierarchy and relationships between its
-  classes.
+- `ARCHITECTURE.md` records the class hierarchy.
 - `DESIGN.md` describes the design principles and conceptual model.
 - `DEVELOPMENT.md` describes development workflows and conventions.
 - `NOTES.md` records design decisions and implementation rationale.

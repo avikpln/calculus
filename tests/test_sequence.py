@@ -134,13 +134,17 @@ def test_subiter_noninteger_start_raises_type_error() -> None:
 
 def test_str_of_finite_sequence_shows_all_elements() -> None:
     seq = Sequence(lambda n: n, size=3, first_index=1)
-    assert str(seq) == "\N{mathematical left angle bracket}1, 2, 3\N{mathematical right angle bracket}"
+    assert str(seq) == (
+        "\N{mathematical left angle bracket}1, 2, 3"
+        "\N{mathematical right angle bracket}"
+    )
 
 
 def test_str_of_infinite_sequence_shows_head_and_ellipsis() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     assert str(seq) == (
-        "\N{mathematical left angle bracket}1, 2, 3, 4, 5, ...\N{mathematical right angle bracket}"
+        "\N{mathematical left angle bracket}1, 2, 3, 4, 5, ..."
+        "\N{mathematical right angle bracket}"
     )
 
 
@@ -167,7 +171,7 @@ def test_index_out_of_range_raises_index_error_on_finite_sequence() -> None:
         seq[4]
 
 
-def test_index_below_first_index_raises_index_error_on_infinite_sequence() -> None:
+def test_below_first_index_raises_index_error_on_infinite_sequence() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     with pytest.raises(IndexError):
         seq[0]
@@ -231,7 +235,17 @@ def test_slice_zero_step_raises_value_error() -> None:
 def test_invalid_subscript_type_raises_type_error() -> None:
     seq = Sequence(lambda n: n, size=5)
     with pytest.raises(TypeError):
-        seq["not a subscript"]  # type: ignore[index]
+        seq["not a subscript"]  # type: ignore[call-overload]
+
+
+def test_negative_step_slice_on_infinite_sequence_is_empty() -> None:
+    seq = Sequence(lambda n: n, first_index=1)
+    assert list(seq[::-1]) == []
+
+
+def test_negative_step_slice_on_infinite_sequence_with_stop_is_empty() -> None:
+    seq = Sequence(lambda n: n, first_index=1)
+    assert list(seq[:5:-1]) == []
 
 
 # -- UTILITY
@@ -273,32 +287,6 @@ def test_reversed_on_infinite_sequence_raises_type_error() -> None:
     # builds the generator. The check inside only runs once iterated.
     with pytest.raises(TypeError):
         next(reversed(seq))
-
-
-def test_shift_by_preserves_metadata_and_shifts_values() -> None:
-    seq = Sequence(lambda n: n, size=3, first_index=1)
-    shifted = seq.shift_by(10)
-    assert shifted.size == 3
-    assert shifted.first_index == 1
-    assert list(shifted) == [11, 12, 13]
-
-
-def test_shift_to_shifts_rule_to_target_index() -> None:
-    seq = Sequence(lambda n: n, size=3, first_index=1)
-    shifted = seq.shift_to(100)
-    assert list(shifted) == [100, 101, 102]
-
-
-def test_shift_by_noninteger_offset_raises_type_error() -> None:
-    seq = Sequence(lambda n: n, size=3)
-    with pytest.raises(TypeError):
-        seq.shift_by("1")  # type: ignore[arg-type]
-
-
-def test_shift_to_noninteger_where_raises_type_error() -> None:
-    seq = Sequence(lambda n: n, size=3)
-    with pytest.raises(TypeError):
-        seq.shift_to("100")  # type: ignore[arg-type]
 
 
 def test_head_returns_prefix_of_infinite_sequence() -> None:
@@ -428,4 +416,6 @@ def test_from_iterable_respects_first_index() -> None:
 
 def test_from_iterable_noninteger_first_index_raises_type_error() -> None:
     with pytest.raises(TypeError):
-        Sequence.from_iterable([1, 2, 3], first_index="0")  # type: ignore[arg-type]
+        Sequence.from_iterable(
+            [1, 2, 3], first_index="0"  # type: ignore[arg-type]
+        )
