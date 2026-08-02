@@ -184,6 +184,22 @@ def test_rule_factory_produces_independent_caches() -> None:
     assert first[20] == second[20]
 
 
+# -- UTILITY
+
+def test_get_rule_returns_equivalent_evaluation() -> None:
+    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
+    rule = fib.get_rule()
+    assert [rule(n) for n in range(0, 6)] == [0, 1, 1, 2, 3, 5]
+
+
+def test_get_rule_returns_independent_cache() -> None:
+    fib = Recurrence(lambda n, a: a[-1] + a[-2], basis=(0, 1))
+    first = fib.get_rule()
+    second = fib.get_rule()
+    assert first is not second
+    assert first(20) == second(20)
+
+
 # -- SPECIAL RECURRENCES
 
 def test_von_neumann() -> None:

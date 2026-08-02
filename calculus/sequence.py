@@ -62,6 +62,8 @@ class Sequence(Iterable[T], Generic[T]):
             Return a constant sequence.
         from_iterable(iterable, first_index):
             Return a sequence from an iterable.
+        get_rule():
+            Return a fresh copy of the sequence's rule.
         head(size):
             Return the first elements of the sequence.
         map(op):
@@ -475,6 +477,14 @@ class Sequence(Iterable[T], Generic[T]):
 
         for index in range(self.last_index, self.first_index - 1, -1):
             yield self._index_sequence(index)
+
+    def get_rule(self) -> Rule[T]:
+        """Return a fresh copy of the sequence's rule.
+
+        Returns:
+            Rule[T]: The rule of the sequence.
+        """
+        return self._rule_factory()
 
     def head(self, size: int) -> Self:
         """Return a sequence containing the first elements.

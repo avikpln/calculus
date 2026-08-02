@@ -289,6 +289,12 @@ def test_reversed_on_infinite_sequence_raises_type_error() -> None:
         next(reversed(seq))
 
 
+def test_get_rule_returns_equivalent_evaluation() -> None:
+    seq = Sequence(lambda n: n * n, size=3, first_index=1)
+    rule = seq.get_rule()
+    assert [rule(n) for n in range(1, 4)] == [1, 4, 9]
+
+
 def test_head_returns_prefix_of_infinite_sequence() -> None:
     seq = Sequence(lambda n: n, first_index=1)
     prefix = seq.head(3)

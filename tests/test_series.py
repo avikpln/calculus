@@ -127,6 +127,20 @@ def test_rule_factory_produces_independent_caches() -> None:
 
 # -- UTILITY
 
+def test_get_rule_returns_equivalent_evaluation() -> None:
+    series = Series(lambda n: n)
+    rule = series.get_rule()
+    assert [rule(n) for n in range(1, 6)] == [1, 3, 6, 10, 15]
+
+
+def test_get_rule_returns_independent_cache() -> None:
+    series = Series(lambda n: n)
+    first = series.get_rule()
+    second = series.get_rule()
+    assert first is not second
+    assert first(20) == second(20)
+
+
 def test_from_sequence_returns_series_matching_partial_sums() -> None:
     seq = NumericSequence(lambda n: n, size=5, first_index=1)
     series = Series.from_sequence(seq)
