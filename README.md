@@ -233,9 +233,10 @@ print(4 * leibniz[1000])
 │   └── test_utils.py                 # Pytest test suite for utility functions
 ├── .gitignore
 ├── .pymarkdown
+├── CHANGELOG.md
 ├── LICENSE
 ├── README.md
-├── TODO.md                           # Planned work
+├── TODO.md
 ├── pyproject.toml                    # Project configuration
 ├── pytest.ini                        # Pytest configuration for test imports
 └── requirements-dev.txt              # Development and CI dependencies

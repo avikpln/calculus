@@ -17,10 +17,6 @@
 
 - Identify opportunities to use decorators.
 
-## Documentation
-
-- Add `CHANGELOG.md`.
-
 ## Environment
 
 - Set up GitHub Issues for tracking bugs and planned work.
