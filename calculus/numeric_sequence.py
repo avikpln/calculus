@@ -36,6 +36,8 @@ class NumericSequence(Sequence[Real]):
     Methods:
         constant(value, size, first_index):
             Return a constant numeric sequence.
+        euler():
+            Return the sequence defining e.
         from_iterable(iterable, first_index):
             Return a numeric sequence from an iterable.
         geometric(first_term, common_ratio, size, first_index):
@@ -534,7 +536,7 @@ class NumericSequence(Sequence[Real]):
         *,
         first_index: int = 1,
     ) -> NumericSequence:
-        """Return a constant sequence.
+        """Return a constant numeric sequence.
 
         Args:
             value (Real): The constant value of each sequence element.

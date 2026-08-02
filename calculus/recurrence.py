@@ -34,6 +34,10 @@ class Recurrence(Sequence[T]):
     is computed from a fixed number of preceding elements via a transition
     function, seeded by a set of initial base cases.
 
+    Attributes:
+        basis (tuple[T, ...]): The basis of the recurrence.
+        order (int): The order of the recurrence.
+
     Methods:
         look_and_say():
             Return the Look-and-Say sequence by John Horton Conway.
