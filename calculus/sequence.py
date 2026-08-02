@@ -223,13 +223,17 @@ class Sequence(Iterable[T], Generic[T]):
                     start = self.last_index
                 else:
                     start = min(start, self.last_index)
+            else:
+                # An infinite sequence with a negative step and no
+                # finite stop has no well-defined bounds, so it
+                # gracefully yields an empty range.
+                start = self.first_index - 1 if start is None else start
             stop = (
                 self.first_index - 1 if stop is None
                 else max(stop, self.first_index - 1)
             )
         else:
             assert False
-        assert start is not None  # mypy
 
         # Evaluate size.
         size = INFINITY

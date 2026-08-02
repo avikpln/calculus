@@ -238,6 +238,16 @@ def test_invalid_subscript_type_raises_type_error() -> None:
         seq["not a subscript"]  # type: ignore[call-overload]
 
 
+def test_negative_step_slice_on_infinite_sequence_is_empty() -> None:
+    seq = Sequence(lambda n: n, first_index=1)
+    assert list(seq[::-1]) == []
+
+
+def test_negative_step_slice_on_infinite_sequence_with_stop_is_empty() -> None:
+    seq = Sequence(lambda n: n, first_index=1)
+    assert list(seq[:5:-1]) == []
+
+
 # -- UTILITY
 
 def test_bool_true_for_nonempty_finite_sequence() -> None:
