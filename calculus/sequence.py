@@ -343,7 +343,8 @@ class Sequence(Iterable[T], Generic[T]):
 
         If subscript is an integer, the corresponding element is
         returned. If subscript is a slice, the corresponding
-        subsequence is returned.
+        subsequence is returned. Zero-indexed finite sequences also
+        support negative indexing and slicing.
 
         Args:
             subscript (int | slice): The index or slice specifying the
@@ -400,9 +401,21 @@ class Sequence(Iterable[T], Generic[T]):
     def _slice_sequence(self, slice_: slice) -> Sequence[T]:
         # Return the subsequence specified by the given slice.
 
-        start, step, size = self._process_range(
-            slice_.start, slice_.stop, slice_.step,
-        )
+        # Allow Python-style negative indexing for finite sequences
+        # starting at index 0.
+        start, stop, step = slice_.start, slice_.stop, slice_.step
+        if self.last_index is not INFINITY and self.first_index == 0:
+            effective_first_index = -(self.last_index + 1)
+            def adjust_negative_index(index: int) -> int:
+                index = max(index, effective_first_index)
+                index = index - effective_first_index
+                return index
+            if start is not None and start < 0:
+                start = adjust_negative_index(start)
+            if stop is not None and stop < 0:
+                stop = adjust_negative_index(stop)
+
+        start, step, size = self._process_range(start, stop, step)
 
         def subrule(k: int) -> int:
             return start + (k - self.first_index)*step
