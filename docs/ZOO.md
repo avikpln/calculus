@@ -11,7 +11,7 @@ A sequence backed by a user-supplied random rule (e.g. a lambda calling
 is queried - not for performance, but because without recording, the same index
 would silently return a different value on every call. Design details,
 including why derived sequences should share rather than fork their recorded
-values, and the proposed `{rₙ}` symbol, are recorded in NOTES.md.
+values, and the proposed `{rₙ}` symbol, are recorded in NOTES-legacy.md.
 
 ## `RationalSequence`
 

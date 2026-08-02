@@ -9,9 +9,9 @@
   ignores.
 
 - Add an LRU cache to `Series._Rule`, replacing the initial single-slot cache,
-  to efficiently support out-of-order queries. See NOTES.md ("`Series` rule
-  caching: single-slot now, cache deferred") for the design choices and open
-  questions.
+  to efficiently support out-of-order queries. See NOTES-legacy.md ("`Series`
+  rule caching: single-slot now, cache deferred") for the design choices and
+  open questions.
 
 ## Improvements
 

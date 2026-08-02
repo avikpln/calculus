@@ -210,6 +210,7 @@ print(4 * leibniz[1000])
 │   ├── DESIGN.md                     # Design principles and concepts
 │   ├── DEVELOPMENT.md                # Development guide
 │   ├── NOTES.md                      # Design decisions and rationale
+│   ├── NOTES-legacy.md               # Legacy notes
 │   ├── STYLE.md                      # Coding and documentation conventions
 │   └── ZOO.md                        # List of ideas for sequence types
 ├── examples
