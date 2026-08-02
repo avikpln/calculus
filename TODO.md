@@ -2,9 +2,6 @@
 
 ## Features
 
-- Add a public `Sequence` method exposing a fresh copy of the evaluation rule
-  (via `_rule_factory()`), e.g. `rule() -> Rule[T]`.
-
 - Support negative slice bounds (`start`/`stop`) for zero-indexed finite
   sequences, mirroring Python's own list-slicing semantics. Currently only
   single-element negative indexing (`seq[-1]`) is translated;

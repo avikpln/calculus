@@ -15,7 +15,11 @@ classDiagram
         +size
 
         %% Methods
+        +__bool__()
+        +__len__()
+        +__reversed__()
         +combine(other, op)
+        +get_rule()
         +head(size)
         +map(op)
         +subiter(start, stop, step)
